@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    final Properties localProps = new Properties()
+    localProps.load(project.rootProject.file('local.properties').newReader())
+
+    defaultConfig {
+        applicationId "com.sergeyfitis.moviekeeper"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "API_KEY", "\"${localProps.getProperty("api.key")}\""
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('../debug_key.jks')
+            storePassword localProps.getProperty("sign.pass")
+            keyPassword localProps.getProperty("sign.pass")
+            keyAlias = localProps.getProperty("sign.alias")
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+    packagingOptions {
+        pickFirst 'META-INF/atomicfu.kotlin_module'
+        pickFirst 'META-INF/kotlinx-io.kotlin_module'
+        pickFirst 'META-INF/kotlinx-coroutines-io.kotlin_module'
+        pickFirst 'META-INF/kotlinx-coroutines-core.kotlin_module'
+        pickFirst 'META-INF/ktor-http.kotlin_module'
+        pickFirst 'META-INF/ktor-utils.kotlin_module'
+        pickFirst 'META-INF/ktor-http-cio.kotlin_module'
+        pickFirst 'META-INF/ktor-client-core.kotlin_module'
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0-rc01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0-rc03'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc03'
+    implementation 'androidx.fragment:fragment:1.2.0-rc03'
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation "io.ktor:ktor-client-core:1.2.6"
+    implementation "io.ktor:ktor-client-okhttp:1.2.6"
+
+    // tests tests tests!!!
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.13-rc-2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha03'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha03'
+}
