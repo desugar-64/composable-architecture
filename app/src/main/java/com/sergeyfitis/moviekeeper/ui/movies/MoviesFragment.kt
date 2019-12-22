@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,4 +52,21 @@ class MoviesFragment(
             findNavController().navigate(R.id.movieDetailsFragment)
         }
     }
+}
+
+val moviesReducer = fun(movies: MutableList<String>, action: MoviesAction) {
+    when(action) {
+        MoviesAction.Load -> { /* ignore for now */ }
+        is MoviesAction.Loaded -> movies.apply { clear(); addAll(getMovies()) }
+    }
+}
+
+private fun getMovies(): List<String> {
+    return listOf(
+        "Parasite (2019)",
+        "The Irishman (2019)",
+        "Burning (2018)",
+        "Long Day's Journey Into Night (2018)",
+        "Birds of Passage (2018)"
+    )
 }
