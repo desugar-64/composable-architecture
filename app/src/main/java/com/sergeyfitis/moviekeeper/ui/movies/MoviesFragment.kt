@@ -9,15 +9,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeyfitis.moviekeeper.R
-import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
+import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
+import com.sergeyfitis.moviekeeper.statemanagement.store.noEffect
+import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
 import com.sergeyfitis.moviekeeper.ui.movies.adapter.MoviesAdapter
 
 class MoviesFragment(
-    private val store: Store<AppState, AppAction>
-) : Fragment(), Store.Subscriber<AppState> {
+    private val store: Store<List<String>, MoviesAction>
+) : Fragment(), Store.Subscriber<List<String>> {
 
     lateinit var rvMovies: RecyclerView
 
@@ -47,17 +48,17 @@ class MoviesFragment(
         store.unsubscribe(this)
     }
 
-    override fun render(value: AppState) {
-        rvMovies.adapter = MoviesAdapter(value.movies) { selectedMovie ->
+    override fun render(value: List<String>) {
+        rvMovies.adapter = MoviesAdapter(value) { selectedMovie ->
             findNavController().navigate(R.id.movieDetailsFragment)
         }
     }
 }
 
-val moviesReducer = fun(movies: MutableList<String>, action: MoviesAction) {
-    when(action) {
-        MoviesAction.Load -> { /* ignore for now */ }
-        is MoviesAction.Loaded -> movies.apply { clear(); addAll(getMovies()) }
+val moviesReducer = fun(movies: List<String>, action: MoviesAction): List<Pair<List<String>, Effect<MoviesAction>>> {
+    return when(action) {
+        MoviesAction.Load -> emptyList()
+        is MoviesAction.Loaded -> return reduced(getMovies(), noEffect())
     }
 }
 

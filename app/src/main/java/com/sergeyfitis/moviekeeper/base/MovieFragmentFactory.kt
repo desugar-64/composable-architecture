@@ -3,6 +3,7 @@ package com.sergeyfitis.moviekeeper.base
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.appAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
@@ -14,12 +15,20 @@ class MovieFragmentFactory(
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
             canonicalNameOf<MovieNavHostFragment>() -> MovieNavHostFragment(this)
-            canonicalNameOf<MoviesFragment>() -> MoviesFragment(store)
-            canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(store)
+            canonicalNameOf<MoviesFragment>() -> MoviesFragment(
+                store.view(
+                    toLocalValue = AppState::movies,
+                    toGlobalAction = { it.appAction() })
+            )
+            canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(
+                store.view(
+                    toLocalValue = AppState::movieDetailsState,
+                    toGlobalAction = { it.appAction() })
+            )
             else -> super.instantiate(classLoader, className)
         }
     }
 
-    private inline fun <reified T : Fragment> canonicalNameOf(): String?
-            = T::class.java.canonicalName
+    private inline fun <reified T : Fragment> canonicalNameOf(): String? =
+        T::class.java.canonicalName
 }

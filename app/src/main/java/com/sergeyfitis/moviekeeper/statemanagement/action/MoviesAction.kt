@@ -2,6 +2,9 @@ package com.sergeyfitis.moviekeeper.statemanagement.action
 
 sealed class AppAction
 
+fun <T : AppAction> T.appAction() = this as AppAction
+fun <T : AppAction> AppAction.localAction() = this as? T
+
 sealed class MoviesAction : AppAction() {
     object Load : MoviesAction()
     data class Loaded(val movies: List<String>) : MoviesAction()

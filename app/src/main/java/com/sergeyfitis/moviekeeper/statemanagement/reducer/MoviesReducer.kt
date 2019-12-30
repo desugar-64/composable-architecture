@@ -23,12 +23,27 @@ val appReducer = combine<AppState, AppAction>(
         moviesReducer,
         valueGet = AppState::movies,
         valueSet = { appState, movies -> appState.movies = movies },
-        actionGet = { appAction -> appAction as? MoviesAction }
+        toLocalAction = { it as? MoviesAction },
+        toGlobalAction = { it as? AppAction }
     ),
      pullback(
          movieDetailsReducer,
          valueGet = AppState::movieDetailsState,
          valueSet = { appState, movieDetailsState -> appState.movieDetailsState = movieDetailsState },
-         actionGet = { appAction -> appAction as? MovieDetailsAction }
+         toLocalAction = { it as? MovieDetailsAction },
+         toGlobalAction = { it as? AppAction }
      )
 )
+
+/*val appReducer = combine<AppState, AppAction>(
+    pullback(
+        moviesReducer,
+        value = ValueHolder::value,
+        action = { it as? MoviesAction }
+    ),
+    pullback(
+        movieDetailsReducer,
+        value = AppState::movieDetailsState,
+        action = { it as? MovieDetailsAction }
+    )
+)*/

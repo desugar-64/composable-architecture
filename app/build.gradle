@@ -70,8 +70,7 @@ dependencies {
     implementation "io.ktor:ktor-client-okhttp:1.2.6"
 
     // tests tests tests!!!
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.13-rc-2'
+    testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha03'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha03'
 }

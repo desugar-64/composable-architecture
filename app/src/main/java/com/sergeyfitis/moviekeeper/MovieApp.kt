@@ -18,10 +18,10 @@ class MovieApp : Application() {
         super.onCreate()
         appFragmentFactory = MovieFragmentFactory(
             Store(AppState(
-                emptyList(),
+                mutableListOf(),
                 emptySet(),
                 MovieDetailsState.initial()
-            ), ::appReducer)
+            ), appReducer)
         )
     }
 }

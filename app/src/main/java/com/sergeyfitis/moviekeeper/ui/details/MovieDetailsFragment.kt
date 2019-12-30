@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.sergeyfitis.moviekeeper.R
-import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieDetailsAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieDetailsState
+import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 
 class MovieDetailsFragment(
-    private val store: Store<AppState, AppAction>
+    private val store: Store<MovieDetailsState, MovieDetailsAction>
 ) : Fragment() {
 
     override fun onCreateView(
@@ -25,6 +24,6 @@ class MovieDetailsFragment(
     }
 }
 
-val movieDetailsReducer = fun(state: MovieDetailsState?, action: MovieDetailsAction) {
+val movieDetailsReducer = fun(state: MovieDetailsState?, action: MovieDetailsAction): List<Pair<MovieDetailsState, Effect<MovieDetailsAction>>> {
     TODO()
 }
