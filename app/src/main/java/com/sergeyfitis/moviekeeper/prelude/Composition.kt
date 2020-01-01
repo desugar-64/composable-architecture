@@ -1,6 +1,9 @@
 package com.sergeyfitis.moviekeeper.prelude
 
-import com.sergeyfitis.moviekeeper.statemanagement.store.*
+import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
+import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
+import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
+import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
 
 fun <Value, Action> combine(
     vararg reducers: Reducer<Value, Action>
@@ -8,6 +11,7 @@ fun <Value, Action> combine(
     return { value, action ->
         var reducedValue: Value = value
         val listOfEffects = mutableListOf<Effect<Action>>()
+
         for (reducer in reducers) {
             val (v, effects) = reducer(reducedValue, action)
             reducedValue = v
@@ -32,8 +36,8 @@ fun <LocalValue, GlobalValue, LocalAction, GlobalAction> pullback(
         return@globalReducer reduced(
             value = valueSet(globalValue, reducedLocalValue),
             effects = reducedLocalEffects.map { localEffect ->
-                effect<GlobalAction> { callback ->
-                    localEffect { localAction -> toGlobalAction(localAction)?.let(callback) }
+                Effect<GlobalAction> { callback ->
+                    localEffect.run { localAction -> toGlobalAction(localAction)?.let(callback) }
                 }
             }
         )

@@ -2,14 +2,29 @@
 
 package com.sergeyfitis.moviekeeper.statemanagement.store
 
-typealias Effect<Action> = (callback: (Action) -> Unit) -> Unit
+import java.util.concurrent.Executor
+
+class Effect<A>(val run: ((A) -> Unit) -> Unit)
+
+fun <A, B> Effect<A>.map(f: (A) -> B): Effect<B> =
+    Effect { callback -> run { callback(f(it)) } }
+
+fun <A> Effect<A>.receiveOn(executor: Executor): Effect<A> {
+    return Effect { callback ->
+        this.run { action -> executor.execute { callback(action) } }
+    }
+}
+
+//typealias Effect<Action> = (callback: (Action) -> Unit) -> Unit
 typealias Reduced<Value, Action> = Pair<Value, List<Effect<Action>>>
 typealias Reducer<Value, Action> = (value: Value, action: Action) -> Reduced<Value, Action>
 
-inline fun <Action> noEffect(): Effect<Action> = {  }
+inline fun <Action> emptyEffect(): Effect<Action> = Effect { }
 inline fun <Action> noEffects(): List<Effect<Action>> = emptyList()
-inline fun <Action> effect(noinline effect: Effect<Action>): Effect<Action> = effect
-inline fun <Value, Action> reduced(value: Value, effects: List<Effect<Action>>): Reduced<Value, Action> =
+inline fun <Value, Action> reduced(
+    value: Value,
+    effects: List<Effect<Action>>
+): Reduced<Value, Action> =
     value to effects
 
 class Store<Value, Action>(
@@ -37,9 +52,7 @@ class Store<Value, Action>(
     fun send(action: Action) {
         val (value, effects) = reducer(value, action)
         this.value = value
-        for (effect in effects) {
-            effect(::send)
-        }
+        effects.forEach { effect -> effect.run(::send) }
         subscribers.forEach { it.render(value) }
     }
 

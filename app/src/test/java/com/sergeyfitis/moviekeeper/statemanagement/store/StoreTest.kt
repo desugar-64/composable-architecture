@@ -9,7 +9,7 @@ class StoreTest {
     @Test
     fun view() {
         val store =
-            Store<Int, Unit>(0) { value, _ -> listOf(value.inc() to noEffect()) }
+            Store<Int, Unit>(0) { value, _ -> reduced(value.inc(), noEffects()) }
         store.send(Unit)
         store.send(Unit)
         Assert.assertEquals(store.value, 2)
