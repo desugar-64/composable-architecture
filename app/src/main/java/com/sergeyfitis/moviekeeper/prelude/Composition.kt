@@ -1,35 +1,42 @@
 package com.sergeyfitis.moviekeeper.prelude
 
-import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
-import com.sergeyfitis.moviekeeper.statemanagement.store.effectOf
-import com.sergeyfitis.moviekeeper.statemanagement.store.noEffect
-import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
+import com.sergeyfitis.moviekeeper.statemanagement.store.*
 
 fun <Value, Action> combine(
     vararg reducers: Reducer<Value, Action>
 ): Reducer<Value, Action> {
-    return { value, action -> reducers.flatMap { it(value, action) } }
+    return { value, action ->
+        var reducedValue: Value = value
+        val listOfEffects = mutableListOf<Effect<Action>>()
+        for (reducer in reducers) {
+            val (v, effects) = reducer(reducedValue, action)
+            reducedValue = v
+            listOfEffects.addAll(effects)
+        }
+        reducedValue to listOfEffects
+    }
 }
 
 fun <LocalValue, GlobalValue, LocalAction, GlobalAction> pullback(
     reducer: Reducer<LocalValue, LocalAction>,
     valueGet: (GlobalValue) -> LocalValue,
-    valueSet: (GlobalValue, LocalValue) -> Unit,
+    valueSet: (GlobalValue, LocalValue) -> GlobalValue,
     toLocalAction: (GlobalAction) -> LocalAction?,
     toGlobalAction: (LocalAction?) -> GlobalAction?
-    ): Reducer<GlobalValue, GlobalAction> {
+): Reducer<GlobalValue, GlobalAction> {
     return globalReducer@{ globalValue, globalAction ->
         val localAction = toLocalAction(globalAction)
-            ?: return@globalReducer reduced(globalValue, noEffect())
+            ?: return@globalReducer reduced(globalValue, noEffects())
         val localValue = valueGet(globalValue)
-        val localEffects = reducer(localValue, localAction)
-        return@globalReducer localEffects.flatMap { (value, effect) ->
-            valueSet(globalValue, value)
-            return@flatMap reduced(
-                value = globalValue,
-                effect = effectOf(toGlobalAction(effect()))
-            )
-        }
+        val (reducedLocalValue, reducedLocalEffects) = reducer(localValue, localAction)
+        return@globalReducer reduced(
+            value = valueSet(globalValue, reducedLocalValue),
+            effects = reducedLocalEffects.map { localEffect ->
+                effect<GlobalAction> { callback ->
+                    localEffect { localAction -> toGlobalAction(localAction)?.let(callback) }
+                }
+            }
+        )
     }
 }
 /*

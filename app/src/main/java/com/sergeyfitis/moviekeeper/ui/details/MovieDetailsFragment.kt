@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.sergeyfitis.moviekeeper.R
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieDetailsAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieDetailsState
-import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
+import com.sergeyfitis.moviekeeper.statemanagement.store.Reduced
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 
 class MovieDetailsFragment(
@@ -24,6 +24,6 @@ class MovieDetailsFragment(
     }
 }
 
-val movieDetailsReducer = fun(state: MovieDetailsState?, action: MovieDetailsAction): List<Pair<MovieDetailsState, Effect<MovieDetailsAction>>> {
+val movieDetailsReducer = fun(state: MovieDetailsState?, action: MovieDetailsAction): Reduced<MovieDetailsState, MovieDetailsAction> {
     TODO()
 }

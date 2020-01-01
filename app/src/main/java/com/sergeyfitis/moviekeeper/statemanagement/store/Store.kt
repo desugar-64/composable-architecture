@@ -1,15 +1,16 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.sergeyfitis.moviekeeper.statemanagement.store
 
-typealias Effect<Action> = () -> Action?
-typealias Reduced<Value, Action> = List<Pair<Value, Effect<Action>>>
+typealias Effect<Action> = (callback: (Action) -> Unit) -> Unit
+typealias Reduced<Value, Action> = Pair<Value, List<Effect<Action>>>
 typealias Reducer<Value, Action> = (value: Value, action: Action) -> Reduced<Value, Action>
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun <Action> noEffect(): Effect<Action> = { null }
-fun <Action> effectOf(action: Action): Effect<Action> = { action }
-@Suppress("NOTHING_TO_INLINE")
-inline fun <Value, Action> reduced(value: Value, noinline effect: Effect<Action>): Reduced<Value, Action> =
-    listOf(value to effect)
+inline fun <Action> noEffect(): Effect<Action> = {  }
+inline fun <Action> noEffects(): List<Effect<Action>> = emptyList()
+inline fun <Action> effect(noinline effect: Effect<Action>): Effect<Action> = effect
+inline fun <Value, Action> reduced(value: Value, effects: List<Effect<Action>>): Reduced<Value, Action> =
+    value to effects
 
 class Store<Value, Action>(
     private val initialState: Value,
@@ -34,10 +35,10 @@ class Store<Value, Action>(
     }
 
     fun send(action: Action) {
-        val result = reducer(value, action)
-        for ((newValue, effect) in result) {
-            this.value = newValue
-            effect()?.let(this::send)
+        val (value, effects) = reducer(value, action)
+        this.value = value
+        for (effect in effects) {
+            effect(::send)
         }
         subscribers.forEach { it.render(value) }
     }
@@ -51,7 +52,7 @@ class Store<Value, Action>(
             reducer = { _, localAction: LocalAction ->
                 this.send(toGlobalAction(localAction))
                 val localValue = toLocalValue(value)
-                return@Store reduced(localValue, noEffect())
+                return@Store reduced(localValue, noEffects())
             }
         )
 

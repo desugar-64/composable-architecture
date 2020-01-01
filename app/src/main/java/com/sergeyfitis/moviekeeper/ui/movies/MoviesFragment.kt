@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeyfitis.moviekeeper.R
 import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesAction
-import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
+import com.sergeyfitis.moviekeeper.statemanagement.store.Reduced
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
-import com.sergeyfitis.moviekeeper.statemanagement.store.noEffect
+import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
 import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
 import com.sergeyfitis.moviekeeper.ui.movies.adapter.MoviesAdapter
 
@@ -55,10 +55,10 @@ class MoviesFragment(
     }
 }
 
-val moviesReducer = fun(movies: List<String>, action: MoviesAction): List<Pair<List<String>, Effect<MoviesAction>>> {
+val moviesReducer = fun(movies: List<String>, action: MoviesAction): Reduced<List<String>, MoviesAction> {
     return when(action) {
-        MoviesAction.Load -> emptyList()
-        is MoviesAction.Loaded -> return reduced(getMovies(), noEffect())
+        MoviesAction.Load -> reduced(movies, noEffects())
+        is MoviesAction.Loaded -> reduced(getMovies(), noEffects())
     }
 }
 

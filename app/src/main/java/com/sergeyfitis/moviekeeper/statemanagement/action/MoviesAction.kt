@@ -2,8 +2,8 @@ package com.sergeyfitis.moviekeeper.statemanagement.action
 
 sealed class AppAction
 
-fun <T : AppAction> T.appAction() = this as AppAction
-fun <T : AppAction> AppAction.localAction() = this as? T
+fun <T : AppAction> T.asAppAction() = this as AppAction
+fun <T : AppAction> AppAction.asLocalAction() = this as? T
 
 sealed class MoviesAction : AppAction() {
     object Load : MoviesAction()
