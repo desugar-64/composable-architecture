@@ -2,12 +2,40 @@
 
 package com.sergeyfitis.moviekeeper.statemanagement.store
 
+import com.sergeyfitis.moviekeeper.prelude.pipe
+import com.sergeyfitis.moviekeeper.prelude.withA
 import java.util.concurrent.Executor
 
-class Effect<A>(val run: ((A) -> Unit) -> Unit)
+typealias Callback<A> = (A) -> Unit
+class Effect<A>(val run: (Callback<A>) -> Unit)
+
+fun <A, B> Effect<A>.fmap(f: (A) -> Effect<B>): Effect<B> {
+//    return Effect { cb -> this@fmap.run { f(it).run(cb) } }
+    return Effect { callback ->
+        run { a -> withA(a, f).run(callback) }
+    }
+}
+
+fun <A, B> map(f: (A) -> B): (Effect<A>) -> Effect<B> {
+    return { effectA ->
+        Effect { callback ->
+//          effectA.run // (A -> Unit) -> Unit
+//          callback // B -> Unit
+//          pipe(f, callback) // A -> Unit
+            effectA.run(pipe(f, callback))
+        }
+    }
+}
 
 fun <A, B> Effect<A>.map(f: (A) -> B): Effect<B> =
-    Effect { callback -> run { callback(f(it)) } }
+    Effect { callback ->
+//      run // (A -> Unit) -> Unit
+//      callback // B -> Unit
+//      pipe(f, callback) // A -> Unit
+        run(pipe(f, callback))
+
+//      run { callback(f(it)) }
+    }
 
 fun <A> Effect<A>.receiveOn(executor: Executor): Effect<A> {
     return Effect { callback ->
@@ -24,8 +52,7 @@ inline fun <Action> noEffects(): List<Effect<Action>> = emptyList()
 inline fun <Value, Action> reduced(
     value: Value,
     effects: List<Effect<Action>>
-): Reduced<Value, Action> =
-    value to effects
+): Reduced<Value, Action> = value to effects
 
 class Store<Value, Action>(
     private val initialState: Value,
