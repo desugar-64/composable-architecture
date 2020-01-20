@@ -9,7 +9,49 @@ import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
-inline fun <A> id(): (A) -> A = { it }
+//zipWith()
+
+fun plus(a: Int, b: Int) = a + b
+
+inline fun <A, B, C, D> zip3(crossinline f: (A, B, C) -> D): (A?, B?, C?) -> D? {
+    return { a, b, c ->
+        zip3(a, b, c)?.map { abc -> f(abc.first, abc.second, abc.third) } }
+}
+
+inline fun <A, B, C> zip2(crossinline f: (A, B) -> C): (A?, B?) -> C? {
+    return { a, b -> zip2(a, b)?.map { ab -> f(ab.first, ab.second) } }
+}
+
+inline fun <A, B, C, D> Triple<A, B, C>.map(f: (Triple<A, B, C>) -> D): D {
+    return f(this)
+}
+
+inline fun <A, B, C> Pair<A, B>.map(f: (Pair<A, B>) -> C): C {
+    return f(this)
+}
+
+fun <A, B, C> zip3(a: A?, b: B?, c: C?): Triple<A, B, C>? {
+    return zip2(a, zip2(b, c))?.map { abc: Pair<A, Pair<B, C>>? ->
+        abc ?: return@map null
+        val (a, bc) = abc
+        Triple(a, bc.first, bc.second)
+    }
+}
+
+fun <A, B> zip2(a: A?, b: B?): Pair<A, B>? {
+    if (a == null || b == null) return null
+    return a to b
+}
+
+inline infix fun <A, B> ((A) -> B).map(crossinline f: (A) -> B): (A) -> B {
+    return { a: A -> f(a) }
+}
+
+inline fun <A, B> map(crossinline f: (A) -> B): (A) -> B {
+    return { a: A -> f(a) }
+}
+
+inline fun <A> id(a: A) = a
 
 // <>
 inline fun <A> concat(crossinline f: (A) -> Unit, crossinline g: (A) -> Unit): (A) -> Unit {
@@ -18,8 +60,13 @@ inline fun <A> concat(crossinline f: (A) -> Unit, crossinline g: (A) -> Unit): (
         g(a)
     }
 }
+
 // <>
-inline fun <A> concat(crossinline f: (A) -> Unit, crossinline g: (A) -> Unit, vararg fs: (A) -> Unit): (A) -> Unit {
+inline fun <A> concat(
+    crossinline f: (A) -> Unit,
+    crossinline g: (A) -> Unit,
+    vararg fs: (A) -> Unit
+): (A) -> Unit {
     return { a ->
         f(a)
         g(a)
@@ -33,6 +80,7 @@ inline fun <A> concat(crossinline f: (A) -> Unit, crossinline g: (A) -> Unit, va
 inline infix fun <A, B, C> ((A) -> B).pipe(crossinline g: (B) -> C): (A) -> C {
     return { a -> g(this(a)) }
 }
+
 // >>>
 inline fun <A, B, C, D> pipe(
     crossinline f: (A) -> B,
@@ -41,10 +89,12 @@ inline fun <A, B, C, D> pipe(
 ): (A) -> D {
     return { a -> h(g(f(a))) }
 }
+
 // >>>
 inline fun <A, B, C> pipe(crossinline f: (A) -> B, crossinline g: (B) -> C): (A) -> C {
     return { a -> g(f(a)) }
 }
+
 // |>
 inline fun <A, B> withA(a: A, f: (A) -> B): B = f(a)
 
