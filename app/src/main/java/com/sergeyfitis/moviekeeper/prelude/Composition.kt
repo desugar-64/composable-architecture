@@ -90,18 +90,43 @@ inline fun <A, B, C, D> pipe(
     return { a -> h(g(f(a))) }
 }
 
+// <<<
+/*
+* let nested = ((1, true), "Swift")
+* nested
+*  |> (first <<< second) { !$0 }
+* */
+inline fun <A, B, C> pipeBackward(crossinline f: (B) -> C, crossinline g: (A) -> B): (A) -> C {
+    return  { a -> f(g(a)) }
+}
+
+@JvmName("pipeBackwardI")
+inline infix fun <A, B, C> ((B) -> C).pipeBackward(crossinline g: (A) -> B): (A) -> C {
+    return  { a -> this(g(a)) }
+}
+
 // >>>
 inline fun <A, B, C> pipe(crossinline f: (A) -> B, crossinline g: (B) -> C): (A) -> C {
     return { a -> g(f(a)) }
 }
 
 // |>
+@JvmName("withAInfix")
+inline infix fun <A, B> A.withA(f: (A) -> B): B = f(this)
 inline fun <A, B> withA(a: A, f: (A) -> B): B = f(a)
 
+fun <Root, Value> combining(
+    f: (Root) -> Value,
+    by: (Value, Value) -> Value
+): (Value, Root) -> Value {
+    return { value, root -> by(value, f(root)) }
+}
+
+inline fun <Root, Value> get(kp: KProperty1<Root, Value>): (Root) -> Value = kp::get
 
 inline fun <Root, Value> prop(
     kp: KProperty1<Root, Value>,
-    crossinline set: (Value, Root) -> Root
+    crossinline set: (Value, Root) -> Root = { _, root -> root }
 ): ((Value) -> Value) -> (Root) -> Root =
     update@{ update ->
         return@update root@{ root ->
