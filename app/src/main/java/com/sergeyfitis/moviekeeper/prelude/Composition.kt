@@ -6,12 +6,10 @@ import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
 import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
 import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
 import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
+import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
-//zipWith()
-
-fun plus(a: Int, b: Int) = a + b
 
 inline fun <A, B, C, D> zip3(crossinline f: (A, B, C) -> D): (A?, B?, C?) -> D? {
     return { a, b, c ->
@@ -76,6 +74,10 @@ inline fun <A> concat(
 
 
 // >>>
+inline infix operator fun <A, B, C> ((A) -> B).plus(crossinline g: (B) -> C): (A) -> C {
+    return { a -> g(this(a)) }
+}
+
 @JvmName("pipeInfix")
 inline infix fun <A, B, C> ((A) -> B).pipe(crossinline g: (B) -> C): (A) -> C {
     return { a -> g(this(a)) }
@@ -122,6 +124,16 @@ fun <Root, Value> combining(
     return { value, root -> by(value, f(root)) }
 }
 
+fun <Root, Value0, Value1> prop(kf: KFunction3<Root, Value0, Value1, *>): (() -> Pair<Value0, Value1>) -> (Root) -> Root {
+    return { update ->
+        { root ->
+            val (value0, value1) = update()
+            kf.invoke(root, value0, value1)
+            root
+        }
+    }
+}
+
 inline fun <Root, Value> get(kp: KProperty1<Root, Value>): (Root) -> Value = kp::get
 
 inline fun <Root, Value> prop(
@@ -163,19 +175,21 @@ fun <LocalValue, GlobalValue, LocalAction, GlobalAction> pullback(
     reducer: Reducer<LocalValue, LocalAction>,
     valueGet: (GlobalValue) -> LocalValue,
     valueSet: (GlobalValue, LocalValue) -> GlobalValue,
-    toLocalAction: (GlobalAction) -> LocalAction?,
-    toGlobalAction: (LocalAction?) -> GlobalAction?
+    toLocalAction: GlobalAction.() -> LocalAction?,
+    toGlobalAction: LocalAction?.() -> GlobalAction?
 ): Reducer<GlobalValue, GlobalAction> {
     return globalReducer@{ globalValue, globalAction ->
-        val localAction = toLocalAction(globalAction)
+        val localAction = globalAction.let(toLocalAction)
             ?: return@globalReducer reduced(globalValue, noEffects())
         val localValue = valueGet(globalValue)
-        val (reducedLocalValue, reducedLocalEffects) = reducer(localValue, localAction)
+        val (reducedLocalValue, reducedLocalEffects)
+                = reducer(localValue, localAction)
         return@globalReducer reduced(
             value = valueSet(globalValue, reducedLocalValue),
             effects = reducedLocalEffects.map { localEffect ->
                 Effect<GlobalAction> { callback ->
-                    localEffect.run { localAction -> toGlobalAction(localAction)?.let(callback) }
+                    localEffect.run { localAction ->
+                        withA(localAction, toGlobalAction)?.let(callback) }
                 }
             }
         )

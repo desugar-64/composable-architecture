@@ -23,15 +23,15 @@ val appReducer = combine<AppState, AppAction>(
         moviesReducer,
         valueGet = AppState::movies,
         valueSet = { appState, movies -> appState.movies = movies; appState },
-        toLocalAction = { it.asLocalAction() },
-        toGlobalAction = { it?.asAppAction() }
+        toLocalAction = { asLocalAction() },
+        toGlobalAction = { this?.asAppAction() }
     ),
      pullback(
          movieDetailsReducer,
          valueGet = AppState::movieDetailsState,
          valueSet = { appState, movieDetailsState -> appState.movieDetailsState = movieDetailsState; appState },
-         toLocalAction = { it.asLocalAction() },
-         toGlobalAction = { it?.asAppAction() }
+         toLocalAction = { asLocalAction() },
+         toGlobalAction = { this?.asAppAction() }
      )
 )
 
