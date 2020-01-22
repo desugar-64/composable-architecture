@@ -10,19 +10,21 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import kotlin.reflect.KFunction2
 
 private val httpMethod = prop(HttpRequestBuilder::method)
-private val setHeader = prop(HttpRequestBuilder::header)
+private val setParam = prop(URLBuilder::parameters)
 private val authToken =
-    { token: String -> setHeader { "api_key" to token } }
+    { token: String -> setParam { it.append("api_key", token); it } }
 
 private inline val HttpRequestBuilder.urlBuilder: URLBuilder
         get() = url
@@ -37,14 +39,10 @@ val url =
         set = { newBuilder, root -> withA(newBuilder, root.url::takeFrom); root }
     )
 
-val baseUrl = prop(URLBuilder::takeFromString)(){ BuildConfig.BASE_URL } pipe prop(URLBuilder::paths)() { arrayOf("3") }
+val baseUrl = prop(URLBuilder::takeFromString)(){ BuildConfig.BASE_URL }
 
 fun <Root, Value> prop(kf: KFunction2<Root, Value, Root>): (() -> Value) -> (Root) -> Root {
-    return { update ->
-        { root ->
-            kf.invoke(root, update())
-        }
-    }
+    return { update -> { root -> kf.invoke(root, update()) } }
 }
 
 val methodGet = httpMethod { HttpMethod.Get }
@@ -58,19 +56,21 @@ val methodPost = httpMethod { HttpMethod.Post }
 fun baseRequestBuilder(method: HttpMethod = HttpMethod.Get): HttpRequestBuilder {
     return withA(
         a = HttpRequestBuilder(),
-        f = authToken(BuildConfig.API_KEY) pipe httpMethod { method })
+        f = prop(HttpRequestBuilder::urlBuilder)(authToken(BuildConfig.API_KEY)) pipe  httpMethod { method })
 }
 
 fun httpClient(): HttpClient {
     return HttpClient(OkHttp) {
-        install(JsonFeature) { serializer = KotlinxSerializer() }
+        install(JsonFeature) { serializer = KotlinxSerializer(json = Json.nonstrict) }
     }
 }
 
 inline fun <reified T> HttpClient.dataTask(scope: CoroutineScope, requestBuilder: HttpRequestBuilder): Effect<T> {
     return Effect { callback ->
         scope.launch {
-            this@dataTask.use { withA(it.request(requestBuilder), callback) }
+            withContext(Dispatchers.IO) {
+                this@dataTask.use { withA(it.request(requestBuilder), callback) }
+            }
         }
     }
 }

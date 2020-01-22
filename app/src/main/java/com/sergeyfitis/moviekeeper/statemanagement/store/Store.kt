@@ -7,7 +7,7 @@ import com.sergeyfitis.moviekeeper.prelude.withA
 import java.util.concurrent.Executor
 
 typealias Callback<A> = (A) -> Unit
-class Effect<A>(val run: (Callback<A>) -> Unit)
+class Effect<out A>(val run: (Callback<A>) -> Unit)
 
 fun <A, B> Effect<A>.fmap(f: (A) -> Effect<B>): Effect<B> {
 //    return Effect { cb -> this@fmap.run { f(it).run(cb) } }
@@ -80,6 +80,10 @@ class Store<Value, Action>(
         val (value, effects) = reducer(value, action)
         this.value = value
         effects.forEach { effect -> effect.run(::send) }
+        notifySubscribers()
+    }
+
+    private fun notifySubscribers() {
         subscribers.forEach { it.render(value) }
     }
 
@@ -99,6 +103,7 @@ class Store<Value, Action>(
         subscribe(object : Subscriber<Value> {
             override fun render(value: Value) {
                 localStore.value = toLocalValue(value)
+                localStore.notifySubscribers()
             }
         })
         return localStore

@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 sealed class AppAction
 
 fun <T : AppAction> T.asAppAction() = this as AppAction
-fun <T : AppAction> AppAction.asLocalAction() = this as? T
+inline fun <reified T : AppAction> AppAction.asLocalAction(): T? = if (this is T) this else null
 
 sealed class MoviesAction : AppAction() {
     data class Load(val scope: CoroutineScope) : MoviesAction()

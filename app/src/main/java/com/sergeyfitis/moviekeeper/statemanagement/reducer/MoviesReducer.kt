@@ -22,7 +22,10 @@ val appReducer = combine<AppState, AppAction>(
     pullback(
         moviesReducer,
         valueGet = AppState::movies,
-        valueSet = { appState, movies -> appState.movies = movies; appState },
+        valueSet = { appState, movies ->
+            appState.movies = movies
+            appState
+        },
         toLocalAction = { asLocalAction() },
         toGlobalAction = { this?.asAppAction() }
     ),
