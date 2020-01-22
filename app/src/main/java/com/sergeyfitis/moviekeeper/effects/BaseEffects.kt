@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import kotlin.reflect.KFunction2
 
 private val httpMethod = prop(HttpRequestBuilder::method)
 private val setParam = prop(URLBuilder::parameters)
@@ -40,10 +39,6 @@ val url =
     )
 
 val baseUrl = prop(URLBuilder::takeFromString)(){ BuildConfig.BASE_URL }
-
-fun <Root, Value> prop(kf: KFunction2<Root, Value, Root>): (() -> Value) -> (Root) -> Root {
-    return { update -> { root -> kf.invoke(root, update()) } }
-}
 
 val methodGet = httpMethod { HttpMethod.Get }
 val methodPost = httpMethod { HttpMethod.Post }

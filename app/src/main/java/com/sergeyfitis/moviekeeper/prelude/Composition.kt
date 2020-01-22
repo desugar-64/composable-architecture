@@ -6,6 +6,7 @@ import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
 import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
 import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
 import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
+import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
@@ -124,6 +125,12 @@ fun <Root, Value> combining(
     return { value, root -> by(value, f(root)) }
 }
 
+@JvmName("propFunc2")
+fun <Root, Value> prop(kf: KFunction2<Root, Value, Root>): (() -> Value) -> (Root) -> Root {
+    return { update -> { root -> kf.invoke(root, update()) } }
+}
+
+@JvmName("propFunc3")
 fun <Root, Value0, Value1> prop(kf: KFunction3<Root, Value0, Value1, *>): (() -> Pair<Value0, Value1>) -> (Root) -> Root {
     return { update ->
         { root ->
