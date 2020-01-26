@@ -20,7 +20,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "API_KEY", "\"${localProps.getProperty("api.key")}\""
-        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        buildConfigField "String", "API_V", "\"3\""
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/\""
     }
 
     signingConfigs {
@@ -54,6 +55,10 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -64,6 +69,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03'
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc03"
 
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0-rc04'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc04'

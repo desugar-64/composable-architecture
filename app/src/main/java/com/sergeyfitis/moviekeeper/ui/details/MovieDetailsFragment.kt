@@ -1,26 +1,23 @@
 package com.sergeyfitis.moviekeeper.ui.details
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.sergeyfitis.moviekeeper.R
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieDetailsAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieDetailsState
 import com.sergeyfitis.moviekeeper.statemanagement.store.Reduced
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
+import com.sergeyfitis.moviekeeper.statemanagement.store.asLiveData
 
 class MovieDetailsFragment(
-    private val store: Store<MovieDetailsState, MovieDetailsAction>
-) : Fragment() {
+    store: Store<MovieDetailsState, MovieDetailsAction>
+) : Fragment(R.layout.fragment_movie_details) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_details, container, false)
+    private val store = store.asLiveData()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 }
 

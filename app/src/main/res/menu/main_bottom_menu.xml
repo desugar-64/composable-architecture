@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_favorite_movies"
+        android:id="@+id/moviesFavoriteFragment"
         android:icon="@drawable/ic_favorite_border"
         android:title="@string/favorite"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_explore_movies"
+        android:id="@+id/moviesFragment"
         android:icon="@drawable/ic_explore"
         app:showAsAction="always"
         android:title="@string/explore"/>

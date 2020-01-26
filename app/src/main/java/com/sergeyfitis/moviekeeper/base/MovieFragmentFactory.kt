@@ -7,6 +7,7 @@ import com.sergeyfitis.moviekeeper.statemanagement.action.asAppAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
+import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
 import com.sergeyfitis.moviekeeper.ui.movies.MoviesFragment
 
 class MovieFragmentFactory(
@@ -25,6 +26,7 @@ class MovieFragmentFactory(
                     toLocalValue = AppState::movieDetailsState,
                     toGlobalAction = { it.asAppAction() })
             )
+            canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()
             else -> super.instantiate(classLoader, className)
         }
     }

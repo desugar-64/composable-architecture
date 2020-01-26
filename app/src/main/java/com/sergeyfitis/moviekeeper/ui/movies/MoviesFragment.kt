@@ -1,14 +1,11 @@
 package com.sergeyfitis.moviekeeper.ui.movies
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
+import androidx.lifecycle.whenResumed
 import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,27 +20,24 @@ import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesAction
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
 import com.sergeyfitis.moviekeeper.ui.movies.adapter.MoviesAdapter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executor
 
 class MoviesFragment(
     store: Store<List<Movie>, MoviesAction>
-) : Fragment() {
+) : Fragment(R.layout.fragment_movies) {
 
-    lateinit var rvMovies: RecyclerView
+    private lateinit var rvMovies: RecyclerView
 
-    private val store = store.asLiveData()
+    private val liveStore = store.asLiveData()
 
     init {
         lifecycleScope.launch {
-            whenStarted { store.send(MoviesAction.Load(this)) }
+            whenStarted { liveStore.send(MoviesAction.Load(this)) }
+            whenResumed { liveStore.observe(viewLifecycleOwner, ::render) }
         }
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_movies, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,13 +45,10 @@ class MoviesFragment(
         rvMovies.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        store.observe(viewLifecycleOwner, Observer {
-            rvMovies.adapter = MoviesAdapter(it.map(Movie::title)) { selectedMovie ->
-                findNavController().navigate(R.id.movieDetailsFragment)
-            }
-        })
+    private fun render(movies: List<Movie>) {
+        rvMovies.adapter = MoviesAdapter(movies.map(Movie::title)) { selectedMovie ->
+            findNavController().navigate(R.id.movieDetailsFragment)
+        }
     }
 }
 
@@ -72,7 +63,5 @@ fun CoroutineScope.loadMoviesEffect(): Effect<MoviesAction> {
     return httpClient()
         .dataTask<MoviesResponse>(this, getPopularMovies)
         .map { MoviesAction.Loaded(it.results) }
-        .receiveOn(mainThread)
+        .receiveOn(Dispatchers.Main.asExecutor())
 }
-
-val mainThread = Executor { Handler(Looper.getMainLooper()).post(it) }
