@@ -19,7 +19,10 @@ interface Lens<A, B> {
             set = { a, c -> set(a, g.set(get(a), c)) }
         )
     }
-    operator fun <C> plus(g: Lens<B, C>): Lens<A, C> = this.pipe(g)
+    operator fun <C> plus(g: Lens<B, C>): Lens<A, C> = this pipe g
+    infix fun <C> pipe(g: Getter<B, C>): Getter<A, C> = asGetter() pipe g
+
+    fun asGetter() = Getter(this::get)
 
     companion object {
         operator fun <A, B> invoke(
