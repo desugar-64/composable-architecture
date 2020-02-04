@@ -1,6 +1,7 @@
 package com.sergeyfitis.moviekeeper.statemanagement.action
 
 import com.sergeyfitis.moviekeeper.models.Movie
+import com.sergeyfitis.moviekeeper.prelude.types.Either
 import kotlinx.coroutines.CoroutineScope
 
 sealed class AppAction
@@ -10,7 +11,7 @@ inline fun <reified T : AppAction> AppAction.asLocalAction(): T? = if (this is T
 
 sealed class MoviesAction : AppAction() {
     data class Load(val scope: CoroutineScope) : MoviesAction()
-    data class Loaded(val movies: List<Movie>) : MoviesAction()
+    data class Loaded(val movies: Either<Throwable, List<Movie>>) : MoviesAction()
 }
 
 sealed class FavoriteAction : AppAction() {
@@ -19,5 +20,6 @@ sealed class FavoriteAction : AppAction() {
 }
 
 sealed class MovieDetailsAction : AppAction() {
-    data class MovieDetails(val movie: String) : MovieDetailsAction()
+    data class GetBy(val scope: CoroutineScope, val movieId: Int) : MovieDetailsAction()
+    data class Loaded(val movie: Movie, val isFavorite: Boolean) : MovieDetailsAction()
 }

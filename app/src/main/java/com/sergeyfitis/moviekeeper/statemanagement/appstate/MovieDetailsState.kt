@@ -1,13 +1,15 @@
 package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
-class MovieDetailsState(
-    val movie: String,
+import com.sergeyfitis.moviekeeper.models.Movie
+
+data class MovieDetailsState(
+    var movie: Movie,
     val isFavorite: Boolean
 ) {
     companion object {
-        fun initial() = MovieDetailsState(
-            movie = "",
-            isFavorite = false
-        )
+//        fun initial() = MovieDetailsState(
+//            movie = Movie(),
+//            isFavorite = false
+//        )
     }
 }

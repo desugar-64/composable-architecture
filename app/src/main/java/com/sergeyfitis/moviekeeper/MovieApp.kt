@@ -3,7 +3,6 @@ package com.sergeyfitis.moviekeeper
 import android.app.Application
 import com.sergeyfitis.moviekeeper.base.MovieFragmentFactory
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieDetailsState
 import com.sergeyfitis.moviekeeper.statemanagement.reducer.appReducer
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 
@@ -20,7 +19,7 @@ class MovieApp : Application() {
             Store(AppState(
                 mutableListOf(),
                 emptySet(),
-                MovieDetailsState.initial()
+                null
             ), appReducer)
         )
     }

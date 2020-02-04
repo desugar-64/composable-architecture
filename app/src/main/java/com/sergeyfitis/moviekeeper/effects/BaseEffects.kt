@@ -1,10 +1,13 @@
 package com.sergeyfitis.moviekeeper.effects
 
 import com.sergeyfitis.moviekeeper.BuildConfig.*
-import com.sergeyfitis.moviekeeper.prelude.Lens
 import com.sergeyfitis.moviekeeper.prelude.pipe
+import com.sergeyfitis.moviekeeper.prelude.types.Either
+import com.sergeyfitis.moviekeeper.prelude.types.Lens
+import com.sergeyfitis.moviekeeper.prelude.types.recover
 import com.sergeyfitis.moviekeeper.prelude.withA
 import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
+import com.sergeyfitis.moviekeeper.statemanagement.store.emptyEffect
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -20,22 +23,25 @@ import io.ktor.http.takeFrom
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 
-private val httpMethodLens = Lens<HttpRequestBuilder, HttpMethod>(
-    get = { it.method },
-    set = { httpRequestBuilder, httpMethod ->
-        httpRequestBuilder.apply { method = httpMethod }
-    }
-)
+private val httpMethodLens =
+    Lens<HttpRequestBuilder, HttpMethod>(
+        get = { it.method },
+        set = { httpRequestBuilder, httpMethod ->
+            httpRequestBuilder.apply { method = httpMethod }
+        }
+    )
 
-val httpUrlLens = Lens<HttpRequestBuilder, URLBuilder>(
-    get = { it.url },
-    set = { httpRequestBuilder, _ -> httpRequestBuilder }
-)
+val httpUrlLens =
+    Lens<HttpRequestBuilder, URLBuilder>(
+        get = { it.url },
+        set = { httpRequestBuilder, _ -> httpRequestBuilder }
+    )
 
-private val setParamLens = Lens<URLBuilder, ParametersBuilder>(
-    get = { it.parameters },
-    set = { urlBuilder, _ -> urlBuilder }
-)
+private val setParamLens =
+    Lens<URLBuilder, ParametersBuilder>(
+        get = { it.parameters },
+        set = { urlBuilder, _ -> urlBuilder }
+    )
 
 private val authToken = { token: String ->
     setParamLens.lift { it.appendMissing("api_key", listOf(token)); it }
@@ -101,12 +107,20 @@ inline fun <reified T> HttpClient.dataTask(
     scope: CoroutineScope,
     requestBuilder: HttpRequestBuilder,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): Effect<T> {
-    return Effect { callback ->
-        scope.launch {
-            withContext(dispatcher) {
-                this@dataTask.use { withA(it.request(requestBuilder), callback) }
+): Effect<Either<Throwable, T>> {
+    return if (scope.isActive)
+        Effect { callback ->
+            scope.launch {
+                withContext(dispatcher) {
+                    this@dataTask.use { client: HttpClient ->
+                        val result =
+                            Either.recover { client.request<T>(requestBuilder) }
+                        withA(result, callback)
+                    }
+                }
             }
         }
+    else {
+        emptyEffect()
     }
 }

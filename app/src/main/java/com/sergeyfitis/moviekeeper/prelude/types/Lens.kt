@@ -1,4 +1,7 @@
-package com.sergeyfitis.moviekeeper.prelude
+package com.sergeyfitis.moviekeeper.prelude.types
+
+import com.sergeyfitis.moviekeeper.prelude.pipe
+import com.sergeyfitis.moviekeeper.prelude.withA
 
 interface Lens<A, B> {
     fun get(a: A): B
@@ -15,7 +18,12 @@ interface Lens<A, B> {
 
     infix fun <C> pipe(g: Lens<B, C>): Lens<A, C> {
         return Lens(
-            get = { a -> withA(a, ::get pipe g::get) /*g.get(get(a))*/ },
+            get = { a ->
+                withA(
+                    a,
+                    ::get pipe g::get
+                ) /*g.get(get(a))*/
+            },
             set = { a, c -> set(a, g.set(get(a), c)) }
         )
     }
