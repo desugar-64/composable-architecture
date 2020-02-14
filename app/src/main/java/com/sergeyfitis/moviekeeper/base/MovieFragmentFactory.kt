@@ -23,7 +23,10 @@ class MovieFragmentFactory(
             )
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(
                 store.view(
-                    toLocalValue = AppState::movieDetailsState,
+                    toLocalValue = { appState ->
+//                        appState.
+                        TODO()
+                    },
                     toGlobalAction = { it.asAppAction() })
             )
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()

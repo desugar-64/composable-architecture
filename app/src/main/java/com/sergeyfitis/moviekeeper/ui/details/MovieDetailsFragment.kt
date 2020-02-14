@@ -7,13 +7,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenCreated
 import androidx.navigation.fragment.navArgs
 import com.sergeyfitis.moviekeeper.R
+import com.sergeyfitis.moviekeeper.prelude.types.right
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieDetailsAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieDetailsState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
 import kotlinx.coroutines.launch
 
 class MovieDetailsFragment(
-    store: Store<MovieDetailsState, MovieDetailsAction>
+    store: Store<MovieState, MovieDetailsAction>
 ) : Fragment(R.layout.fragment_movie_details) {
 
     private val liveStore = store.asLiveData()
@@ -33,12 +34,16 @@ class MovieDetailsFragment(
     }
 }
 
-val movieDetailsReducer = fun(state: MovieDetailsState?, action: MovieDetailsAction): Reduced<MovieDetailsState, MovieDetailsAction> {
-    return when(action) {
-        is MovieDetailsAction.GetBy -> TODO()
-        is MovieDetailsAction.Loaded -> reduced(
-            value = MovieDetailsState(action.movie, action.isFavorite),
-            effects = noEffects()
-        )
+val movieDetailsReducer =
+    fun(state: MovieState, action: MovieDetailsAction): Reduced<MovieState, MovieDetailsAction> {
+        return when (action) {
+            is MovieDetailsAction.GetBy -> TODO()
+            is MovieDetailsAction.Loaded -> reduced(
+                value = state.copy(
+                    movie = action.movie.right(),
+                    isFavorite = action.isFavorite
+                ),
+                effects = noEffects()
+            )
+        }
     }
-}
