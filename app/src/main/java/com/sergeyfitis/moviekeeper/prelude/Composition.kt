@@ -2,6 +2,8 @@
 
 package com.sergeyfitis.moviekeeper.prelude
 
+import com.sergeyfitis.moviekeeper.prelude.types.Option
+import com.sergeyfitis.moviekeeper.prelude.types.toOption
 import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
 import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
 import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
@@ -182,21 +184,23 @@ fun <LocalValue, GlobalValue, LocalAction, GlobalAction> pullback(
     reducer: Reducer<LocalValue, LocalAction>,
     valueGet: (GlobalValue) -> LocalValue,
     valueSet: (GlobalValue, LocalValue) -> GlobalValue,
-    toLocalAction: GlobalAction.() -> LocalAction?,
-    toGlobalAction: LocalAction?.() -> GlobalAction?
+    toLocalAction: GlobalAction.() -> Option<LocalAction>,
+    toGlobalAction: Option<LocalAction>.() -> Option<GlobalAction>
 ): Reducer<GlobalValue, GlobalAction> {
     return globalReducer@{ globalValue, globalAction ->
-        val localAction = globalAction.let(toLocalAction)
-            ?: return@globalReducer reduced(globalValue, noEffects())
+        val localAction = toLocalAction(globalAction)
+        if (localAction.isEmpty) return@globalReducer reduced(globalValue, noEffects())
+
         val localValue = valueGet(globalValue)
         val (reducedLocalValue, reducedLocalEffects)
-                = reducer(localValue, localAction)
+                = reducer(localValue, localAction.value)
         return@globalReducer reduced(
             value = valueSet(globalValue, reducedLocalValue),
             effects = reducedLocalEffects.map { localEffect ->
                 Effect<GlobalAction> { callback ->
                     localEffect.run { localAction ->
-                        withA(localAction, toGlobalAction)?.let(callback) }
+                        toGlobalAction(localAction.toOption()).map(callback)
+                    }
                 }
             }
         )

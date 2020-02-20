@@ -15,11 +15,7 @@ sealed class MoviesAction : AppAction() {
 }
 
 sealed class FavoriteAction : AppAction() {
-    data class SaveFavorite(val movie: String) : FavoriteAction()
-    data class RemoveFavorite(val movie: String) : FavoriteAction()
+    data class SaveFavorite(val movie: Movie) : FavoriteAction()
+    data class RemoveFavorite(val movie: Movie) : FavoriteAction()
 }
 
-sealed class MovieDetailsAction : AppAction() {
-    data class GetBy(val scope: CoroutineScope, val movieId: Int) : MovieDetailsAction()
-    data class Loaded(val movie: Movie, val isFavorite: Boolean) : MovieDetailsAction()
-}

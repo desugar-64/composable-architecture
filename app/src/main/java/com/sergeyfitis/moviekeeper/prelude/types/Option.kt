@@ -3,8 +3,16 @@ package com.sergeyfitis.moviekeeper.prelude.types
 import com.sergeyfitis.moviekeeper.prelude.id
 
 sealed class Option<out A> {
-    object None : Option<Nothing>()
-    data class Some<out A>(val value: A) : Option<A>()
+    abstract val isEmpty: Boolean
+    abstract val value: A
+    object None : Option<Nothing>() {
+        override val isEmpty: Boolean = true
+        override val value: Nothing
+            get() = throw RuntimeException("Nothing to unwrap")
+    }
+    data class Some<out A>(override val value: A) : Option<A>() {
+        override val isEmpty: Boolean = false
+    }
 
     inline infix fun <B> map(f: (A) -> B): Option<B> =
         flatMap { a -> Some(f(a)) }
@@ -28,5 +36,6 @@ sealed class Option<out A> {
     }
 }
 
-inline fun <T> Option<T>.getOrElse(default: () -> T): T = fold({ default() }, ::id)
+inline fun <T> Option<T>.getOrElse(default: () -> T): T = fold(default, ::id)
+inline fun <T> Option<T>.getOrThrow(): T = fold({ throw RuntimeException("Nothing to unpack") }, ::id)
 fun <T> T?.toOption(): Option<T> = Option.ofNullable(this)

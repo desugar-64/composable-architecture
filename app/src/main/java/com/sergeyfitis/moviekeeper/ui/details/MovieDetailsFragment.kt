@@ -7,14 +7,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenCreated
 import androidx.navigation.fragment.navArgs
 import com.sergeyfitis.moviekeeper.R
-import com.sergeyfitis.moviekeeper.prelude.types.right
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieDetailsAction
+import com.sergeyfitis.moviekeeper.prelude.pullback
+import com.sergeyfitis.moviekeeper.statemanagement.action.MovieAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieStateLens
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
 import kotlinx.coroutines.launch
 
 class MovieDetailsFragment(
-    store: Store<MovieState, MovieDetailsAction>
+    store: Store<MovieViewState, MovieViewAction>
 ) : Fragment(R.layout.fragment_movie_details) {
 
     private val liveStore = store.asLiveData()
@@ -24,7 +27,7 @@ class MovieDetailsFragment(
         lifecycleScope.launch {
             whenCreated {
                 val movieId = args.movieId
-                liveStore.send(MovieDetailsAction.GetBy(this, movieId))
+                liveStore.send(MovieViewAction.getDetails(this, movieId))
             }
         }
     }
@@ -34,16 +37,22 @@ class MovieDetailsFragment(
     }
 }
 
-val movieDetailsReducer =
-    fun(state: MovieState, action: MovieDetailsAction): Reduced<MovieState, MovieDetailsAction> {
+private val movieStateReducer =
+    fun(state: MovieState, action: MovieAction): Reduced<MovieState, MovieAction> {
         return when (action) {
-            is MovieDetailsAction.GetBy -> TODO()
-            is MovieDetailsAction.Loaded -> reduced(
-                value = state.copy(
-                    movie = action.movie.right(),
-                    isFavorite = action.isFavorite
-                ),
+            is MovieAction.GetDetails -> TODO() // load cast, etc
+            is MovieAction.Loaded -> reduced(
+                value = state.copy(movie = action.movie),
                 effects = noEffects()
             )
         }
     }
+
+val movieViewReducer =
+    pullback<MovieState, MovieViewState, MovieAction, MovieViewAction>(
+        reducer = movieStateReducer,
+        valueGet = MovieViewState.movieStateLens::get,
+        valueSet = MovieViewState.movieStateLens::set,
+        toLocalAction = MovieViewAction.moviePrism::getOption,
+        toGlobalAction = { map(MovieViewAction.moviePrism::reverseGet) }
+    )

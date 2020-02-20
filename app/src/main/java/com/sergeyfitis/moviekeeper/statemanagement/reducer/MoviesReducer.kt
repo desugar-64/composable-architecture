@@ -7,11 +7,10 @@ import com.sergeyfitis.moviekeeper.prelude.types.Either
 import com.sergeyfitis.moviekeeper.prelude.types.ofNullable
 import com.sergeyfitis.moviekeeper.prelude.types.right
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.asAppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.asLocalAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
-import com.sergeyfitis.moviekeeper.ui.details.movieDetailsReducer
+import com.sergeyfitis.moviekeeper.ui.details.movieViewReducer
 import com.sergeyfitis.moviekeeper.ui.movies.moviesReducer
 
 
@@ -35,7 +34,7 @@ val appReducer = combine<AppState, AppAction>(
         toGlobalAction = { this?.asAppAction() }
     ),
     pullback(
-        movieDetailsReducer,
+        movieViewReducer,
         valueGet = {
             it.movieState.fold(
                 ifLeft = { MovieState(Either.ofNullable(null), false) },

@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentFactory
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.asAppAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
@@ -23,11 +24,8 @@ class MovieFragmentFactory(
             )
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(
                 store.view(
-                    toLocalValue = { appState ->
-//                        appState.
-                        TODO()
-                    },
-                    toGlobalAction = { it.asAppAction() })
+                    toLocalValue = { appState -> appState.movieViewState },
+                    toGlobalAction = { /*it.asAppAction()*/  TODO("lift local view action to the world of the app action")})
             )
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()
             else -> super.instantiate(classLoader, className)
