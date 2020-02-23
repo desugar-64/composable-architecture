@@ -33,6 +33,8 @@ sealed class Option<out A> {
         fun <A> just(a: A): Option<A> = Some(a)
         fun <A> empty(): Option<A> = None
         fun <A> ofNullable(a: A?): Option<A> = if (a != null) Some(a) else None
+        inline fun <A> recover(getA: () -> A) =
+            Either.recover(getA).fold({ empty<A>() }, ::just)
     }
 }
 

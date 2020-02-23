@@ -1,15 +1,16 @@
 package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
+import com.sergeyfitis.moviekeeper.models.Movie
 import com.sergeyfitis.moviekeeper.prelude.combine
-import com.sergeyfitis.moviekeeper.prelude.id
 import com.sergeyfitis.moviekeeper.prelude.pullback
-import com.sergeyfitis.moviekeeper.prelude.types.Either
-import com.sergeyfitis.moviekeeper.prelude.types.ofNullable
-import com.sergeyfitis.moviekeeper.prelude.types.right
+import com.sergeyfitis.moviekeeper.prelude.types.Option
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.asLocalAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.appAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.movieViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
 import com.sergeyfitis.moviekeeper.ui.details.movieViewReducer
 import com.sergeyfitis.moviekeeper.ui.movies.moviesReducer
 
@@ -23,30 +24,25 @@ import com.sergeyfitis.moviekeeper.ui.movies.moviesReducer
 }*/
 
 val appReducer = combine<AppState, AppAction>(
-    pullback(
+    pullback<List<Movie>, AppState, AppAction.MoviesAction, AppAction>(
         moviesReducer,
         valueGet = AppState::movies,
         valueSet = { appState, movies ->
             appState.movies = movies
             appState
         },
-        toLocalAction = { asLocalAction() },
-        toGlobalAction = { this?.asAppAction() }
+        toLocalAction = AppAction.moviesPrism::get,
+        toGlobalAction = { map(AppAction.moviesPrism::reverseGet) }
     ),
-    pullback(
+    pullback<MovieViewState, AppState, MovieViewAction, AppAction>(
         movieViewReducer,
-        valueGet = {
-            it.movieState.fold(
-                ifLeft = { MovieState(Either.ofNullable(null), false) },
-                ifRight = ::id
-            )
-        },
-        valueSet = { appState, movieDetailsState ->
-            appState.movieState = movieDetailsState.right()
+        valueGet = AppState::movieViewState,
+        valueSet = { appState, movieViewState ->
+            appState.movieViewState = movieViewState
             appState
         },
-        toLocalAction = { asLocalAction() },
-        toGlobalAction = { this?.asAppAction() }
+        toLocalAction = { Option.recover(this::movieViewAction) },
+        toGlobalAction = { map(MovieViewAction::appAction) }
     )
 )
 

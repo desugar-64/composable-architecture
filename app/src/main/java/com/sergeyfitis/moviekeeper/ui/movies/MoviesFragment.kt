@@ -17,7 +17,7 @@ import com.sergeyfitis.moviekeeper.models.Movie
 import com.sergeyfitis.moviekeeper.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.prelude.id
 import com.sergeyfitis.moviekeeper.prelude.types.rmap
-import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction.MoviesAction
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
 import com.sergeyfitis.moviekeeper.ui.movies.MoviesFragmentDirections.Companion.actionMoviesFragmentToMovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.movies.adapter.MoviesAdapter

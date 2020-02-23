@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenCreated
 import androidx.navigation.fragment.navArgs
 import com.sergeyfitis.moviekeeper.R
 import com.sergeyfitis.moviekeeper.prelude.pullback
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieStateLens
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
-import kotlinx.coroutines.launch
 
 class MovieDetailsFragment(
     store: Store<MovieViewState, MovieViewAction>
@@ -24,11 +22,9 @@ class MovieDetailsFragment(
     private val args by navArgs<MovieDetailsFragmentArgs>()
 
     init {
-        lifecycleScope.launch {
-            whenCreated {
-                val movieId = args.movieId
-                liveStore.send(MovieViewAction.getDetails(this, movieId))
-            }
+        lifecycleScope.launchWhenCreated {
+            val movieId = args.movieId
+            liveStore.send(MovieViewAction.getDetails(this, movieId))
         }
     }
 
@@ -38,10 +34,10 @@ class MovieDetailsFragment(
 }
 
 private val movieStateReducer =
-    fun(state: MovieState, action: MovieAction): Reduced<MovieState, MovieAction> {
+    fun(state: MovieState, action: AppAction.MovieAction): Reduced<MovieState, AppAction.MovieAction> {
         return when (action) {
-            is MovieAction.GetDetails -> TODO() // load cast, etc
-            is MovieAction.Loaded -> reduced(
+            is AppAction.MovieAction.GetDetails -> TODO() // load cast, etc
+            is AppAction.MovieAction.Loaded -> reduced(
                 value = state.copy(movie = action.movie),
                 effects = noEffects()
             )
@@ -49,10 +45,10 @@ private val movieStateReducer =
     }
 
 val movieViewReducer =
-    pullback<MovieState, MovieViewState, MovieAction, MovieViewAction>(
+    pullback<MovieState, MovieViewState, AppAction.MovieAction, MovieViewAction>(
         reducer = movieStateReducer,
         valueGet = MovieViewState.movieStateLens::get,
         valueSet = MovieViewState.movieStateLens::set,
-        toLocalAction = MovieViewAction.moviePrism::getOption,
+        toLocalAction = MovieViewAction.moviePrism::get,
         toGlobalAction = { map(MovieViewAction.moviePrism::reverseGet) }
     )
