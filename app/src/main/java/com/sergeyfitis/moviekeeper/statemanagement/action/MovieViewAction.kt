@@ -10,7 +10,7 @@ sealed class MovieViewAction {
     data class Favorite(val action: FavoriteAction) : MovieViewAction()
 
     companion object {
-        fun ofAppAction(action: AppAction): MovieViewAction {
+        fun ofAppAction(action: AppAction): MovieViewAction { // make it compile time safe
             return when(action) {
                 is FavoriteAction -> Favorite(action)
                 is AppAction.MovieAction -> Movie(action)
@@ -31,14 +31,15 @@ sealed class MovieViewAction {
                 },
                 reverseGet = ::Movie
             )
+        val movieViewActionPrism = Prism<AppAction, MovieViewAction>(
+            get = { appAction -> Option.recover { ofAppAction(appAction) } },
+            reverseGet = { viewAction ->
+                when(viewAction) {
+                    is Movie -> viewAction.action
+                    is Favorite -> viewAction.action
+                }
+            }
+        )
+
     }
 }
-
-val AppAction.movieViewAction: MovieViewAction
-    get() = MovieViewAction.ofAppAction(this)
-
-val MovieViewAction.appAction: AppAction
-    get() = when(this) {
-        is MovieViewAction.Movie -> this.action
-        is MovieViewAction.Favorite -> this.action
-    }

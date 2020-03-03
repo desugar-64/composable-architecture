@@ -20,6 +20,7 @@ sealed class AppAction {
     }
 
     companion object {
+
         val moviesPrism = Prism<AppAction, MoviesAction>(
             get = { appAction ->
                 if (appAction is MoviesAction)

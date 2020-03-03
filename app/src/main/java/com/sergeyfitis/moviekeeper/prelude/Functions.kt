@@ -13,6 +13,13 @@ import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
+inline fun <A> absurd(a: A): Nothing {
+    throw RuntimeException(
+        """
+            |It should never happen. Impossible scenario.
+            |If this happened, then you are doing something wrong
+        """.trimMargin())
+}
 
 inline fun <A, B, C, D> zip3(crossinline f: (A, B, C) -> D): (A?, B?, C?) -> D? {
     return { a, b, c ->

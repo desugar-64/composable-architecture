@@ -3,9 +3,11 @@ package com.sergeyfitis.moviekeeper.base
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.asAppAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesViewState
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
@@ -19,13 +21,15 @@ class MovieFragmentFactory(
             canonicalNameOf<MovieNavHostFragment>() -> MovieNavHostFragment(this)
             canonicalNameOf<MoviesFragment>() -> MoviesFragment(
                 store.view(
-                    toLocalValue = AppState::movies,
-                    toGlobalAction = { it.asAppAction() })
+                    toLocalValue = AppState::moviesViewState,
+                    toGlobalAction = MoviesViewAction.moviesViewActionPrism::reverseGet
+                )
             )
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(
                 store.view(
-                    toLocalValue = { appState -> appState.movieViewState },
-                    toGlobalAction = { /*it.asAppAction()*/  TODO("lift local view action to the world of the app action")})
+                    toLocalValue = AppState::movieViewState,
+                    toGlobalAction = MovieViewAction.movieViewActionPrism::reverseGet
+                )
             )
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()
             else -> super.instantiate(classLoader, className)

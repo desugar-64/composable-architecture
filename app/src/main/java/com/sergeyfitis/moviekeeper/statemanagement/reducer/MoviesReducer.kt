@@ -1,18 +1,13 @@
 package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
-import com.sergeyfitis.moviekeeper.models.Movie
 import com.sergeyfitis.moviekeeper.prelude.combine
 import com.sergeyfitis.moviekeeper.prelude.pullback
-import com.sergeyfitis.moviekeeper.prelude.types.Option
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.appAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.movieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.*
 import com.sergeyfitis.moviekeeper.ui.details.movieViewReducer
-import com.sergeyfitis.moviekeeper.ui.movies.moviesReducer
+import com.sergeyfitis.moviekeeper.ui.movies.moviesViewReducer
 
 
 /*fun appReducer(appState: AppState, appAction: AppAction) {
@@ -24,15 +19,15 @@ import com.sergeyfitis.moviekeeper.ui.movies.moviesReducer
 }*/
 
 val appReducer = combine<AppState, AppAction>(
-    pullback<List<Movie>, AppState, AppAction.MoviesAction, AppAction>(
-        moviesReducer,
-        valueGet = AppState::movies,
+    pullback<MoviesViewState, AppState, MoviesViewAction, AppAction>(
+        moviesViewReducer,
+        valueGet = AppState::moviesViewState,
         valueSet = { appState, movies ->
-            appState.movies = movies
+            appState.moviesViewState = movies
             appState
         },
-        toLocalAction = AppAction.moviesPrism::get,
-        toGlobalAction = { map(AppAction.moviesPrism::reverseGet) }
+        toLocalAction = MoviesViewAction.moviesViewActionPrism::get,
+        toGlobalAction = { map(MoviesViewAction.moviesViewActionPrism::reverseGet) }
     ),
     pullback<MovieViewState, AppState, MovieViewAction, AppAction>(
         movieViewReducer,
@@ -41,8 +36,8 @@ val appReducer = combine<AppState, AppAction>(
             appState.movieViewState = movieViewState
             appState
         },
-        toLocalAction = { Option.recover(this::movieViewAction) },
-        toGlobalAction = { map(MovieViewAction::appAction) }
+        toLocalAction = MovieViewAction.movieViewActionPrism::get,
+        toGlobalAction = { map(MovieViewAction.movieViewActionPrism::reverseGet) }
     )
 )
 

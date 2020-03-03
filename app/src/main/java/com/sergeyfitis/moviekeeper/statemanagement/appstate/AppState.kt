@@ -8,10 +8,18 @@ import com.sergeyfitis.moviekeeper.prelude.types.toOption
 
 class AppState(
     var selectedMovie: Option<Movie>,
-    var movies: List<Movie>,
+    var moviesState: MoviesState,
     var favoriteMovies: Set<Movie>,
     var movieState: Option<MovieState>
 )
+
+// TODO: Replace with Lens
+var AppState.moviesViewState: MoviesViewState
+    get() = MoviesViewState(selectedMovie, moviesState)
+    set(value) {
+        selectedMovie = value.selectedMovie
+        moviesState = value.moviesState
+    }
 
 var AppState.movieViewState: MovieViewState
     get() {

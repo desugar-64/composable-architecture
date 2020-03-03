@@ -4,6 +4,7 @@ import android.app.Application
 import com.sergeyfitis.moviekeeper.base.MovieFragmentFactory
 import com.sergeyfitis.moviekeeper.prelude.types.Option
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesState
 import com.sergeyfitis.moviekeeper.statemanagement.reducer.appReducer
 import com.sergeyfitis.moviekeeper.statemanagement.store.Store
 
@@ -19,7 +20,7 @@ class MovieApp : Application() {
         appFragmentFactory = MovieFragmentFactory(
             Store(AppState(
                 Option.empty(),
-                mutableListOf(),
+                MoviesState(emptyList()),
                 emptySet(),
                 Option.empty()
             ), appReducer)

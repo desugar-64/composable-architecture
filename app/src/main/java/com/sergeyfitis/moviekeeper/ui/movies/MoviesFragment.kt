@@ -5,7 +5,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
-import androidx.lifecycle.whenCreated
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,18 +15,22 @@ import com.sergeyfitis.moviekeeper.effects.httpClient
 import com.sergeyfitis.moviekeeper.models.Movie
 import com.sergeyfitis.moviekeeper.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.prelude.id
+import com.sergeyfitis.moviekeeper.prelude.pullback
 import com.sergeyfitis.moviekeeper.prelude.types.rmap
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction.MoviesAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesStateLens
 import com.sergeyfitis.moviekeeper.statemanagement.store.*
 import com.sergeyfitis.moviekeeper.ui.movies.MoviesFragmentDirections.Companion.actionMoviesFragmentToMovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.movies.adapter.MoviesAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.launch
 
 class MoviesFragment(
-    store: Store<List<Movie>, MoviesAction>
+    store: Store<MoviesViewState, MoviesViewAction>
 ) : Fragment(R.layout.fragment_movies) {
 
     private lateinit var rvMovies: RecyclerView
@@ -35,8 +38,8 @@ class MoviesFragment(
     private val liveStore = store.asLiveData()
 
     init {
-        lifecycleScope.launch {
-            whenCreated { liveStore.send(MoviesAction.Load(this)) }
+        lifecycleScope.launchWhenCreated() {
+            liveStore.send(MoviesViewAction.loadMovies(this))
         }
     }
 
@@ -47,24 +50,43 @@ class MoviesFragment(
         liveStore.observe(viewLifecycleOwner, ::render)
     }
 
-    private fun render(movies: List<Movie>) {
-        rvMovies.adapter = MoviesAdapter(movies) { movie ->
+    private fun render(viewState: MoviesViewState) {
+        rvMovies.adapter = MoviesAdapter(viewState.moviesState.movies) { movie ->
+            liveStore.send(MoviesViewAction.openMovie(movie))
             val destination = actionMoviesFragmentToMovieDetailsFragment(movie.id)
             findNavController().navigate(destination)
         }
     }
 }
 
-val moviesReducer =
-    fun(movies: List<Movie>, action: MoviesAction): Reduced<List<Movie>, MoviesAction> {
-        return when (action) {
-            is MoviesAction.Load -> reduced(movies, listOf(action.scope.loadMoviesEffect()))
+private val moviesStateReducer =
+    fun (state: MoviesState, action: MoviesAction): Reduced<MoviesState, MoviesAction> {
+        return when(action) {
+            is MoviesAction.Load -> reduced(state, listOf(action.scope.loadMoviesEffect()))
             is MoviesAction.Loaded -> reduced(
-                value = action.movies.fold({ emptyList<Movie>() }, ::id),
+                value = state.copy(movies = action.movies.fold({ emptyList<Movie>() }, ::id)),
                 effects = noEffects()
             )
         }
     }
+
+/*val moviesViewReducer =
+    fun(viewState: MoviesViewState, action: MoviesViewAction): Reduced<MoviesViewState, MoviesViewAction> {
+        return when (action) {
+            is MoviesAction.Open -> reduced(
+                value = state.copy(selectedMovie = action.movie.toOption()),
+                effects = noEffects()
+            )
+        }
+    }*/
+
+val moviesViewReducer = pullback<MoviesState, MoviesViewState, MoviesAction, MoviesViewAction>(
+    reducer = moviesStateReducer,
+    valueGet = MoviesViewState.moviesStateLens::get,
+    valueSet = MoviesViewState.moviesStateLens::set,
+    toLocalAction = { MoviesViewAction.moviesPrism.get(this) },
+    toGlobalAction = { map(MoviesViewAction.moviesPrism::reverseGet) }
+)
 
 fun CoroutineScope.loadMoviesEffect(): Effect<MoviesAction> {
     return httpClient()
