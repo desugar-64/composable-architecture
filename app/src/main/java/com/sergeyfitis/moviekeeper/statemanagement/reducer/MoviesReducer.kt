@@ -26,8 +26,8 @@ val appReducer = combine<AppState, AppAction>(
             appState.moviesViewState = movies
             appState
         },
-        toLocalAction = MoviesViewAction.moviesViewActionPrism::get,
-        toGlobalAction = { map(MoviesViewAction.moviesViewActionPrism::reverseGet) }
+        toLocalAction = AppAction.moviesViewActionPrism::get,
+        toGlobalAction = { map(AppAction.moviesViewActionPrism::reverseGet) }
     ),
     pullback<MovieViewState, AppState, MovieViewAction, AppAction>(
         movieViewReducer,
@@ -36,8 +36,8 @@ val appReducer = combine<AppState, AppAction>(
             appState.movieViewState = movieViewState
             appState
         },
-        toLocalAction = MovieViewAction.movieViewActionPrism::get,
-        toGlobalAction = { map(MovieViewAction.movieViewActionPrism::reverseGet) }
+        toLocalAction = AppAction.movieViewActionPrism::get,
+        toGlobalAction = { map(AppAction.movieViewActionPrism::reverseGet) }
     )
 )
 

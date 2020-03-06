@@ -2,6 +2,7 @@
 
 package com.sergeyfitis.moviekeeper.statemanagement.store
 
+import android.util.Log
 import com.sergeyfitis.moviekeeper.prelude.pipe
 import com.sergeyfitis.moviekeeper.prelude.withA
 import java.util.concurrent.Executor
@@ -84,6 +85,7 @@ class Store<Value, Action>(
     }
 
     private fun notifySubscribers() {
+        Log.d("Store", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
         subscribers.forEach { it.render(value) }
     }
 
@@ -100,10 +102,11 @@ class Store<Value, Action>(
             }
         )
 
-        subscribe(object : Subscriber<Value> {
+        subscribe(object : Subscriber<Value> { // FIXME: fix leaking
             override fun render(value: Value) {
                 localStore.value = toLocalValue(value)
                 localStore.notifySubscribers()
+                Log.d("Local Store", "subscribe#render invoked")
             }
         })
         return localStore

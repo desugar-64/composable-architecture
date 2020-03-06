@@ -3,8 +3,6 @@ package com.sergeyfitis.moviekeeper.base
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesViewState
@@ -22,13 +20,13 @@ class MovieFragmentFactory(
             canonicalNameOf<MoviesFragment>() -> MoviesFragment(
                 store.view(
                     toLocalValue = AppState::moviesViewState,
-                    toGlobalAction = MoviesViewAction.moviesViewActionPrism::reverseGet
+                    toGlobalAction = AppAction.moviesViewActionPrism::reverseGet
                 )
             )
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(
                 store.view(
                     toLocalValue = AppState::movieViewState,
-                    toGlobalAction = MovieViewAction.movieViewActionPrism::reverseGet
+                    toGlobalAction = AppAction.movieViewActionPrism::reverseGet
                 )
             )
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()

@@ -17,7 +17,8 @@ import com.sergeyfitis.moviekeeper.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.prelude.id
 import com.sergeyfitis.moviekeeper.prelude.pullback
 import com.sergeyfitis.moviekeeper.prelude.types.rmap
-import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction.MoviesAction
+import com.sergeyfitis.moviekeeper.prelude.types.toOption
+import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesViewState
@@ -67,25 +68,19 @@ private val moviesStateReducer =
                 value = state.copy(movies = action.movies.fold({ emptyList<Movie>() }, ::id)),
                 effects = noEffects()
             )
-        }
-    }
-
-/*val moviesViewReducer =
-    fun(viewState: MoviesViewState, action: MoviesViewAction): Reduced<MoviesViewState, MoviesViewAction> {
-        return when (action) {
             is MoviesAction.Open -> reduced(
                 value = state.copy(selectedMovie = action.movie.toOption()),
                 effects = noEffects()
             )
         }
-    }*/
+    }
 
 val moviesViewReducer = pullback<MoviesState, MoviesViewState, MoviesAction, MoviesViewAction>(
     reducer = moviesStateReducer,
     valueGet = MoviesViewState.moviesStateLens::get,
     valueSet = MoviesViewState.moviesStateLens::set,
-    toLocalAction = { MoviesViewAction.moviesPrism.get(this) },
-    toGlobalAction = { map(MoviesViewAction.moviesPrism::reverseGet) }
+    toLocalAction = MoviesViewAction.moviesActionPrism::get,
+    toGlobalAction = { map(MoviesViewAction.moviesActionPrism::reverseGet) }
 )
 
 fun CoroutineScope.loadMoviesEffect(): Effect<MoviesAction> {

@@ -1,13 +1,12 @@
 package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
+import android.util.Log
 import com.sergeyfitis.moviekeeper.models.Movie
 import com.sergeyfitis.moviekeeper.prelude.types.Option
-import com.sergeyfitis.moviekeeper.prelude.types.getOrElse
 import com.sergeyfitis.moviekeeper.prelude.types.getOrThrow
 import com.sergeyfitis.moviekeeper.prelude.types.toOption
 
 class AppState(
-    var selectedMovie: Option<Movie>,
     var moviesState: MoviesState,
     var favoriteMovies: Set<Movie>,
     var movieState: Option<MovieState>
@@ -15,20 +14,27 @@ class AppState(
 
 // TODO: Replace with Lens
 var AppState.moviesViewState: MoviesViewState
-    get() = MoviesViewState(selectedMovie, moviesState)
+    get() = MoviesViewState(moviesState)
     set(value) {
-        selectedMovie = value.selectedMovie
         moviesState = value.moviesState
     }
 
 var AppState.movieViewState: MovieViewState
     get() {
-        val movie = selectedMovie.getOrThrow()
+        val movie = moviesState.selectedMovie.getOrThrow()
+        val isFavorite = favoriteMovies.contains(movie)
+        Log.d("AppState", "get movieViewState invoked")
         return MovieViewState(
             selectedMovie = movie,
-            movieState = movieState.getOrElse { MovieState(movie, favoriteMovies.contains(movie)) }
+            movieState = movieState.fold({ MovieState(movie, isFavorite) }, {
+                it.copy(
+                    movie = movie,
+                    isFavorite = isFavorite
+                )
+            })
         )
     }
     set(value) {
+        Log.d("AppState", "set movieViewState invoked")
         movieState = value.movieState.toOption()
     }

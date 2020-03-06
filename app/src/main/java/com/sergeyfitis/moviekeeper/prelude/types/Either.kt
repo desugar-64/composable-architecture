@@ -1,5 +1,7 @@
 package com.sergeyfitis.moviekeeper.prelude.types
 
+import com.sergeyfitis.moviekeeper.BuildConfig
+
 
 sealed class Either<out L, out R> {
 
@@ -36,5 +38,8 @@ inline fun <R> Either.Companion.recover(f: () -> R): Either<Throwable, R> =
     try {
         Either.Right(f())
     } catch (t: Throwable) {
+        if (BuildConfig.DEBUG) {
+            t.printStackTrace()
+        }
         Either.Left(t)
     }

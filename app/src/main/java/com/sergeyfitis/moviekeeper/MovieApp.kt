@@ -18,12 +18,16 @@ class MovieApp : Application() {
     override fun onCreate() {
         super.onCreate()
         appFragmentFactory = MovieFragmentFactory(
-            Store(AppState(
-                Option.empty(),
-                MoviesState(emptyList()),
-                emptySet(),
-                Option.empty()
-            ), appReducer)
+            Store(
+                AppState(
+                    MoviesState(
+                        Option.empty(),
+                        emptyList()
+                    ),
+                    emptySet(),
+                    Option.empty()
+                ), appReducer
+            )
         )
     }
 }

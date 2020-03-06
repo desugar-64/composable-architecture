@@ -5,11 +5,11 @@ import com.sergeyfitis.moviekeeper.prelude.types.Lens
 import com.sergeyfitis.moviekeeper.prelude.types.Option
 
 data class MoviesState(
+    val selectedMovie: Option<Movie>,
     val movies: List<Movie>
 )
 
 data class MoviesViewState(
-    val selectedMovie: Option<Movie>,
     val moviesState: MoviesState
 ) {
     companion object
@@ -17,7 +17,7 @@ data class MoviesViewState(
 
 val MoviesViewState.Companion.moviesStateLens
     get() = Lens<MoviesViewState, MoviesState>(
-        get = { it.moviesState },
+        get = { moviesViewState -> moviesViewState.moviesState },
         set = { moviesViewState, moviesState ->
             moviesViewState.copy(moviesState = moviesState)
         }

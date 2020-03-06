@@ -115,7 +115,7 @@ inline fun <reified T> HttpClient.dataTask(
                     this@dataTask.use { client: HttpClient ->
                         val result =
                             Either.recover { client.request<T>(requestBuilder) }
-                        withA(result, callback)
+                        callback(result)
                     }
                 }
             }
