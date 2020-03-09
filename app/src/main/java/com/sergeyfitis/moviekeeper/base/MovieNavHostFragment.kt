@@ -6,7 +6,7 @@ import androidx.navigation.fragment.NavHostFragment
 
 @Keep
 class MovieNavHostFragment(
-    private val fragmentFactory: MovieFragmentFactory
+    private val fragmentFactory: AppFragmentFactory
 ) : NavHostFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = fragmentFactory

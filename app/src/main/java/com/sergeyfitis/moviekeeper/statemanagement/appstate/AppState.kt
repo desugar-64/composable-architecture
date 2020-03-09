@@ -10,7 +10,18 @@ class AppState(
     var moviesState: MoviesState,
     var favoriteMovies: Set<Movie>,
     var movieState: Option<MovieState>
-)
+) {
+    companion object {
+        fun initial() = AppState(
+            MoviesState(
+                Option.empty(),
+                emptyList()
+            ),
+            emptySet(),
+            Option.empty()
+        )
+    }
+}
 
 // TODO: Replace with Lens
 var AppState.moviesViewState: MoviesViewState
