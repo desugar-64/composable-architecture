@@ -21,21 +21,23 @@ class MovieApp : Application() {
         reducer = appReducer
     )
 
-    private val movieStoreLazy by lazy(LazyThreadSafetyMode.NONE) { // TODO: replace with the memoization function or just drop it on the shoulders of a DI container which can take care of lazy injection
-        appStore.view(
-            toLocalValue = AppState::movieViewState,
-            toGlobalAction = AppAction.movieViewActionPrism::reverseGet
-        )
-    }
-
     override fun onCreate() {
         super.onCreate()
-        appFragmentFactory = AppFragmentFactory(
+        val movieStoreLazy = {
+            appStore.view(
+                toLocalValue = AppState::movieViewState,
+                toGlobalAction = AppAction.movieViewActionPrism::reverseGet
+            )
+        }
+        val moviesStoreLazy = {
             appStore.view(
                 toLocalValue = AppState::moviesViewState,
                 toGlobalAction = AppAction.moviesViewActionPrism::reverseGet
-            ),
-            ::movieStoreLazy
+            )
+        }
+        appFragmentFactory = AppFragmentFactory(
+            moviesStoreLazy,
+            movieStoreLazy
         )
     }
 }

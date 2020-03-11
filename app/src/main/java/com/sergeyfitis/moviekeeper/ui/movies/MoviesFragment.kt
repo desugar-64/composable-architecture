@@ -3,6 +3,7 @@ package com.sergeyfitis.moviekeeper.ui.movies
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -25,20 +26,18 @@ import com.syaremych.composable_architecture.prelude.id
 import com.syaremych.composable_architecture.prelude.pullback
 import com.syaremych.composable_architecture.prelude.types.rmap
 import com.syaremych.composable_architecture.prelude.types.toOption
-import com.syaremych.composable_architecture.store.asLiveData
-import com.syaremych.composable_architecture.store.map
-import com.syaremych.composable_architecture.store.receiveOn
+import com.syaremych.composable_architecture.store.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
 class MoviesFragment(
-    store: com.syaremych.composable_architecture.store.Store<MoviesViewState, MoviesViewAction>
+    store: Store<MoviesViewState, MoviesViewAction>
 ) : Fragment(R.layout.fragment_movies) {
 
     private lateinit var rvMovies: RecyclerView
 
-    private val liveStore = store.asLiveData()
+    private val liveStore = store.asLiveData(releaseStoreWith = this as LifecycleOwner)
 
     init {
         lifecycleScope.launchWhenCreated() {
@@ -63,19 +62,19 @@ class MoviesFragment(
 }
 
 private val moviesStateReducer =
-    fun (state: MoviesState, action: MoviesAction): com.syaremych.composable_architecture.store.Reduced<MoviesState, MoviesAction> {
+    fun (state: MoviesState, action: MoviesAction): Reduced<MoviesState, MoviesAction> {
         return when(action) {
-            is MoviesAction.Load -> com.syaremych.composable_architecture.store.reduced(
+            is MoviesAction.Load -> reduced(
                 state,
                 listOf(action.scope.loadMoviesEffect())
             )
-            is MoviesAction.Loaded -> com.syaremych.composable_architecture.store.reduced(
+            is MoviesAction.Loaded -> reduced(
                 value = state.copy(movies = action.movies.fold({ emptyList<Movie>() }, ::id)),
-                effects = com.syaremych.composable_architecture.store.noEffects()
+                effects = noEffects()
             )
-            is MoviesAction.Open -> com.syaremych.composable_architecture.store.reduced(
+            is MoviesAction.Open -> reduced(
                 value = state.copy(selectedMovie = action.movie.toOption()),
-                effects = com.syaremych.composable_architecture.store.noEffects()
+                effects = noEffects()
             )
         }
     }
@@ -88,7 +87,7 @@ val moviesViewReducer = pullback<MoviesState, MoviesViewState, MoviesAction, Mov
     toGlobalAction = { map(MoviesViewAction.moviesActionPrism::reverseGet) }
 )
 
-fun CoroutineScope.loadMoviesEffect(): com.syaremych.composable_architecture.store.Effect<MoviesAction> {
+fun CoroutineScope.loadMoviesEffect(): Effect<MoviesAction> {
     return httpClient()
         .dataTask<MoviesResponse>(this, getPopularMovies)
         .map { MoviesAction.Loaded(it.rmap(MoviesResponse::results)) }

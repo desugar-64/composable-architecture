@@ -63,6 +63,7 @@ class Store<Value, Action>(
         fun render(value: Value)
     }
 
+    @Volatile
     var value: Value = initialState
         private set
 
@@ -108,7 +109,7 @@ class Store<Value, Action>(
             unsubscribe(storeToViewUpdateNotifier)
         }
 
-        subscribe(storeToViewUpdateNotifier) // FIXME: leaking when Store#view function called multiple times, storeToViewUpdateNotifier never get removed
+        subscribe(storeToViewUpdateNotifier)
 
         return localStore
     }

@@ -2,8 +2,8 @@ package com.sergeyfitis.moviekeeper.ui.details
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
@@ -14,25 +14,29 @@ import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieStateLens
 import com.syaremych.composable_architecture.prelude.pullback
+import com.syaremych.composable_architecture.store.Reduced
+import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.asLiveData
+import com.syaremych.composable_architecture.store.noEffects
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 
 class MovieDetailsFragment(
-    store: com.syaremych.composable_architecture.store.Store<MovieViewState, MovieViewAction>
+    store: Store<MovieViewState, MovieViewAction>
 ) : Fragment(R.layout.fragment_movie_details) {
 
-    private val liveStore = store.asLiveData()
+    private val liveStore = store.asLiveData(releaseStoreWith = this as LifecycleOwner)
+
     private val args by navArgs<MovieDetailsFragmentArgs>()
 
     init {
         lifecycleScope.launchWhenCreated {
             val movieId = args.movieId
-            liveStore.send(MovieViewAction.getDetails(this, movieId))
+            liveStore.send(MovieViewAction.details(this, movieId))
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         liveStore.observe(viewLifecycleOwner, ::render)
     }
 
@@ -43,15 +47,15 @@ class MovieDetailsFragment(
 }
 
 private val movieStateReducer =
-    fun(state: MovieState, action: MovieAction): com.syaremych.composable_architecture.store.Reduced<MovieState, MovieAction> {
+    fun(state: MovieState, action: MovieAction): Reduced<MovieState, MovieAction> {
         return when (action) {
             is MovieAction.GetDetails -> com.syaremych.composable_architecture.store.reduced(
                 value = state,
-                effects = com.syaremych.composable_architecture.store.noEffects()
+                effects = noEffects()
             ) // TODO: load cast, etc
             is MovieAction.Loaded -> com.syaremych.composable_architecture.store.reduced(
                 value = state.copy(movie = action.movie),
-                effects = com.syaremych.composable_architecture.store.noEffects()
+                effects = noEffects()
             )
         }
     }

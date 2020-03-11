@@ -10,7 +10,7 @@ sealed class MovieViewAction {
     data class Favorite(val action: FavoriteAction) : MovieViewAction()
 
     companion object {
-        fun getDetails(scope: CoroutineScope, movieId: Int): MovieViewAction {
+        fun details(scope: CoroutineScope, movieId: Int): MovieViewAction {
             return Movie(MovieAction.GetDetails(scope, movieId))
         }
 

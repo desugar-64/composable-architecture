@@ -12,13 +12,13 @@ import com.sergeyfitis.moviekeeper.ui.movies.MoviesFragment
 import com.syaremych.composable_architecture.store.Store
 
 class AppFragmentFactory(
-    private val moviesStore: Store<MoviesViewState, MoviesViewAction>,
+    private val moviesStore: () -> Store<MoviesViewState, MoviesViewAction>,
     private val movieStoreLazy: () -> Store<MovieViewState, MovieViewAction>
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
             canonicalNameOf<MovieNavHostFragment>() -> MovieNavHostFragment(this)
-            canonicalNameOf<MoviesFragment>() -> MoviesFragment(moviesStore)
+            canonicalNameOf<MoviesFragment>() -> MoviesFragment(moviesStore.invoke())
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(movieStoreLazy.invoke())
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()
             else -> super.instantiate(classLoader, className)
