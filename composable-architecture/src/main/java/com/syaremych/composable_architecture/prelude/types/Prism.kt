@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.prelude.types
+package com.syaremych.composable_architecture.prelude.types
 
 /*
 * A [Prism] is a loss less invertible optic that can look into a structure and optionally find its focus.

@@ -2,9 +2,9 @@ package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
 import android.util.Log
 import com.sergeyfitis.moviekeeper.models.Movie
-import com.sergeyfitis.moviekeeper.prelude.types.Option
-import com.sergeyfitis.moviekeeper.prelude.types.getOrThrow
-import com.sergeyfitis.moviekeeper.prelude.types.toOption
+import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.types.getOrThrow
+import com.syaremych.composable_architecture.prelude.types.toOption
 
 class AppState(
     var moviesState: MoviesState,

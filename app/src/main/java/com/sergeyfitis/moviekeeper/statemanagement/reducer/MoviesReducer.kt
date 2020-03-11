@@ -1,13 +1,13 @@
 package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
-import com.sergeyfitis.moviekeeper.prelude.combine
-import com.sergeyfitis.moviekeeper.prelude.pullback
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.*
 import com.sergeyfitis.moviekeeper.ui.details.movieViewReducer
 import com.sergeyfitis.moviekeeper.ui.movies.moviesViewReducer
+import com.syaremych.composable_architecture.prelude.combine
+import com.syaremych.composable_architecture.prelude.pullback
 
 
 /*fun appReducer(appState: AppState, appAction: AppAction) {

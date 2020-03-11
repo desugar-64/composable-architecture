@@ -1,13 +1,13 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package com.sergeyfitis.moviekeeper.prelude
+package com.syaremych.composable_architecture.prelude
 
-import com.sergeyfitis.moviekeeper.prelude.types.Option
-import com.sergeyfitis.moviekeeper.prelude.types.toOption
-import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
-import com.sergeyfitis.moviekeeper.statemanagement.store.Reducer
-import com.sergeyfitis.moviekeeper.statemanagement.store.noEffects
-import com.sergeyfitis.moviekeeper.statemanagement.store.reduced
+import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.types.toOption
+import com.syaremych.composable_architecture.store.Effect
+import com.syaremych.composable_architecture.store.Reducer
+import com.syaremych.composable_architecture.store.noEffects
+import com.syaremych.composable_architecture.store.reduced
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1

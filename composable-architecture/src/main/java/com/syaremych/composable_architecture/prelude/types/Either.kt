@@ -1,6 +1,6 @@
-package com.sergeyfitis.moviekeeper.prelude.types
+package com.syaremych.composable_architecture.prelude.types
 
-import com.sergeyfitis.moviekeeper.BuildConfig
+import com.syaremych.composable_architecture.BuildConfig
 
 
 sealed class Either<out L, out R> {
@@ -32,7 +32,7 @@ fun <L1, L2, R> Either<L1, R>.lmap(f: (L1) -> L2): Either<L2, R> =
     swap().rmap(f).swap()
 
 fun <T> Either.Companion.ofNullable(value: T?): Either<Unit, T> =
-    value?.let { Either.Right(it) } ?: Either.Left(Unit)
+    value?.let { v -> Either.Right(v as T) } ?: Either.Left(Unit)
 
 inline fun <R> Either.Companion.recover(f: () -> R): Either<Throwable, R> =
     try {

@@ -1,13 +1,11 @@
 package com.sergeyfitis.moviekeeper.effects
 
 import com.sergeyfitis.moviekeeper.BuildConfig.*
-import com.sergeyfitis.moviekeeper.prelude.pipe
-import com.sergeyfitis.moviekeeper.prelude.types.Either
-import com.sergeyfitis.moviekeeper.prelude.types.Lens
-import com.sergeyfitis.moviekeeper.prelude.types.recover
-import com.sergeyfitis.moviekeeper.prelude.withA
-import com.sergeyfitis.moviekeeper.statemanagement.store.Effect
-import com.sergeyfitis.moviekeeper.statemanagement.store.emptyEffect
+import com.syaremych.composable_architecture.prelude.pipe
+import com.syaremych.composable_architecture.prelude.types.Either
+import com.syaremych.composable_architecture.prelude.types.Lens
+import com.syaremych.composable_architecture.prelude.types.recover
+import com.syaremych.composable_architecture.prelude.withA
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -107,9 +105,9 @@ inline fun <reified T> HttpClient.dataTask(
     scope: CoroutineScope,
     requestBuilder: HttpRequestBuilder,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): Effect<Either<Throwable, T>> {
+): com.syaremych.composable_architecture.store.Effect<Either<Throwable, T>> {
     return if (scope.isActive)
-        Effect { callback ->
+        com.syaremych.composable_architecture.store.Effect { callback ->
             scope.launch {
                 withContext(dispatcher) {
                     this@dataTask.use { client: HttpClient ->
@@ -121,6 +119,6 @@ inline fun <reified T> HttpClient.dataTask(
             }
         }
     else {
-        emptyEffect()
+        com.syaremych.composable_architecture.store.emptyEffect()
     }
 }

@@ -9,7 +9,12 @@ class StoreTest {
     @Test
     fun view() {
         val store =
-            Store<Int, Unit>(0) { value, _ -> reduced(value.inc(), noEffects()) }
+            com.syaremych.composable_architecture.store.Store<Int, Unit>(0) { value, _ ->
+                com.syaremych.composable_architecture.store.reduced(
+                    value.inc(),
+                    com.syaremych.composable_architecture.store.noEffects()
+                )
+            }
         store.send(Unit)
         store.send(Unit)
         Assert.assertEquals(store.value, 2)

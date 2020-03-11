@@ -1,8 +1,8 @@
 package com.sergeyfitis.moviekeeper.statemanagement.action
 
-import com.sergeyfitis.moviekeeper.prelude.types.Option
-import com.sergeyfitis.moviekeeper.prelude.types.Prism
-import com.sergeyfitis.moviekeeper.prelude.types.toOption
+import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.types.Prism
+import com.syaremych.composable_architecture.prelude.types.toOption
 import kotlinx.coroutines.CoroutineScope
 
 sealed class MovieViewAction {

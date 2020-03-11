@@ -1,6 +1,6 @@
-package com.sergeyfitis.moviekeeper.prelude.types
+package com.syaremych.composable_architecture.prelude.types
 
-import com.sergeyfitis.moviekeeper.prelude.pipe
+import com.syaremych.composable_architecture.prelude.pipe
 
 interface Getter<A, B> {
     fun get(a: A): B

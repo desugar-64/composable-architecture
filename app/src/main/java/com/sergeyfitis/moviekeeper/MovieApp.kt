@@ -7,7 +7,7 @@ import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesViewState
 import com.sergeyfitis.moviekeeper.statemanagement.reducer.appReducer
-import com.sergeyfitis.moviekeeper.statemanagement.store.Store
+import com.syaremych.composable_architecture.store.Store
 
 class MovieApp : Application() {
 
