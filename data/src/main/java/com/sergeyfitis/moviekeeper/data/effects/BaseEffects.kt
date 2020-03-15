@@ -1,11 +1,13 @@
-package com.sergeyfitis.moviekeeper.effects
+package com.sergeyfitis.moviekeeper.data.effects
 
-import com.sergeyfitis.moviekeeper.BuildConfig.*
+import com.sergeyfitis.moviekeeper.data.BuildConfig.*
 import com.syaremych.composable_architecture.prelude.pipe
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.recover
 import com.syaremych.composable_architecture.prelude.withA
+import com.syaremych.composable_architecture.store.Effect
+import com.syaremych.composable_architecture.store.emptyEffect
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -96,18 +98,22 @@ fun requestBuilder(method: HttpMethod = HttpMethod.Get): HttpRequestBuilder {
 //}
 
 private val baseHttpClientConfig: HttpClientConfig<OkHttpConfig>.() -> Unit = {
-    install(JsonFeature) { serializer = KotlinxSerializer(json = Json.nonstrict) }
+    install(JsonFeature) {
+        serializer = KotlinxSerializer(json = Json {
+            ignoreUnknownKeys = true
+        })
+    }
 }
 
-fun httpClient() = HttpClient(OkHttp, baseHttpClientConfig)
+fun httpClientInstance() = HttpClient(OkHttp, baseHttpClientConfig)
 
 inline fun <reified T> HttpClient.dataTask(
     scope: CoroutineScope,
     requestBuilder: HttpRequestBuilder,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): com.syaremych.composable_architecture.store.Effect<Either<Throwable, T>> {
+): Effect<Either<Throwable, T>> {
     return if (scope.isActive)
-        com.syaremych.composable_architecture.store.Effect { callback ->
+        Effect { callback ->
             scope.launch {
                 withContext(dispatcher) {
                     this@dataTask.use { client: HttpClient ->
@@ -119,6 +125,6 @@ inline fun <reified T> HttpClient.dataTask(
             }
         }
     else {
-        com.syaremych.composable_architecture.store.emptyEffect()
+        emptyEffect()
     }
 }

@@ -1,3 +1,5 @@
 rootProject.name='Movie Keeper'
 include ':app'
 include ':composable-architecture'
+include ':feature-movies-list'
+include ':data'

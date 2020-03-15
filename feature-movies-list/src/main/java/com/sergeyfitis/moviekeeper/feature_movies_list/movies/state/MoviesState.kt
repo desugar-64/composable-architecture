@@ -1,6 +1,6 @@
-package com.sergeyfitis.moviekeeper.statemanagement.appstate
+package com.sergeyfitis.moviekeeper.feature_movies_list.movies.state
 
-import com.sergeyfitis.moviekeeper.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 

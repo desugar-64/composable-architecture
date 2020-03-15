@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/moviesFragment"
-        android:name="com.sergeyfitis.moviekeeper.ui.movies.MoviesFragment"
+        android:name="com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment"
         android:label="fragment_movies"
         tools:layout="@layout/fragment_movies" >
         <action

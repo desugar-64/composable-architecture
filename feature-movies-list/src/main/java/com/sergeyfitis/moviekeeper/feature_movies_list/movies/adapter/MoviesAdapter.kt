@@ -1,11 +1,11 @@
-package com.sergeyfitis.moviekeeper.ui.movies.adapter
+package com.sergeyfitis.moviekeeper.feature_movies_list.movies.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.sergeyfitis.moviekeeper.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.Movie
 
 typealias OnMovieItemClicked = (movie: Movie) -> Unit
 

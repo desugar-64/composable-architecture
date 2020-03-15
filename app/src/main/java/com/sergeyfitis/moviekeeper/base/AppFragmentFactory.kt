@@ -2,13 +2,13 @@ package com.sergeyfitis.moviekeeper.base
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MoviesViewState
 import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
-import com.sergeyfitis.moviekeeper.ui.movies.MoviesFragment
 import com.syaremych.composable_architecture.store.Store
 
 class AppFragmentFactory(

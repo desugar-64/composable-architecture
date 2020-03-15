@@ -1,6 +1,6 @@
-package com.sergeyfitis.moviekeeper.statemanagement.action
+package com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions
 
-import com.sergeyfitis.moviekeeper.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.syaremych.composable_architecture.prelude.types.Prism
 import com.syaremych.composable_architecture.prelude.types.toOption
 import kotlinx.coroutines.CoroutineScope

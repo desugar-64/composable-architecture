@@ -1,6 +1,6 @@
 package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
-import com.sergeyfitis.moviekeeper.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.syaremych.composable_architecture.prelude.types.Lens
 
 data class MovieViewState(

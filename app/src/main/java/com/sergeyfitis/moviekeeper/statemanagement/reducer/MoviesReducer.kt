@@ -1,11 +1,15 @@
 package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.reducer.moviesViewReducer
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.MoviesViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.*
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesViewState
 import com.sergeyfitis.moviekeeper.ui.details.movieViewReducer
-import com.sergeyfitis.moviekeeper.ui.movies.moviesViewReducer
 import com.syaremych.composable_architecture.prelude.combine
 import com.syaremych.composable_architecture.prelude.pullback
 

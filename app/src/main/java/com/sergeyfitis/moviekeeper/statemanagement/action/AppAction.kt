@@ -1,7 +1,7 @@
 package com.sergeyfitis.moviekeeper.statemanagement.action
 
-import com.sergeyfitis.moviekeeper.models.Movie
-import com.syaremych.composable_architecture.prelude.types.Either
+import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
 import com.syaremych.composable_architecture.prelude.types.toOption
@@ -35,12 +35,6 @@ sealed class AppAction {
 sealed class MovieAction {
     data class GetDetails(val scope: CoroutineScope, val movieId: Int) : MovieAction()
     data class Loaded(val movie: Movie, val isFavorite: Boolean) : MovieAction()
-}
-
-sealed class MoviesAction {
-    data class Load(val scope: CoroutineScope) : MoviesAction()
-    data class Loaded(val movies: Either<Throwable, List<Movie>>) : MoviesAction()
-    data class Open(val movie: Movie) : MoviesAction()
 }
 
 sealed class FavoriteAction : AppAction() {

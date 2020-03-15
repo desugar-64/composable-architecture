@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.effects
+package com.sergeyfitis.moviekeeper.data.effects
 
 import com.syaremych.composable_architecture.prelude.withA
 

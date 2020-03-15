@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.models
+package com.sergeyfitis.moviekeeper.data.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

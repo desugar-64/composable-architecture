@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+apply from: "../config/config.gradle"
+
+android {
+    final Properties localProps = new Properties()
+    localProps.load(project.rootProject.file('local.properties').newReader())
+
+    compileSdkVersion compileSdk
+    buildToolsVersion buildTools
+
+    defaultConfig {
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+
+        buildConfigField "String", "API_KEY", "\"${localProps.getProperty("api.key")}\""
+        buildConfigField "String", "API_V", "\"3\""
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/\""
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = jvm
+        targetCompatibility = jvm
+    }
+
+    kotlinOptions {
+        jvmTarget = jvm
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin"
+
+    implementation project(path: ':composable-architecture')
+
+    api "io.ktor:ktor-client-core:$ktor"
+    api "io.ktor:ktor-client-okhttp:$ktor"
+    api "io.ktor:ktor-client-serialization-jvm:$ktor"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
+
+
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
