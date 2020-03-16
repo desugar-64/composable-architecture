@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.statemanagement.action
+package com.sergeyfitis.moviekeeper.feature_movie.action
 
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism

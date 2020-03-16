@@ -10,7 +10,7 @@
         android:id="@+id/main_nav_host"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:name="com.sergeyfitis.moviekeeper.base.MovieNavHostFragment"
+        android:name="com.sergeyfitis.moviekeeper.base.AppNavHostFragment"
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_nav_graph"
         app:layout_constraintTop_toTopOf="parent"

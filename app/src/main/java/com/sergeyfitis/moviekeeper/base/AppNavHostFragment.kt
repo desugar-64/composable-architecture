@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 import androidx.navigation.fragment.NavHostFragment
 
 @Keep
-class MovieNavHostFragment(
+class AppNavHostFragment(
     private val fragmentFactory: AppFragmentFactory
 ) : NavHostFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {

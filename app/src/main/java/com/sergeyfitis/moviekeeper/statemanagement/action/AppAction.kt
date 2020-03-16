@@ -1,11 +1,10 @@
 package com.sergeyfitis.moviekeeper.statemanagement.action
 
-import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
 import com.syaremych.composable_architecture.prelude.types.toOption
-import kotlinx.coroutines.CoroutineScope
 
 sealed class AppAction {
     data class MoviesView(val viewAction: MoviesViewAction) : AppAction()
@@ -31,14 +30,3 @@ sealed class AppAction {
         )
     }
 }
-
-sealed class MovieAction {
-    data class GetDetails(val scope: CoroutineScope, val movieId: Int) : MovieAction()
-    data class Loaded(val movie: Movie, val isFavorite: Boolean) : MovieAction()
-}
-
-sealed class FavoriteAction : AppAction() {
-    data class SaveFavorite(val movie: Movie) : FavoriteAction()
-    data class RemoveFavorite(val movie: Movie) : FavoriteAction()
-}
-

@@ -2,12 +2,12 @@ package com.sergeyfitis.moviekeeper.base
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import com.sergeyfitis.moviekeeper.feature_movie.MovieDetailsFragment
+import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
-import com.sergeyfitis.moviekeeper.ui.details.MovieDetailsFragment
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
 import com.syaremych.composable_architecture.store.Store
 
@@ -17,7 +17,7 @@ class AppFragmentFactory(
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
-            canonicalNameOf<MovieNavHostFragment>() -> MovieNavHostFragment(this)
+            canonicalNameOf<AppNavHostFragment>() -> AppNavHostFragment(this)
             canonicalNameOf<MoviesFragment>() -> MoviesFragment(moviesStore.invoke())
             canonicalNameOf<MovieDetailsFragment>() -> MovieDetailsFragment(movieStoreLazy.invoke())
             canonicalNameOf<MoviesFavoriteFragment>() -> MoviesFavoriteFragment()

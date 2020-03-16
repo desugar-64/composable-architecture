@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.ui.details
+package com.sergeyfitis.moviekeeper.feature_movie
 
 import android.os.Bundle
 import android.util.Log
@@ -7,12 +7,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
-import com.sergeyfitis.moviekeeper.R
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.MovieViewAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.MovieViewState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieStateLens
+import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
+import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
+import com.sergeyfitis.moviekeeper.feature_movie.state.movieStateLens
 import com.syaremych.composable_architecture.prelude.pullback
 import com.syaremych.composable_architecture.store.Reduced
 import com.syaremych.composable_architecture.store.Store
@@ -26,7 +25,7 @@ class MovieDetailsFragment(
 
     private val liveStore = store.asLiveData(releaseStoreWith = this as LifecycleOwner)
 
-    private val args by navArgs<MovieDetailsFragmentArgs>()
+    private val args by navArgs<MovieDetailsFragmentArgs>() // ??? problem, the main nav graph is located in the app module
 
     init {
         lifecycleScope.launchWhenCreated {
