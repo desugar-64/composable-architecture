@@ -22,6 +22,7 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 
 private val httpMethodLens =
     Lens<HttpRequestBuilder, HttpMethod>(
@@ -99,9 +100,7 @@ fun requestBuilder(method: HttpMethod = HttpMethod.Get): HttpRequestBuilder {
 
 private val baseHttpClientConfig: HttpClientConfig<OkHttpConfig>.() -> Unit = {
     install(JsonFeature) {
-        serializer = KotlinxSerializer(json = Json {
-            ignoreUnknownKeys = true
-        })
+        serializer = KotlinxSerializer(json = Json(configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true)))
     }
 }
 

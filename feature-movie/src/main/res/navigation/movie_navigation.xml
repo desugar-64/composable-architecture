@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/movie_navigation"
+    app:startDestination="@id/movieDetailsFragment">
+
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.sergeyfitis.moviekeeper.feature_movie.MovieDetailsFragment"
+        android:label="MovieDetailsFragment">
+        <argument
+            android:name="movieId"
+            app:argType="integer" />
+    </fragment>
+    <deepLink
+        android:id="@+id/deepLink"
+        app:uri="moviekeeper://movie/{movieId}" />
+</navigation>

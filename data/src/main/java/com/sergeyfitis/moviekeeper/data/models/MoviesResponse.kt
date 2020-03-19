@@ -1,6 +1,5 @@
-package com.sergeyfitis.moviekeeper.models
+package com.sergeyfitis.moviekeeper.data.models
 
-import com.sergeyfitis.moviekeeper.data.models.Movie
 import kotlinx.serialization.Serializable
 
 @Serializable

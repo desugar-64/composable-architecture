@@ -24,7 +24,7 @@ class MoviesFragment(
     private val liveStore = store.asLiveData(releaseStoreWith = this as LifecycleOwner)
 
     init {
-        lifecycleScope.launchWhenCreated() {
+        lifecycleScope.launchWhenCreated {
             liveStore.send(MoviesViewAction.loadMovies(this))
         }
     }
@@ -40,7 +40,7 @@ class MoviesFragment(
         rvMovies.adapter = MoviesAdapter(viewState.moviesState.movies) { movie ->
             liveStore.send(MoviesViewAction.openMovie(movie))
 //            val destination = actionMoviesFragmentToMovieDetailsFragment(movie.id)
-//            findNavController().navigate(destination)
+//            findNavController().navigate(Uri.parse("moviekeeper://movie/${movie.id}"))
         }
     }
 }

@@ -2,6 +2,8 @@ package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
 import android.util.Log
 import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
 import com.syaremych.composable_architecture.prelude.types.Option
