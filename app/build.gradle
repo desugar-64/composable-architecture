@@ -69,7 +69,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha05'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation "androidx.core:core-ktx:$coreKtx"
-    implementation 'androidx.fragment:fragment:1.2.2'
+    implementation "androidx.fragment:fragment:$fragment"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
 
@@ -79,6 +79,7 @@ dependencies {
     implementation project(path: ':composable-architecture')
     implementation project(path: ':feature-movies-list')
     implementation project(path: ':feature-movie')
+    implementation project(path: ':navigation')
 
     // temporary add data module until finish modularizing
     implementation project(path: ':data')

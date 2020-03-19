@@ -42,7 +42,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompat"
     implementation "androidx.core:core-ktx:$coreKtx"
     implementation "androidx.recyclerview:recyclerview:$recyclerview"
-    implementation 'androidx.fragment:fragment:1.2.2'
+    implementation "androidx.fragment:fragment:$fragment"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
