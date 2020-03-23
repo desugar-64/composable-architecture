@@ -12,7 +12,7 @@ sealed class MoviesViewAction {
         fun loadMovies(scope: CoroutineScope): MoviesViewAction {
             return Movies(MoviesAction.Load(scope))
         }
-        fun openMovie(movie: Movie): MoviesViewAction {
+        fun loadMovie(movie: Movie): MoviesViewAction {
             return Movies(MoviesAction.Open(movie))
         }
 

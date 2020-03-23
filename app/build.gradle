@@ -79,7 +79,6 @@ dependencies {
     implementation project(path: ':composable-architecture')
     implementation project(path: ':feature-movies-list')
     implementation project(path: ':feature-movie')
-    implementation project(path: ':navigation')
 
     // temporary add data module until finish modularizing
     implementation project(path: ':data')

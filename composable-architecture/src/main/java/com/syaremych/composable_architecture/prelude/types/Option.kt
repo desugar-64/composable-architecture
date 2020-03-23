@@ -5,11 +5,13 @@ import com.syaremych.composable_architecture.prelude.id
 sealed class Option<out A> {
     abstract val isEmpty: Boolean
     abstract val value: A
+
     object None : Option<Nothing>() {
         override val isEmpty: Boolean = true
         override val value: Nothing
             get() = throw RuntimeException("Nothing to unwrap")
     }
+
     data class Some<out A>(override val value: A) : Option<A>() {
         override val isEmpty: Boolean = false
     }
@@ -39,5 +41,13 @@ sealed class Option<out A> {
 }
 
 inline fun <T> Option<T>.getOrElse(default: () -> T): T = fold(default, ::id)
-inline fun <T> Option<T>.getOrThrow(): T = fold({ throw RuntimeException("Nothing to unpack") }, ::id)
+inline fun <T> Option<T>.getOrThrow(): T = fold({
+    throw RuntimeException(
+        """
+            |Nothing to unpack. 
+            |You must put something in order to get something back.
+        """.trimMargin()
+    )
+}, ::id)
+
 fun <T> T?.toOption(): Option<T> = Option.ofNullable(this)

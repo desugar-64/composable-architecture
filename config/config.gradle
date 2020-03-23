@@ -1,7 +1,7 @@
 buildscript {
     ext {
         // Kotlin & AGP
-        kotlin = "1.3.70"
+        kotlin = "1.3.71"
 
         // SDK
         compileSdk = 29

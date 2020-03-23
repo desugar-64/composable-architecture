@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sergeyfitis.moviekeeper.feature_movies_list.R
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.adapter.MoviesAdapter
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.asLiveData
 
 class MoviesFragment(
-    store: Store<MoviesViewState, MoviesViewAction>
+    store: Store<MoviesViewState, MoviesViewAction>,
+    private val navigator: MovieListNavigation
 ) : Fragment(R.layout.fragment_movies) {
 
     private lateinit var rvMovies: RecyclerView
@@ -38,9 +40,8 @@ class MoviesFragment(
 
     private fun render(viewState: MoviesViewState) {
         rvMovies.adapter = MoviesAdapter(viewState.moviesState.movies) { movie ->
-            liveStore.send(MoviesViewAction.openMovie(movie))
-//            val destination = actionMoviesFragmentToMovieDetailsFragment(movie.id)
-//            findNavController().navigate(Uri.parse("moviekeeper://movie/${movie.id}"))
+            liveStore.send(MoviesViewAction.loadMovie(movie))
+            navigator.openMovieDetails(movie)
         }
     }
 }
