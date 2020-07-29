@@ -187,6 +187,7 @@ fun <Value, Action> combine(
     }
 }
 
+@Deprecated("Migrate to pullback extension method")
 fun <LocalValue, GlobalValue, LocalAction, GlobalAction> pullback(
     reducer: Reducer<LocalValue, LocalAction>,
     valueGet: (GlobalValue) -> LocalValue,

@@ -55,17 +55,21 @@ inline fun <Value, Action> reduced(
     effects: List<Effect<Action>>
 ): Reduced<Value, Action> = value to effects
 
-class Store<Value, Action>(
-    private val initialState: Value,
-    private val reducer: Reducer<Value, Action>
-) {
+class Store<Value : Any, Action : Any> private constructor() {
+
+
+
     interface Subscriber<Value> {
         fun render(value: Value)
     }
 
     @Volatile
-    var value: Value = initialState
-        private set
+    lateinit var value: Value
+        internal set
+
+    private lateinit var reducer: Reducer1<Value, Action, Any>
+
+    private lateinit var environment: Any
 
     private val subscribers: MutableSet<Subscriber<Value>> =
         Collections.synchronizedSet(HashSet())
@@ -77,24 +81,25 @@ class Store<Value, Action>(
         subscriber.render(value)
     }
 
-    fun send(action: Action) {
-        val (value, effects) = reducer(value, action)
+    private fun send(action: Action) {
+        val (value, effects) = reducer(value, action, environment)
         this.value = value
         effects.forEach { effect -> effect.run(::send) }
         notifySubscribers()
     }
 
-    fun <LocalValue, LocalAction> view(
+    fun <LocalValue: Any, LocalAction: Any> view(
         toLocalValue: (Value) -> LocalValue,
         toGlobalAction: (LocalAction) -> Action
     ): Store<LocalValue, LocalAction> {
-        val localStore = Store(
+        val localStore = init<LocalValue, LocalAction, Any>(
             initialState = toLocalValue(value),
-            reducer = { _, localAction: LocalAction ->
+            reducer = { _, localAction, _ ->
                 this.send(toGlobalAction(localAction))
                 val localValue = toLocalValue(value)
-                return@Store reduced(localValue, noEffects())
-            }
+                return@init reduced(localValue, noEffects())
+            },
+            environment = environment
         )
 
         val storeToViewUpdateNotifier = object : Subscriber<Value> {
@@ -127,5 +132,23 @@ class Store<Value, Action>(
     private fun notifySubscribers() {
         Log.d("Store", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
         subscribers.forEach { it.render(value) }
+    }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun <Value : Any, Action : Any, Environment : Any> init(
+            initialState: Value,
+            reducer: (Value, Action, Environment) -> Pair<Value, List<Effect<Action>>>,
+            environment: Environment
+        ): Store<Value, Action> {
+            val store = Store<Value, Action>()
+            store.value = initialState
+            store.environment = environment
+            store.reducer = Reducer1 { value, action, env ->
+                val (state, effects) = reducer(value, action, env as Environment)
+                return@Reducer1 reduced(state, effects)
+            }
+            return store
+        }
     }
 }
