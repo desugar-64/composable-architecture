@@ -6,7 +6,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion compileSdkV
     buildToolsVersion buildTools
 
     final Properties localProps = new Properties()

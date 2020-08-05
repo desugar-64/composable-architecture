@@ -9,7 +9,7 @@ android {
     final Properties localProps = new Properties()
     localProps.load(project.rootProject.file('local.properties').newReader())
 
-    compileSdkVersion compileSdk
+    compileSdkVersion compileSdkV
     buildToolsVersion buildTools
 
     defaultConfig {

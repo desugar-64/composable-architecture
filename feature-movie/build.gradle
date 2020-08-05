@@ -6,7 +6,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply from: "../config/config.gradle"
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion compileSdkV
     buildToolsVersion buildTools
 
     defaultConfig {

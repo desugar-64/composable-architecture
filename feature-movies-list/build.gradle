@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 apply from: "../config/config.gradle"
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion compileSdkV
     buildToolsVersion buildTools
 
     defaultConfig {
