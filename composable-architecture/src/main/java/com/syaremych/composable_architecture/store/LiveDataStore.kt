@@ -3,7 +3,7 @@ package com.syaremych.composable_architecture.store
 import android.os.Looper
 import androidx.lifecycle.*
 
-class LiveDataStore<Value, Action>(
+class LiveDataStore<Value : Any, Action : Any>(
     private val store: Store<Value, Action>,
     releaseStoreWith: LifecycleOwner
 ) : LiveData<Value>(),
@@ -52,5 +52,5 @@ class LiveDataStore<Value, Action>(
     }
 }
 
-fun <Value, Action> Store<Value, Action>.asLiveData(releaseStoreWith: LifecycleOwner) =
+fun <Value : Any, Action : Any> Store<Value, Action>.asLiveData(releaseStoreWith: LifecycleOwner) =
     LiveDataStore(this, releaseStoreWith)

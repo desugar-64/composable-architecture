@@ -9,15 +9,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeyfitis.moviekeeper.feature_movies_list.R
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.ViewAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.adapter.MoviesAdapter
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.ViewState
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.asLiveData
 
 class MoviesFragment(
-    store: Store<MoviesViewState, MoviesViewAction>,
+    store: Store<ViewState, ViewAction>,
     private val navigator: MovieListNavigation
 ) : Fragment(R.layout.fragment_movies) {
 
@@ -27,7 +27,7 @@ class MoviesFragment(
 
     init {
         lifecycleScope.launchWhenCreated {
-            liveStore.send(MoviesViewAction.loadMovies(this))
+            liveStore.send(ViewAction.loadMovies(this))
         }
     }
 
@@ -38,9 +38,9 @@ class MoviesFragment(
         liveStore.observe(viewLifecycleOwner, Observer(::render))
     }
 
-    private fun render(viewState: MoviesViewState) {
-        rvMovies.adapter = MoviesAdapter(viewState.moviesState.movies) { movie ->
-            liveStore.send(MoviesViewAction.loadMovie(movie))
+    private fun render(viewState: ViewState) {
+        rvMovies.adapter = MoviesAdapter(viewState.moviesFeatureState.movies) { movie ->
+            liveStore.send(ViewAction.loadMovie(movie))
             navigator.openMovieDetails(movie)
         }
     }

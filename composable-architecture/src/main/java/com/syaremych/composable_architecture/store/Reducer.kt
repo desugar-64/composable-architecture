@@ -5,18 +5,20 @@ import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
 
-class Reducer1<Value, Action, Environment>(
+class Reducer<Value, Action, Environment>(
     internal val reducer: (Value, Action, Environment) -> Reduced<Value, Action>
-)
+) where Value : Any, Action : Any
 
-operator fun <Value, Action, Environment> Reducer1<Value, Action, Environment>.invoke(
+operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.invoke(
     value: Value,
     action: Action,
     environment: Environment
-) = reducer(value, action, environment)
+) where Value : Any, Action : Any = reducer(value, action, environment)
 
-fun <Value, Action, Environment> Reducer1<Value, Action, Environment>.combine(vararg reducers: Reducer1<Value, Action, Environment>) =
-    Reducer1<Value, Action, Environment> { value, action, environment ->
+fun <Value : Any,
+        Action : Any,
+        Environment> Reducer<Value, Action, Environment>.combine(vararg reducers: Reducer<Value, Action, Environment>) =
+    Reducer<Value, Action, Environment> { value, action, environment ->
         var reducedValue: Value = value
         val listOfEffects = mutableListOf<Effect<Action>>()
 
@@ -25,22 +27,22 @@ fun <Value, Action, Environment> Reducer1<Value, Action, Environment>.combine(va
             reducedValue = v
             listOfEffects.addAll(effects)
         }
-        return@Reducer1 reduced(reducedValue, listOfEffects)
+        return@Reducer reduced(reducedValue, listOfEffects)
     }
 
-fun <Value,
-        Action,
+fun <Value : Any,
+        Action : Any,
         Environment,
-        GlobalValue,
-        GlobalAction,
-        GlobalEnvironment> Reducer1<Value, Action, Environment>.pullback(
+        GlobalValue : Any,
+        GlobalAction : Any,
+        GlobalEnvironment> Reducer<Value, Action, Environment>.pullback(
     value: Lens<GlobalValue, Value>,
     action: Prism<GlobalAction, Action>,
     environment: Getter<GlobalEnvironment, Environment>
-): Reducer1<GlobalValue, GlobalAction, GlobalEnvironment> {
-    return Reducer1 { globalValue, globalAction, globalEnvironment ->
+): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
+    return Reducer { globalValue, globalAction, globalEnvironment ->
         val localAction = action.get(globalAction)
-        if (localAction is Option.None) return@Reducer1 reduced(globalValue, noEffects())
+        if (localAction is Option.None) return@Reducer reduced(globalValue, noEffects())
 
         val localValue = value.get(globalValue)
         val localEnvironment = environment.get(globalEnvironment)
@@ -48,7 +50,7 @@ fun <Value,
         val (reducedLocalValue, reducedLocalEffects)
                 = this@pullback(localValue, localAction.value, localEnvironment)
 
-        return@Reducer1 reduced(
+        return@Reducer reduced(
             value.set(globalValue, reducedLocalValue),
             reducedLocalEffects.map { localEffect ->
                 Effect<GlobalAction> { callback ->

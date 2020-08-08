@@ -6,15 +6,15 @@ import com.sergeyfitis.moviekeeper.feature_movie.MovieDetailsFragment
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesViewAction
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.ViewAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.ViewState
 import com.sergeyfitis.moviekeeper.navigation.AppNavigator
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
 import com.syaremych.composable_architecture.store.Store
 
 class AppFragmentFactory(
     private val appNavigatorLazy: () -> AppNavigator,
-    private val moviesStoreLazy:  () -> Store<MoviesViewState, MoviesViewAction>,
+    private val moviesStoreLazy:  () -> Store<ViewState, ViewAction>,
     private val movieStoreLazy:   () -> Store<MovieViewState, MovieViewAction>
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {

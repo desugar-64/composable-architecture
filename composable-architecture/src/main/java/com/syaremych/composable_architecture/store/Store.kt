@@ -45,7 +45,6 @@ fun <A> Effect<A>.receiveOn(executor: Executor): Effect<A> {
 }
 
 typealias Reduced<Value, Action> = Pair<Value, List<Effect<Action>>>
-typealias Reducer<Value, Action> = (value: Value, action: Action) -> Reduced<Value, Action>
 
 inline fun <Action> emptyEffect(): Effect<Action> = Effect { }
 
@@ -57,8 +56,6 @@ inline fun <Value, Action> reduced(
 
 class Store<Value : Any, Action : Any> private constructor() {
 
-
-
     interface Subscriber<Value> {
         fun render(value: Value)
     }
@@ -67,28 +64,28 @@ class Store<Value : Any, Action : Any> private constructor() {
     lateinit var value: Value
         internal set
 
-    private lateinit var reducer: Reducer1<Value, Action, Any>
+    private lateinit var reducer: Reducer<Value, Action, Any>
 
     private lateinit var environment: Any
 
     private val subscribers: MutableSet<Subscriber<Value>> =
         Collections.synchronizedSet(HashSet())
 
-    private var onStoreReleased: (() -> Unit)? = null
+    internal var onStoreReleased: (() -> Unit)? = null
 
     fun subscribe(subscriber: Subscriber<Value>) {
         subscribers.add(subscriber)
         subscriber.render(value)
     }
 
-    private fun send(action: Action) {
+    internal fun send(action: Action) {
         val (value, effects) = reducer(value, action, environment)
         this.value = value
         effects.forEach { effect -> effect.run(::send) }
         notifySubscribers()
     }
 
-    fun <LocalValue: Any, LocalAction: Any> view(
+    fun <LocalValue: Any, LocalAction: Any> scope(
         toLocalValue: (Value) -> LocalValue,
         toGlobalAction: (LocalAction) -> Action
     ): Store<LocalValue, LocalAction> {
@@ -144,9 +141,9 @@ class Store<Value : Any, Action : Any> private constructor() {
             val store = Store<Value, Action>()
             store.value = initialState
             store.environment = environment
-            store.reducer = Reducer1 { value, action, env ->
+            store.reducer = Reducer { value, action, env ->
                 val (state, effects) = reducer(value, action, env as Environment)
-                return@Reducer1 reduced(state, effects)
+                return@Reducer reduced(state, effects)
             }
             return store
         }

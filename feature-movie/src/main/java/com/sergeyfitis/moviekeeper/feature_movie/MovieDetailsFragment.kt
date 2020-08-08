@@ -12,11 +12,7 @@ import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
 import com.sergeyfitis.moviekeeper.feature_movie.state.movieStateLens
-import com.syaremych.composable_architecture.prelude.pullback
-import com.syaremych.composable_architecture.store.Reduced
-import com.syaremych.composable_architecture.store.Store
-import com.syaremych.composable_architecture.store.asLiveData
-import com.syaremych.composable_architecture.store.noEffects
+import com.syaremych.composable_architecture.store.*
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 
 class MovieDetailsFragment(
@@ -46,7 +42,7 @@ class MovieDetailsFragment(
 }
 
 private val movieStateReducer =
-    fun(state: MovieState, action: MovieAction): Reduced<MovieState, MovieAction> {
+    /*fun(state: MovieState, action: MovieAction): Reduced<MovieState, MovieAction> {
         return when (action) {
             is MovieAction.GetDetails -> com.syaremych.composable_architecture.store.reduced(
                 value = state,
@@ -57,7 +53,17 @@ private val movieStateReducer =
                 effects = noEffects()
             )
         }
+    }*/
+    Reducer<MovieState, MovieAction, Any> {value, action, environment ->
+        return@Reducer reduced(value, noEffects())
     }
+
+
+val mvr = movieStateReducer.pullback(
+    value = TODO(),
+    action = TODO(),
+    environment = TODO()
+)
 
 val movieViewReducer =
     pullback<MovieState, MovieViewState, MovieAction, MovieViewAction>(

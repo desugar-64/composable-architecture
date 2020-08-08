@@ -4,20 +4,20 @@ import android.util.Log
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesViewState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.ViewState
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 
 class AppState(
-    var moviesState: MoviesState,
+    var moviesFeatureState: MoviesFeatureState,
     var favoriteMovies: Set<Movie>,
     var movieState: Option<MovieState>
 ) {
     companion object {
         fun initial() = AppState(
-            MoviesState(
+            MoviesFeatureState(
                 Option.empty(),
                 emptyList()
             ),
@@ -28,15 +28,15 @@ class AppState(
 }
 
 // TODO: Replace with Lens
-var AppState.moviesViewState: MoviesViewState
-    get() = MoviesViewState(moviesState)
+var AppState.moviesViewState: ViewState
+    get() = ViewState(moviesFeatureState)
     set(value) {
-        moviesState = value.moviesState
+        moviesFeatureState = value.moviesFeatureState
     }
 
 var AppState.movieViewState: MovieViewState
     get() {
-        val movie = moviesState.selectedMovie.getOrThrow()
+        val movie = moviesFeatureState.selectedMovie.getOrThrow()
         val isFavorite = favoriteMovies.contains(movie)
         Log.d("AppState", "get movieViewState invoked")
         return MovieViewState(
