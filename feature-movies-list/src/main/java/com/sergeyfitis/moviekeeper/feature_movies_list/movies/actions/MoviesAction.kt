@@ -1,13 +1,10 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions
 
 import com.sergeyfitis.moviekeeper.data.models.Movie
-import com.syaremych.composable_architecture.prelude.types.Prism
-import com.syaremych.composable_architecture.prelude.types.toOption
-import kotlinx.coroutines.CoroutineScope
 
-internal sealed class ViewAction {
+internal sealed class MoviesAction {
 
-    data class MovieTapped(val movie: Movie) : ViewAction()
+    data class MovieTapped(val movie: Movie) : MoviesAction()
 
 /*
     internal data class Movies(val action: MoviesFeatureAction): ViewAction()

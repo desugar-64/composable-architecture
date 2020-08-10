@@ -5,9 +5,8 @@ import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.ViewState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
 import com.syaremych.composable_architecture.prelude.types.Option
-import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 
 class AppState(
@@ -28,8 +27,8 @@ class AppState(
 }
 
 // TODO: Replace with Lens
-var AppState.moviesViewState: ViewState
-    get() = ViewState(moviesFeatureState)
+var AppState.moviesViewState: MoviesState
+    get() = MoviesState(moviesFeatureState)
     set(value) {
         moviesFeatureState = value.moviesFeatureState
     }

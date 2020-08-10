@@ -7,7 +7,9 @@ import com.syaremych.composable_architecture.prelude.types.Prism
 
 class Reducer<Value, Action, Environment>(
     internal val reducer: (Value, Action, Environment) -> Reduced<Value, Action>
-) where Value : Any, Action : Any
+) where Value : Any, Action : Any {
+    companion object
+}
 
 operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.invoke(
     value: Value,
@@ -17,7 +19,7 @@ operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.in
 
 fun <Value : Any,
         Action : Any,
-        Environment> Reducer<Value, Action, Environment>.combine(vararg reducers: Reducer<Value, Action, Environment>) =
+        Environment> Reducer.Companion.combine(vararg reducers: Reducer<Value, Action, Environment>) =
     Reducer<Value, Action, Environment> { value, action, environment ->
         var reducedValue: Value = value
         val listOfEffects = mutableListOf<Effect<Action>>()
@@ -38,14 +40,14 @@ fun <Value : Any,
         GlobalEnvironment> Reducer<Value, Action, Environment>.pullback(
     value: Lens<GlobalValue, Value>,
     action: Prism<GlobalAction, Action>,
-    environment: Getter<GlobalEnvironment, Environment>
+    environment: (GlobalEnvironment) -> Environment
 ): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
     return Reducer { globalValue, globalAction, globalEnvironment ->
         val localAction = action.get(globalAction)
         if (localAction is Option.None) return@Reducer reduced(globalValue, noEffects())
 
         val localValue = value.get(globalValue)
-        val localEnvironment = environment.get(globalEnvironment)
+        val localEnvironment = environment.invoke(globalEnvironment)
 
         val (reducedLocalValue, reducedLocalEffects)
                 = this@pullback(localValue, localAction.value, localEnvironment)

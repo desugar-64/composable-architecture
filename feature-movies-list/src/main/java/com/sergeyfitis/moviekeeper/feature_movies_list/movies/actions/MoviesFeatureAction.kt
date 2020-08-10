@@ -13,7 +13,7 @@ sealed class MoviesFeatureAction {
     companion object
 }
 
-internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureAction, ViewAction>
+internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureAction, MoviesAction>
     get() = Prism(
         get = { featureAction -> TODO() },
         reverseGet = { viewAction -> TODO() }
