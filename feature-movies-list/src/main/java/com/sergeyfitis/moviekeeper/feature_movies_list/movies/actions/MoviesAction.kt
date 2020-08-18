@@ -5,6 +5,7 @@ import com.sergeyfitis.moviekeeper.data.models.Movie
 internal sealed class MoviesAction {
 
     data class MovieTapped(val movie: Movie) : MoviesAction()
+    object LoadMovies : MoviesAction()
 
 /*
     internal data class Movies(val action: MoviesFeatureAction): ViewAction()
