@@ -1,11 +1,13 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions
 
 import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.syaremych.composable_architecture.prelude.types.Either
 
-internal sealed class MoviesAction {
+sealed class MoviesAction {
 
     data class MovieTapped(val movie: Movie) : MoviesAction()
     object LoadMovies : MoviesAction()
+    data class MoviesLoaded(val result: Either<Throwable, List<Movie>>) : MoviesAction()
 
 /*
     internal data class Movies(val action: MoviesFeatureAction): ViewAction()

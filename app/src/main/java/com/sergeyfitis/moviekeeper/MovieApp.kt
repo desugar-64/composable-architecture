@@ -12,12 +12,14 @@ import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieViewState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesViewState
+import com.sergeyfitis.moviekeeper.statemanagement.environment.AppEnvironment
 import com.sergeyfitis.moviekeeper.statemanagement.reducer.appReducer
 import com.sergeyfitis.moviekeeper.ui.MainActivity
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 import com.syaremych.composable_architecture.store.Store
+import com.syaremych.composable_architecture.store.invoke
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MovieApp : Application() {
@@ -27,9 +29,10 @@ class MovieApp : Application() {
             private set
     }
 
-    private val appStore = Store(
+    private val appStore = Store.init<AppState, AppAction, AppEnvironment>(
         initialState = AppState.initial(),
-        reducer = appReducer
+        reducer = appReducer,
+        environment = AppEnvironment
     )
 
     private var mainNavHostActivity: Option<MainActivity> =

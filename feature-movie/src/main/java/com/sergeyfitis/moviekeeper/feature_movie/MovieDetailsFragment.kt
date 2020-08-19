@@ -59,12 +59,15 @@ private val movieStateReducer =
     }
 
 
+/*
 val mvr = movieStateReducer.pullback(
     value = TODO(),
     action = TODO(),
     environment = TODO()
 )
+*/
 
+/*
 val movieViewReducer =
     pullback<MovieState, MovieViewState, MovieAction, MovieViewAction>(
         reducer = movieStateReducer,
@@ -73,3 +76,4 @@ val movieViewReducer =
         toLocalAction = MovieViewAction.moviePrism::get,
         toGlobalAction = { map(MovieViewAction.moviePrism::reverseGet) }
     )
+*/

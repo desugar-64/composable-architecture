@@ -85,16 +85,16 @@ class Store<Value : Any, Action : Any> private constructor() {
         notifySubscribers()
     }
 
-    fun <LocalValue: Any, LocalAction: Any> scope(
+    fun <LocalValue : Any, LocalAction : Any> scope(
         toLocalValue: (Value) -> LocalValue,
         toGlobalAction: (LocalAction) -> Action
     ): Store<LocalValue, LocalAction> {
         val localStore = init<LocalValue, LocalAction, Any>(
             initialState = toLocalValue(value),
-            reducer = { _, localAction, _ ->
+            reducer = Reducer { _, localAction, _ ->
                 this.send(toGlobalAction(localAction))
                 val localValue = toLocalValue(value)
-                return@init reduced(localValue, noEffects())
+                return@Reducer reduced(localValue, noEffects())
             },
             environment = environment
         )
@@ -135,7 +135,7 @@ class Store<Value : Any, Action : Any> private constructor() {
         @Suppress("UNCHECKED_CAST")
         fun <Value : Any, Action : Any, Environment : Any> init(
             initialState: Value,
-            reducer: (Value, Action, Environment) -> Pair<Value, List<Effect<Action>>>,
+            reducer: Reducer<Value, Action, Environment>,
             environment: Environment
         ): Store<Value, Action> {
             val store = Store<Value, Action>()

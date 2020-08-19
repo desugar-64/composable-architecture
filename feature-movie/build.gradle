@@ -32,7 +32,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = jvm
+        jvmTarget = jvm.toString()
     }
 
 }
@@ -43,7 +43,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompat"
     implementation "androidx.core:core-ktx:$coreKtx"
     implementation "androidx.recyclerview:recyclerview:$recyclerview"
-    implementation "androidx.fragment:fragment:$fragment"
+    implementation "androidx.fragment:fragment-ktx:$fragment"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
@@ -53,7 +53,7 @@ dependencies {
     implementation project(path: ':data')
 
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

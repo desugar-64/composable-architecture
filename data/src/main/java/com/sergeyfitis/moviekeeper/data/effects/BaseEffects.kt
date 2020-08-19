@@ -24,6 +24,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 
+@Deprecated("")
 private val httpMethodLens =
     Lens<HttpRequestBuilder, HttpMethod>(
         get = { it.method },
@@ -32,26 +33,31 @@ private val httpMethodLens =
         }
     )
 
+@Deprecated("")
 val httpUrlLens =
     Lens<HttpRequestBuilder, URLBuilder>(
         get = { it.url },
         set = { httpRequestBuilder, _ -> httpRequestBuilder }
     )
 
+@Deprecated("")
 private val setParamLens =
     Lens<URLBuilder, ParametersBuilder>(
         get = { it.parameters },
         set = { urlBuilder, _ -> urlBuilder }
     )
 
+@Deprecated("")
 private val authToken = { token: String ->
     setParamLens.lift { it.appendMissing("api_key", listOf(token)); it }
 }
 
+@Deprecated("")
 fun urlPath(path: String): (URLBuilder) -> URLBuilder {
     return { it.path(API_V, path) }
 }
 
+@Deprecated("")
 fun requestBuilder(method: HttpMethod = HttpMethod.Get): HttpRequestBuilder {
     return withA(
         a = HttpRequestBuilder(),
@@ -100,7 +106,9 @@ fun requestBuilder(method: HttpMethod = HttpMethod.Get): HttpRequestBuilder {
 
 private val baseHttpClientConfig: HttpClientConfig<OkHttpConfig>.() -> Unit = {
     install(JsonFeature) {
-        serializer = KotlinxSerializer(json = Json(configuration = JsonConfiguration.Stable.copy(ignoreUnknownKeys = true)))
+        serializer = KotlinxSerializer(json = Json {
+            ignoreUnknownKeys = true
+        })
     }
 }
 

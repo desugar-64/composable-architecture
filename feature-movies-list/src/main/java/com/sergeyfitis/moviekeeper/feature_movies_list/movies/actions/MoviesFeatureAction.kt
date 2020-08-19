@@ -1,20 +1,18 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions
 
-import com.sergeyfitis.moviekeeper.data.models.Movie
-import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.Prism
-import kotlinx.coroutines.CoroutineScope
+import com.syaremych.composable_architecture.prelude.types.toOption
 
 sealed class MoviesFeatureAction {
-    data class Load(val scope: CoroutineScope) : MoviesFeatureAction()
-    data class Loaded(val movies: Either<Throwable, List<Movie>>) : MoviesFeatureAction()
-    data class Open(val movie: Movie) : MoviesFeatureAction()
+    data class Movies(val action: MoviesAction) : MoviesFeatureAction()
 
     companion object
 }
 
 internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureAction, MoviesAction>
     get() = Prism(
-        get = { featureAction -> TODO() },
-        reverseGet = { viewAction -> TODO() }
+        get = { featureAction -> when(featureAction) {
+            is MoviesFeatureAction.Movies -> featureAction.action.toOption()
+        } },
+        reverseGet = { viewAction -> MoviesFeatureAction.Movies(viewAction) }
     )
