@@ -9,14 +9,26 @@ import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.moviesState
 import com.syaremych.composable_architecture.prelude.id
 import com.syaremych.composable_architecture.store.Reducer
+import com.syaremych.composable_architecture.store.noEffects
 import com.syaremych.composable_architecture.store.pullback
+import com.syaremych.composable_architecture.store.reduced
 
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
-            is MoviesAction.MovieTapped -> TODO()
-            MoviesAction.LoadMovies -> TODO()
-            is MoviesAction.MoviesLoaded -> TODO()
+            is MoviesAction.MovieTapped -> TODO() // navigation to the screen details
+            MoviesAction.LoadMovies -> TODO() // use the given environment to fetch the movies list
+            is MoviesAction.MoviesLoaded -> reduced(
+                value = state.copy(
+                    movies = action
+                        .result
+                        .fold(
+                            ifLeft = { emptyList() },
+                            ifRight = ::id
+                        )
+                ),
+                effects = noEffects()
+            )
         }
     }
 

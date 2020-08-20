@@ -3,15 +3,16 @@ package com.sergeyfitis.moviekeeper.feature_movie.state
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.syaremych.composable_architecture.prelude.types.Lens
 
-data class MovieViewState(
+data class MovieFeatureState(
     val selectedMovie: Movie,
-    val movieState: MovieState
+    val movieState: MovieState,
+    val favoriteMovies: List<Movie>
 ) {
     companion object
 }
 
-val MovieViewState.Companion.movieStateLens
-    get() = Lens<MovieViewState, MovieState>(
+val MovieFeatureState.Companion.movieState
+    get() = Lens<MovieFeatureState, MovieState>(
         get = { it.movieState },
         set = { movieViewState, movieState -> movieViewState.copy(movieState = movieState) }
     )

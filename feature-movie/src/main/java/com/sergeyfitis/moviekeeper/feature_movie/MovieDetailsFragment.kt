@@ -7,16 +7,15 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
+import com.sergeyfitis.moviekeeper.feature_movie.action.MovieFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
-import com.sergeyfitis.moviekeeper.feature_movie.action.MovieViewAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
-import com.sergeyfitis.moviekeeper.feature_movie.state.MovieViewState
-import com.sergeyfitis.moviekeeper.feature_movie.state.movieStateLens
+import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.syaremych.composable_architecture.store.*
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 
 class MovieDetailsFragment(
-    store: Store<MovieViewState, MovieViewAction>
+    store: Store<MovieFeatureState, MovieFeatureAction>
 ) : Fragment(R.layout.fragment_movie_details) {
 
     private val liveStore = store.asLiveData(releaseStoreWith = this as LifecycleOwner)
@@ -26,7 +25,7 @@ class MovieDetailsFragment(
     init {
         lifecycleScope.launchWhenCreated {
             val movieId = args.movieId
-            liveStore.send(MovieViewAction.details(this, movieId))
+//            liveStore.send(MovieAction.details(this, movieId))
         }
     }
 
@@ -35,7 +34,7 @@ class MovieDetailsFragment(
         liveStore.observe(viewLifecycleOwner, ::render)
     }
 
-    private fun render(state: MovieViewState) {
+    private fun render(state: MovieFeatureState) {
         Log.d("MovieDetailsFragment", "render invoked")
         tv_movie.text = state.movieState.movie.title
     }
@@ -54,7 +53,7 @@ private val movieStateReducer =
             )
         }
     }*/
-    Reducer<MovieState, MovieAction, Any> {value, action, environment ->
+    Reducer<MovieState, MovieFeatureAction, Any> { value, action, environment ->
         return@Reducer reduced(value, noEffects())
     }
 

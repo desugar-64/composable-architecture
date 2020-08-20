@@ -14,5 +14,5 @@ internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureActi
         get = { featureAction -> when(featureAction) {
             is MoviesFeatureAction.Movies -> featureAction.action.toOption()
         } },
-        reverseGet = { viewAction -> MoviesFeatureAction.Movies(viewAction) }
+        reverseGet = MoviesFeatureAction::Movies
     )
