@@ -22,8 +22,7 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
 
         buildConfigField "String", "API_KEY", "\"${localProps.getProperty("api.key")}\""
-        buildConfigField "String", "API_V", "\"3\""
-        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/\""
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
     }
 
     buildTypes {
@@ -46,9 +45,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin"
+    implementation kotlinStdLib
 
     implementation project(path: ':composable-architecture')
+
+    api "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.6.0")
+
 
     api "io.ktor:ktor-client-core:$ktor"
     api "io.ktor:ktor-client-okhttp:$ktor"

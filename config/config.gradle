@@ -2,6 +2,7 @@ buildscript {
     ext {
         // Kotlin & AGP
         kotlin = "1.4.0"
+        kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin"
 
         // SDK
         compileSdkV = 29

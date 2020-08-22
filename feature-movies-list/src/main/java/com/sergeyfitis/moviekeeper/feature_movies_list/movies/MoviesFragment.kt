@@ -42,7 +42,7 @@ class MoviesFragment(
 
     init {
         lifecycleScope.launchWhenCreated {
-            viewStore.send(MoviesAction.LoadMovies)
+            viewStore.send(MoviesAction.LoadMovies(this))
         }
         lifecycle.addObserver(viewStore)
     }

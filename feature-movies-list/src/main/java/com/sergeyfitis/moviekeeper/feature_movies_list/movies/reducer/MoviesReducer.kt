@@ -3,6 +3,7 @@ package com.sergeyfitis.moviekeeper.feature_movies_list.movies.reducer
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.moviesAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.effects.loadMoviesEffect
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.environment.MoviesFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
@@ -17,7 +18,10 @@ internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
             is MoviesAction.MovieTapped -> TODO() // navigation to the screen details
-            MoviesAction.LoadMovies -> TODO() // use the given environment to fetch the movies list
+            is MoviesAction.LoadMovies -> reduced(
+                value = state,
+                effects = listOf(action.scope.loadMoviesEffect(environment))
+            )
             is MoviesAction.MoviesLoaded -> reduced(
                 value = state.copy(
                     movies = action

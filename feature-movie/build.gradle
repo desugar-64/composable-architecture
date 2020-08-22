@@ -39,7 +39,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin"
+    implementation kotlinStdLib
     implementation "androidx.appcompat:appcompat:$appCompat"
     implementation "androidx.core:core-ktx:$coreKtx"
     implementation "androidx.recyclerview:recyclerview:$recyclerview"

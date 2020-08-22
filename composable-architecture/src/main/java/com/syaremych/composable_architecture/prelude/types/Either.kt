@@ -1,6 +1,7 @@
 package com.syaremych.composable_architecture.prelude.types
 
 import com.syaremych.composable_architecture.BuildConfig
+import kotlin.coroutines.cancellation.CancellationException
 
 
 sealed class Either<out L, out R> {
@@ -34,12 +35,16 @@ fun <L1, L2, R> Either<L1, R>.lmap(f: (L1) -> L2): Either<L2, R> =
 fun <T> Either.Companion.ofNullable(value: T?): Either<Unit, T> =
     value?.let { v -> Either.Right(v as T) } ?: Either.Left(Unit)
 
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <R> Either.Companion.recover(f: () -> R): Either<Throwable, R> =
     try {
         Either.Right(f())
     } catch (t: Throwable) {
         if (BuildConfig.DEBUG) {
             t.printStackTrace()
+        }
+        if (t is CancellationException) {
+            throw t
         }
         Either.Left(t)
     }

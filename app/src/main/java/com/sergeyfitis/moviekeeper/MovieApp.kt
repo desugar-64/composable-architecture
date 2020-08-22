@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.sergeyfitis.moviekeeper.base.AppActivityLifecycleCallbacks
 import com.sergeyfitis.moviekeeper.base.AppFragmentFactory
+import com.sergeyfitis.moviekeeper.data.api.MoviesClient
+import com.sergeyfitis.moviekeeper.data.api.live
 import com.sergeyfitis.moviekeeper.navigation.AppNavigator
 import com.sergeyfitis.moviekeeper.navigation.movie.AppMovieNavigator
 import com.sergeyfitis.moviekeeper.navigation.movielist.AppMovieListNavigator
@@ -33,7 +35,7 @@ class MovieApp : Application() {
     private val appStore = Store.init<AppState, AppAction, AppEnvironment>(
         initialState = AppState.initial(),
         reducer = appReducer,
-        environment = AppEnvironment
+        environment = AppEnvironment(MoviesClient.live)
     )
 
     private var mainNavHostActivity: Option<MainActivity> =
