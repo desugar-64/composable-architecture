@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.syaremych.composable_architecture.prelude.concat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 import java.util.*
-import kotlin.reflect.KFunction0
 
 class ViewStore<Value : Any, Action: Any>(
     initialValue: Value,
@@ -14,19 +16,22 @@ class ViewStore<Value : Any, Action: Any>(
     val doOnDispose: () -> Unit
 ) : LifecycleObserver {
     var value: Value = initialValue
-        internal set
+        @Synchronized internal set
+        @Synchronized get
 
     private val subscribers: MutableSet<Store.Subscriber<Value>> =
         Collections.synchronizedSet(HashSet())
 
-    internal val subscriber = object : Store.Subscriber<Value> {
-        override fun render(value: Value) {
+    private val mainThread = Dispatchers.Main.immediate.asExecutor()
+
+
+    internal val subscriber =
+        Store.Subscriber<Value> { value ->
             if (acceptUpdateIf(this@ViewStore.value, value)) {
                 this@ViewStore.value = value
                 notifySubscribers()
             }
         }
-    }
 
     fun subscribe(subscriber: Store.Subscriber<Value>) {
         subscribers.add(subscriber)
@@ -38,13 +43,15 @@ class ViewStore<Value : Any, Action: Any>(
     }
 
     private fun notifySubscribers() {
-        Log.d("Store", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
-        subscribers.forEach { it.render(value) }
+        Log.d("ViewStore", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
+        mainThread.execute { subscribers.forEach { it.render(value) } }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     internal fun onDestroy() {
         doOnDispose.invoke()
+        Log.d("ViewStore", "destroyed")
+        subscribers.clear()
     }
 
 }
@@ -58,9 +65,11 @@ fun <Value, Action> Store<Value, Action>.view(
         acceptUpdateIf = acceptUpdateIf,
         doOnDispose = ::release
     )
-    onStoreReleased = { unsubscribe(viewStore.subscriber) }
+    val doOnRelease = onStoreReleased concat { unsubscribe(viewStore.subscriber) }
+    onStoreReleased = doOnRelease
+    subscribe(viewStore.subscriber)
     return viewStore
 }
 
 val <Value : Any, Action : Any> Store<Value, Action>.view: ViewStore<Value, Action>
-    get() = view(acceptUpdateIf = { lhs, rhs -> lhs == rhs})
+    get() = view(acceptUpdateIf = { lhs, rhs -> lhs != rhs })

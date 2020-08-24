@@ -7,7 +7,7 @@ import okhttp3.OkHttpClient
 private val authQueryAppenderInterceptor: Interceptor = Interceptor { chain ->
     val requestBuilder = chain.request().newBuilder()
 
-    val url = chain.request().url
+    val url = chain.request().url()
     val urlBuilder = url.newBuilder()
     if (url.queryParameter("api_key") == null) {
         urlBuilder.addQueryParameter("api_key", BuildConfig.API_KEY)

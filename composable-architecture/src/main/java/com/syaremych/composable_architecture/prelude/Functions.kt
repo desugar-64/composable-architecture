@@ -2,12 +2,6 @@
 
 package com.syaremych.composable_architecture.prelude
 
-import com.syaremych.composable_architecture.prelude.types.Option
-import com.syaremych.composable_architecture.prelude.types.toOption
-import com.syaremych.composable_architecture.store.Effect
-import com.syaremych.composable_architecture.store.Reducer
-import com.syaremych.composable_architecture.store.noEffects
-import com.syaremych.composable_architecture.store.reduced
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1
@@ -59,7 +53,7 @@ inline fun <A, B> map(crossinline f: (A) -> B): (A) -> B {
     return { a: A -> f(a) }
 }
 
-inline fun <A> id(a: A) = a
+inline fun <A> identity(a: A) = a
 
 // <>
 inline fun <A> concat(crossinline f: (A) -> Unit, crossinline g: (A) -> Unit): (A) -> Unit {
@@ -82,6 +76,13 @@ inline fun <A> concat(
     }
 }
 
+// <>
+inline infix fun (() -> Unit)?.concat(crossinline g: () -> Unit): () -> Unit {
+    return {
+        this?.invoke()
+        g.invoke()
+    }
+}
 
 // >>>
 inline infix operator fun <A, B, C> ((A) -> B).plus(crossinline g: (B) -> C): (A) -> C {

@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.syaremych.composable_architecture.prelude.types
 
 import com.syaremych.composable_architecture.BuildConfig
@@ -48,3 +50,6 @@ inline fun <R> Either.Companion.recover(f: () -> R): Either<Throwable, R> =
         }
         Either.Left(t)
     }
+
+@Suppress("UNUSED_PARAMETER")
+inline fun <T> emptyList(t: Throwable) = emptyList<T>()

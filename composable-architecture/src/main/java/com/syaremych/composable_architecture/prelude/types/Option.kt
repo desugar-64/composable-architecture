@@ -1,6 +1,6 @@
 package com.syaremych.composable_architecture.prelude.types
 
-import com.syaremych.composable_architecture.prelude.id
+import com.syaremych.composable_architecture.prelude.identity
 
 sealed class Option<out A> {
     abstract val isEmpty: Boolean
@@ -40,7 +40,7 @@ sealed class Option<out A> {
     }
 }
 
-inline fun <T> Option<T>.getOrElse(default: () -> T): T = fold(default, ::id)
+inline fun <T> Option<T>.getOrElse(default: () -> T): T = fold(default, ::identity)
 inline fun <T> Option<T>.getOrThrow(): T = fold({
     throw RuntimeException(
         """
@@ -48,6 +48,6 @@ inline fun <T> Option<T>.getOrThrow(): T = fold({
             |You must put something in order to get something back.
         """.trimMargin()
     )
-}, ::id)
+}, ::identity)
 
 fun <T> T?.toOption(): Option<T> = Option.ofNullable(this)

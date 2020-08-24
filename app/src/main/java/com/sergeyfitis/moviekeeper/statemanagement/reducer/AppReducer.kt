@@ -1,5 +1,6 @@
 package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
+import com.sergeyfitis.moviekeeper.feature_movie.environment.MovieFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movie.reducer.movieFeatureReducer
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.environment.MoviesFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.reducer.moviesFeatureReducer
@@ -26,6 +27,6 @@ val appReducer: Reducer<AppState, AppAction, AppEnvironment> =
         movieFeatureReducer.pullback(
             value = AppState.movieFeatureState,
             action = AppAction.movieFeatureAction,
-            environment = TODO()
+            environment = { MovieFeatureEnvironment }
         )
     )

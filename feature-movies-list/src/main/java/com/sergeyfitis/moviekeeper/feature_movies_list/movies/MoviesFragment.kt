@@ -9,16 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sergeyfitis.moviekeeper.feature_movies_list.R
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.moviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.adapter.MoviesAdapter
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.moviesState
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.ViewStore
 import com.syaremych.composable_architecture.store.view
 
 class MoviesFragment(
-    store: Store<MoviesFeatureState, MoviesFeatureAction>,
+    private val store: Store<MoviesFeatureState, MoviesFeatureAction>,
     private val navigator: MovieListNavigation
 ) : Fragment(R.layout.fragment_movies) {
 
@@ -26,23 +28,22 @@ class MoviesFragment(
 
     private val viewStore: ViewStore<MoviesState, MoviesAction> =
         store.scope<MoviesState, MoviesAction>(
-            toLocalValue = { TODO() },
-            toGlobalAction = { TODO() }
+            toLocalValue = MoviesFeatureState.moviesState::get,
+            toGlobalAction = MoviesFeatureAction.moviesAction::reverseGet
         ).view
 
 
-    private val subscriber: Store.Subscriber<MoviesState> = object : Store.Subscriber<MoviesState> {
-        override fun render(value: MoviesState) {
+    private val subscriber: Store.Subscriber<MoviesState> =
+        Store.Subscriber { value ->
             rvMovies.adapter = MoviesAdapter(value.movies) { movie ->
                 viewStore.send(MoviesAction.MovieTapped(movie))
                 navigator.openMovieDetails(movie)
             }
         }
-    }
 
     init {
         lifecycleScope.launchWhenCreated {
-            viewStore.send(MoviesAction.LoadMovies(this))
+            viewStore.send(MoviesAction.LoadMovies)
         }
         lifecycle.addObserver(viewStore)
     }
@@ -58,6 +59,11 @@ class MoviesFragment(
     override fun onDestroyView() {
         viewStore.unsubscribe(subscriber)
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        store.release() // hot fix
+        super.onDestroy()
     }
 
 }

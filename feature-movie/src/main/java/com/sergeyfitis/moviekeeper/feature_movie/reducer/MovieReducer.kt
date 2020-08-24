@@ -7,7 +7,7 @@ import com.sergeyfitis.moviekeeper.feature_movie.environment.MovieFeatureEnviron
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movie.state.movieState
-import com.syaremych.composable_architecture.prelude.id
+import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.store.Reducer
 import com.syaremych.composable_architecture.store.combine
 import com.syaremych.composable_architecture.store.pullback
@@ -27,6 +27,6 @@ val movieFeatureReducer: Reducer<MovieFeatureState, MovieFeatureAction, MovieFea
         movieViewReducer.pullback(
             value = MovieFeatureState.movieState,
             action = MovieFeatureAction.movieAction,
-            environment = ::id
+            environment = ::identity
         )
     )

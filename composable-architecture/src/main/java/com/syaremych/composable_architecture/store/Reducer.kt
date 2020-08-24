@@ -1,9 +1,9 @@
 package com.syaremych.composable_architecture.store
 
-import com.syaremych.composable_architecture.prelude.types.Getter
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
+import kotlinx.coroutines.flow.map
 
 class Reducer<Value, Action, Environment>(
     internal val reducer: (Value, Action, Environment) -> Reduced<Value, Action>
@@ -55,9 +55,9 @@ fun <Value : Any,
         return@Reducer reduced(
             value.set(globalValue, reducedLocalValue),
             reducedLocalEffects.map { localEffect ->
-                Effect<GlobalAction> { callback ->
-                    localEffect.run { localAction -> callback.invoke(action.reverseGet(localAction)) }
-                }
+                localEffect
+                    .map { localAction -> action.reverseGet(localAction) }
+                    .eraseToEffect()
             }
         )
     }

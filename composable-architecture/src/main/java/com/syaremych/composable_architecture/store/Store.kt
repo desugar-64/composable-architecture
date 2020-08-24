@@ -3,60 +3,25 @@
 package com.syaremych.composable_architecture.store
 
 import android.util.Log
-import com.syaremych.composable_architecture.prelude.pipe
-import com.syaremych.composable_architecture.prelude.withA
+import com.syaremych.composable_architecture.store.Store.Subscriber
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import java.util.*
-import java.util.concurrent.Executor
+import kotlin.collections.HashSet
 
-typealias Callback<A> = (A) -> Unit
-
-class Effect<out A>(val run: (Callback<A>) -> Unit)
-
-fun <A, B> Effect<A>.fmap(f: (A) -> Effect<B>): Effect<B> {
-//    return Effect { cb -> this@fmap.run { f(it).run(cb) } }
-    return Effect { callback ->
-        run { a -> withA(a, f).run(callback) }
-    }
-}
-
-fun <A, B> map(f: (A) -> B): (Effect<A>) -> Effect<B> {
-    return { effectA ->
-        Effect { callback ->
-//          effectA.run // (A -> Unit) -> Unit
-//          callback // B -> Unit
-//          pipe(f, callback) // A -> Unit
-            effectA.run(pipe(f, callback))
-        }
-    }
-}
-
-fun <A, B> Effect<A>.map(f: (A) -> B): Effect<B> =
-    Effect { callback ->
-//      run // (A -> Unit) -> Unit
-//      callback // B -> Unit
-//      pipe(f, callback) // A -> Unit
-        run(pipe(f, callback))
-    }
-
-fun <A> Effect<A>.receiveOn(executor: Executor): Effect<A> {
-    return Effect { callback ->
-        this.run { action -> executor.execute { callback(action) } }
-    }
-}
 
 typealias Reduced<Value, Action> = Pair<Value, List<Effect<Action>>>
 
-inline fun <Action> emptyEffect(): Effect<Action> = Effect { }
-
-inline fun <Action> noEffects(): List<Effect<Action>> = emptyList()
 inline fun <Value, Action> reduced(
     value: Value,
     effects: List<Effect<Action>>
 ): Reduced<Value, Action> = value to effects
 
-class Store<Value : Any, Action : Any> private constructor() {
+class Store<Value : Any, Action : Any> private constructor(
+    storeDispatcher: CoroutineDispatcher
+) {
 
-    interface Subscriber<Value> {
+    fun interface Subscriber<Value> {
         fun render(value: Value)
     }
 
@@ -71,6 +36,8 @@ class Store<Value : Any, Action : Any> private constructor() {
     private val subscribers: MutableSet<Subscriber<Value>> =
         Collections.synchronizedSet(HashSet())
 
+    private val storeScope = CoroutineScope(SupervisorJob() + storeDispatcher)
+
     internal var onStoreReleased: (() -> Unit)? = null
 
     fun subscribe(subscriber: Subscriber<Value>) {
@@ -79,10 +46,15 @@ class Store<Value : Any, Action : Any> private constructor() {
     }
 
     internal fun send(action: Action) {
-        val (value, effects) = reducer(value, action, environment)
-        this.value = value
-        effects.forEach { effect -> effect.run(::send) }
-        notifySubscribers()
+        storeScope.launch {
+            val (value, effects) = reducer(value, action, environment)
+            this@Store.value = value
+            effects.forEach { effect ->
+                ensureActive()
+                effect.collect { action: Action -> send(action) }
+            }
+            notifySubscribers()
+        }
     }
 
     fun <LocalValue : Any, LocalAction : Any> scope(
@@ -99,12 +71,10 @@ class Store<Value : Any, Action : Any> private constructor() {
             environment = environment
         )
 
-        val storeToViewUpdateNotifier = object : Subscriber<Value> {
-            override fun render(value: Value) {
-                localStore.value = toLocalValue(value)
-                localStore.notifySubscribers()
-                Log.d("Local Store", "subscribe#render invoked")
-            }
+        val storeToViewUpdateNotifier = Subscriber<Value> { value ->
+            localStore.value = toLocalValue(value)
+            localStore.notifySubscribers()
+            Log.d("Local Store", "subscribe#render invoked")
         }
 
         localStore.onStoreReleased = {
@@ -120,6 +90,7 @@ class Store<Value : Any, Action : Any> private constructor() {
         subscribers.clear()
         onStoreReleased?.invoke()
         onStoreReleased = null
+        storeScope.cancel()
     }
 
     fun unsubscribe(subscriber: Subscriber<Value>) {
@@ -136,9 +107,10 @@ class Store<Value : Any, Action : Any> private constructor() {
         fun <Value : Any, Action : Any, Environment : Any> init(
             initialState: Value,
             reducer: Reducer<Value, Action, Environment>,
-            environment: Environment
+            environment: Environment,
+            storeDispatcher: CoroutineDispatcher = Dispatchers.Default
         ): Store<Value, Action> {
-            val store = Store<Value, Action>()
+            val store = Store<Value, Action>(storeDispatcher)
             store.value = initialState
             store.environment = environment
             store.reducer = Reducer { value, action, env ->
