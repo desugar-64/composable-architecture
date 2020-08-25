@@ -4,9 +4,9 @@ import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
+import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
-import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 
 data class AppState(
@@ -17,7 +17,7 @@ data class AppState(
 ) {
     companion object {
         fun initial() = AppState(
-            moviesFeatureState = MoviesFeatureState(emptyList()),
+            moviesFeatureState = MoviesFeatureState(Option.empty(), emptyList()),
             movieFeatureState = Option.empty(),
             favoriteMovies = emptySet(),
             movieState = Option.empty()
@@ -33,10 +33,22 @@ val AppState.Companion.moviesFeatureState: Lens<AppState, MoviesFeatureState>
         }
     )
 
-val AppState.Companion.movieFeatureState: Lens<AppState, MovieFeatureState>
+val AppState.Companion.movieFeatureState: Lens<AppState, Option<MovieFeatureState>>
     get() = Lens(
-        get = { appState -> appState.movieFeatureState.getOrThrow() },
+        get = { appState ->
+            when (val movie = appState.moviesFeatureState.selectedMovie) {
+                Option.None -> Option.empty()
+                is Option.Some -> MovieFeatureState(
+                    selectedMovie = movie.value,
+                    favoriteMovies = appState
+                        .movieFeatureState
+                        .map(MovieFeatureState::favoriteMovies)
+                        .fold(::emptySet, ::identity)
+                ).toOption()
+
+            }
+        },
         set = { appState, movieFeatureState ->
-            appState.copy(movieFeatureState = movieFeatureState.toOption())
+            appState.copy(movieFeatureState = movieFeatureState)
         }
     )

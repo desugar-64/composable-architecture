@@ -6,6 +6,7 @@ import com.syaremych.composable_architecture.prelude.types.Option
 
 // Should contain all variables of the feature(including all its sub-states)
 data class MoviesFeatureState(
+    val selectedMovie: Option<Movie>,
     val movies: List<Movie>
 ) {
     companion object
@@ -20,5 +21,10 @@ internal data class MoviesState(
 internal val MoviesFeatureState.Companion.moviesState
     get() = Lens<MoviesFeatureState, MoviesState>(
         get = { featureState -> MoviesState(Option.None, featureState.movies) },
-        set = { featureState, viewState -> featureState.copy(movies = viewState.movies) }
+        set = { featureState, viewState ->
+            featureState.copy(
+                selectedMovie = viewState.selectedMovie,
+                movies = viewState.movies
+            )
+        }
     )

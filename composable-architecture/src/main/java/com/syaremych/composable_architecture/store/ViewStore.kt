@@ -1,59 +1,35 @@
 package com.syaremych.composable_architecture.store
 
-import android.util.Log
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import com.syaremych.composable_architecture.prelude.concat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
-import java.util.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
 
-class ViewStore<Value : Any, Action: Any>(
+@OptIn(ExperimentalCoroutinesApi::class)
+class ViewStore<Value : Any, Action : Any>(
     initialValue: Value,
     val send: (Action) -> Unit,
     private val acceptUpdateIf: (Value, Value) -> Boolean,
-    val doOnDispose: () -> Unit
-) : LifecycleObserver {
-    var value: Value = initialValue
-        @Synchronized internal set
-        @Synchronized get
+    private val doOnDispose: () -> Unit
+) : Flow<Value> {
 
-    private val subscribers: MutableSet<Store.Subscriber<Value>> =
-        Collections.synchronizedSet(HashSet())
-
-    private val mainThread = Dispatchers.Main.immediate.asExecutor()
-
+    private val _viewState: MutableStateFlow<Value> = MutableStateFlow(initialValue)
 
     internal val subscriber =
         Store.Subscriber<Value> { value ->
-            if (acceptUpdateIf(this@ViewStore.value, value)) {
-                this@ViewStore.value = value
-                notifySubscribers()
+            if (acceptUpdateIf(this@ViewStore._viewState.value, value)) {
+                this@ViewStore._viewState.value = value
             }
         }
 
-    fun subscribe(subscriber: Store.Subscriber<Value>) {
-        subscribers.add(subscriber)
-        subscriber.render(value)
+    @InternalCoroutinesApi
+    override suspend fun collect(collector: FlowCollector<Value>) {
+        _viewState.collect(collector)
     }
 
-    fun unsubscribe(subscriber: Store.Subscriber<Value>) {
-        subscribers.remove(subscriber)
-    }
-
-    private fun notifySubscribers() {
-        Log.d("ViewStore", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
-        mainThread.execute { subscribers.forEach { it.render(value) } }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    internal fun onDestroy() {
-        doOnDispose.invoke()
-        Log.d("ViewStore", "destroyed")
-        subscribers.clear()
-    }
-
+    fun dispose() = doOnDispose.invoke()
 }
 
 fun <Value, Action> Store<Value, Action>.view(

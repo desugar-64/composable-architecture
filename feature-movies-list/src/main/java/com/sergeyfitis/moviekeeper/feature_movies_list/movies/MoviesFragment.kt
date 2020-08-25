@@ -18,51 +18,48 @@ import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.moviesState
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.ViewStore
 import com.syaremych.composable_architecture.store.view
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MoviesFragment(
-    private val store: Store<MoviesFeatureState, MoviesFeatureAction>,
+    private val featureStore: Store<MoviesFeatureState, MoviesFeatureAction>,
     private val navigator: MovieListNavigation
 ) : Fragment(R.layout.fragment_movies) {
 
     private lateinit var rvMovies: RecyclerView
 
     private val viewStore: ViewStore<MoviesState, MoviesAction> =
-        store.scope<MoviesState, MoviesAction>(
+        featureStore.scope<MoviesState, MoviesAction>(
             toLocalValue = MoviesFeatureState.moviesState::get,
             toGlobalAction = MoviesFeatureAction.moviesAction::reverseGet
         ).view
 
-
-    private val subscriber: Store.Subscriber<MoviesState> =
-        Store.Subscriber { value ->
-            rvMovies.adapter = MoviesAdapter(value.movies) { movie ->
-                viewStore.send(MoviesAction.MovieTapped(movie))
-                navigator.openMovieDetails(movie)
-            }
-        }
-
     init {
-        lifecycleScope.launchWhenCreated {
-            viewStore.send(MoviesAction.LoadMovies)
+        lifecycleScope.launchWhenCreated { viewStore.send(MoviesAction.LoadMovies) }
+    }
+
+    private fun render(viewState: MoviesState) {
+        rvMovies.adapter = MoviesAdapter(viewState.movies) { movie ->
+            viewStore.send(MoviesAction.MovieTapped(movie))
+            navigator.openMovieDetails(movie)
         }
-        lifecycle.addObserver(viewStore)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rvMovies = view.findViewById(R.id.rv_movies)
         rvMovies.layoutManager = LinearLayoutManager(requireContext())
-
-        viewStore.subscribe(subscriber)
-    }
-
-    override fun onDestroyView() {
-        viewStore.unsubscribe(subscriber)
-        super.onDestroyView()
+        viewStore
+            .onEach { state -> render(state) }
+            .onCompletion { viewStore.dispose() }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onDestroy() {
-        store.release() // hot fix
+        featureStore.release()
         super.onDestroy()
     }
 

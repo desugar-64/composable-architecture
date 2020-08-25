@@ -21,7 +21,9 @@ val appReducer: Reducer<AppState, AppAction, AppEnvironment> =
             value = AppState.moviesFeatureState,
             action = AppAction.moviesFeatureAction,
             environment = { appEnvironment ->
-                MoviesFeatureEnvironment(appEnvironment.moviesClient.popular)
+                MoviesFeatureEnvironment(
+                    movies = appEnvironment.moviesClient.popular
+                )
             }
         ),
         movieFeatureReducer.pullback(

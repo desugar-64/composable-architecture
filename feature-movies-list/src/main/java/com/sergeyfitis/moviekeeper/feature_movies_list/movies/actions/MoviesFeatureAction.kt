@@ -11,8 +11,12 @@ sealed class MoviesFeatureAction {
 
 internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureAction, MoviesAction>
     get() = Prism(
-        get = { featureAction -> when(featureAction) {
-            is MoviesFeatureAction.Movies -> featureAction.action.toOption()
-        } },
-        reverseGet = MoviesFeatureAction::Movies
+        get = { featureAction ->
+            when (featureAction) {
+                is MoviesFeatureAction.Movies -> featureAction.action.toOption()
+            }
+        },
+        reverseGet = { viewAction ->
+            MoviesFeatureAction.Movies(viewAction)
+        }
     )

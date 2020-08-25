@@ -108,7 +108,7 @@ class Store<Value : Any, Action : Any> private constructor(
             initialState: Value,
             reducer: Reducer<Value, Action, Environment>,
             environment: Environment,
-            storeDispatcher: CoroutineDispatcher = Dispatchers.Default
+            storeDispatcher: CoroutineDispatcher = Dispatchers.Main.immediate
         ): Store<Value, Action> {
             val store = Store<Value, Action>(storeDispatcher)
             store.value = initialState
