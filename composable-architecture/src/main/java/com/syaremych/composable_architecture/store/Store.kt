@@ -25,6 +25,7 @@ class Store<Value : Any, Action : Any> private constructor(
         fun render(value: Value)
     }
 
+    // TODO: Use Mutex for consistent value updates
     @Volatile
     lateinit var value: Value
         internal set
