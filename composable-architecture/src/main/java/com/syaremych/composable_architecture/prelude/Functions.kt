@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "unused", "UNUSED_PARAMETER")
 
 package com.syaremych.composable_architecture.prelude
 
@@ -35,8 +35,8 @@ inline fun <A, B, C> Pair<A, B>.map(f: (Pair<A, B>) -> C): C {
 fun <A, B, C> zip3(a: A?, b: B?, c: C?): Triple<A, B, C>? {
     return zip2(a, zip2(b, c))?.map { abc: Pair<A, Pair<B, C>>? ->
         abc ?: return@map null
-        val (a, bc) = abc
-        Triple(a, bc.first, bc.second)
+        val (innerA, bc) = abc
+        Triple(innerA, bc.first, bc.second)
     }
 }
 

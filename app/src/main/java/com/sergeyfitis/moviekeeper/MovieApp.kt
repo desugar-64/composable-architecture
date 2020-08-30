@@ -23,7 +23,8 @@ import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 import com.syaremych.composable_architecture.store.Store
-import kotlinx.android.synthetic.main.activity_main.*
+
+//import kotlinx.android.synthetic.main.activity_main.*
 
 class MovieApp : Application() {
 
@@ -52,7 +53,7 @@ class MovieApp : Application() {
         val navControllerLazy: () -> NavController = {
             mainNavHostActivity
                 .getOrThrow()
-                .main_nav_host
+                .mainNavHost
                 .findNavController()
         }
 

@@ -17,6 +17,9 @@ class ViewStore<Value : Any, Action : Any>(
 
     private val _viewState: MutableStateFlow<Value> = MutableStateFlow(initialValue)
 
+    val value: Value
+        get() = _viewState.value
+
     internal val subscriber =
         Store.Subscriber<Value> { value ->
             if (acceptUpdateIf(this@ViewStore._viewState.value, value)) {

@@ -12,7 +12,7 @@ import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.store.*
 
 internal val movieViewReducer: Reducer<Option<MovieState>, MovieAction, MovieFeatureEnvironment> =
-    Reducer { state, action, environment ->
+    Reducer { state, action, _ ->
         when (action) {
             is MovieAction.LoadDetails -> reduced(state, noEffects()) // load some additional stuff
             is MovieAction.DetailsLoaded -> TODO()

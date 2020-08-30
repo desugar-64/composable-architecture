@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.syaremych.composable_architecture.prelude.types
 
 import com.syaremych.composable_architecture.prelude.identity

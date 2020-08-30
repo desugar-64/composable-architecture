@@ -8,9 +8,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0-alpha07'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin"
+        classpath 'com.android.tools.build:gradle:4.2.0-alpha08'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinV"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinV"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,8 +24,17 @@ allprojects {
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
-            jvmTarget = jvm
+//            allWarningsAsErrors = true
+
             freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
+
+            // Enable experimental coroutines APIs, including Flow
+            freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
+            freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.FlowPreview'
+            freeCompilerArgs += '-Xopt-in=kotlin.Experimental'
+            freeCompilerArgs += '-Xallow-jvm-ir-dependencies'
+
+            jvmTarget = jvm
         }
     }
 }

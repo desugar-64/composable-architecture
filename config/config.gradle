@@ -1,15 +1,18 @@
 buildscript {
     ext {
         // Kotlin & AGP
-        kotlin = "1.4.0"
-        kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin"
+        kotlinV = "1.4.0"
+        kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinV"
+
+        // Compose
+        composeV = "1.0.0-alpha01"
 
         // SDK
         compileSdkV = 29
         buildTools = "29.0.3"
         minSdkV = 23
         targetSdkV = 29
-        jvm = JavaVersion.VERSION_1_8
+        jvm = 1.8
 
         // Libs
         appCompat = "1.3.0-alpha02"
