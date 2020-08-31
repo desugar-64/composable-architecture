@@ -5,6 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
     }
 
     dependencies {
@@ -21,6 +22,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
@@ -35,6 +37,7 @@ allprojects {
             freeCompilerArgs += '-Xallow-jvm-ir-dependencies'
 
             jvmTarget = jvm
+            useIR = true
         }
     }
 }

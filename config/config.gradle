@@ -22,6 +22,5 @@ buildscript {
         lifecycle = "2.2.0"
         navigation = "2.3.0"
         navigationKtx = "2.3.0"
-        ktor = "1.4.0"
     }
 }

@@ -16,7 +16,6 @@ import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.ViewStore
 import com.syaremych.composable_architecture.store.view
-import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -52,15 +51,15 @@ class MovieDetailsFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sw_favorite.setOnCheckedChangeListener { _, isChecked ->
-            viewStore.send(MovieAction.ToggleFavorite(isChecked))
-        }
+//        sw_favorite.setOnCheckedChangeListener { _, isChecked ->
+//            viewStore.send(MovieAction.ToggleFavorite(isChecked))
+//        }
     }
 
     private fun render(state: MovieState) {
         Log.d("MovieDetailsFragment", "render invoked")
-        tv_movie.text = state.movie.title
-        sw_favorite.isChecked = state.isFavorite
+//        tv_movie.text = state.movie.title
+//        sw_favorite.isChecked = state.isFavorite
     }
 
     override fun onDestroy() {

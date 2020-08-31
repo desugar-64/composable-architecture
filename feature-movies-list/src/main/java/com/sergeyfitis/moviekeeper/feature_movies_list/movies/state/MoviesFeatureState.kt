@@ -7,7 +7,8 @@ import com.syaremych.composable_architecture.prelude.types.Option
 // Should contain all variables of the feature(including all its sub-states)
 data class MoviesFeatureState(
     val selectedMovie: Option<Movie>,
-    val movies: List<Movie>
+    val movies: List<Movie>,
+    val favorites: Set<Int>
 ) {
     companion object
 }

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 apply from: "../config/config.gradle"
 
@@ -67,6 +66,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime:$composeV"
     implementation "androidx.compose.runtime:runtime-livedata:$composeV"
     implementation "androidx.ui:ui-tooling:$composeV"
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:0.2.0"
 
     implementation project(path: ':composable-architecture')
     api project(path: ':data')

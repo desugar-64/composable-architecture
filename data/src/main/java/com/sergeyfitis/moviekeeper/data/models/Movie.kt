@@ -9,5 +9,9 @@ data class Movie(
     @SerialName("original_title")
     val title: String,
     @SerialName("poster_path")
-    var poster: String
+    var poster: String,
+    @SerialName("vote_count")
+    val voteCount: Int,
+    @SerialName("vote_average")
+    val voteAverage: Float
 )

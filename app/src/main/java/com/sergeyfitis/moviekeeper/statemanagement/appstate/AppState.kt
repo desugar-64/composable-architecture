@@ -17,7 +17,7 @@ data class AppState(
 ) {
     companion object {
         fun initial() = AppState(
-            moviesFeatureState = MoviesFeatureState(Option.empty(), emptyList()),
+            moviesFeatureState = MoviesFeatureState(Option.empty(), emptyList(), emptySet()),
             movieFeatureState = Option.empty(),
             favoriteMovies = emptySet(),
             movieState = Option.empty()

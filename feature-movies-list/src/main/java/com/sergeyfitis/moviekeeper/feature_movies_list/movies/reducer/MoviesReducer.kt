@@ -21,7 +21,10 @@ internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
             is MoviesAction.MovieTapped -> reduced(
-                value = state.copy(selectedMovie = action.movie.toOption()),
+                value = state.copy(
+                    selectedMovie =
+                    state.movies.first { action.movieId == it.id }.toOption()
+                ),
                 effects = noEffects()
             ) // navigation to the screen details
             MoviesAction.LoadMovies -> reduced(
