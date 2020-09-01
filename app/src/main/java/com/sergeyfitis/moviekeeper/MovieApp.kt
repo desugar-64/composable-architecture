@@ -24,8 +24,6 @@ import com.syaremych.composable_architecture.prelude.types.getOrThrow
 import com.syaremych.composable_architecture.prelude.types.toOption
 import com.syaremych.composable_architecture.store.Store
 
-//import kotlinx.android.synthetic.main.activity_main.*
-
 class MovieApp : Application() {
 
     companion object {

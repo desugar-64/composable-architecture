@@ -7,4 +7,5 @@ sealed class MoviesAction {
     data class MovieTapped(val movieId: Int) : MoviesAction()
     object LoadMovies : MoviesAction()
     data class MoviesLoaded(val result: Either<Throwable, List<Movie>>) : MoviesAction()
+    data class ToggleFavorite(val movieId: Int, val isFavorite: Boolean) : MoviesAction()
 }

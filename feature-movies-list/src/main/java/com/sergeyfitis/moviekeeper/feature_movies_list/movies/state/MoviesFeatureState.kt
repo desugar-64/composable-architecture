@@ -16,16 +16,24 @@ data class MoviesFeatureState(
 // Should contain domain specific variables
 internal data class MoviesState(
     val selectedMovie: Option<Movie>,
-    val movies: List<Movie>
+    val movies: List<Movie>,
+    val favorites: Set<Int>
 )
 
 internal val MoviesFeatureState.Companion.moviesState
     get() = Lens<MoviesFeatureState, MoviesState>(
-        get = { featureState -> MoviesState(Option.None, featureState.movies) },
+        get = { featureState ->
+            MoviesState(
+                selectedMovie = Option.None,
+                movies = featureState.movies,
+                favorites = featureState.favorites
+            )
+        },
         set = { featureState, viewState ->
             featureState.copy(
                 selectedMovie = viewState.selectedMovie,
-                movies = viewState.movies
+                movies = viewState.movies,
+                favorites = viewState.favorites
             )
         }
     )

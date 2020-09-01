@@ -40,6 +40,15 @@ internal val moviesViewReducer =
                 ),
                 effects = noEffects()
             )
+            is MoviesAction.ToggleFavorite -> reduced(
+                value = state.copy(favorites = state.favorites.toMutableSet().apply {
+                    if (action.isFavorite)
+                        add(action.movieId)
+                    else
+                        remove(action.movieId)
+                }),
+                effects = noEffects()
+            )
         }
     }
 

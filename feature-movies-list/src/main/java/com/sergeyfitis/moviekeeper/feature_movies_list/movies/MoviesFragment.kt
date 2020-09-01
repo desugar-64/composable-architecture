@@ -11,8 +11,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction.*
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction.Movies
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.MovieViewItem
@@ -61,10 +62,16 @@ class MoviesFragment(
                     stateHolder.value.movies,
                     contentPadding = InnerPadding(bottom = 16.dp),
                 ) { item ->
-                    MovieViewItem(movie = item) { clicked ->
-                        viewStore.send(Action.MovieTapped(clicked.id))
-                        navigator.openMovieDetails(clicked.id)
-                    }
+                    MovieViewItem(
+                        item = item,
+                        onClick = {
+                            viewStore.send(Action.MovieTapped(item.id))
+                            navigator.openMovieDetails(item.id)
+                        },
+                        toggleFavorite = { isFavorite ->
+                            viewStore.send(Action.FavoriteToggle(item.id, isFavorite))
+                        }
+                    )
                 }
             }
         }
@@ -93,10 +100,13 @@ private fun MoviesFragment.State.Companion.init(featureState: MoviesFeatureState
 
 private fun MoviesFeatureAction.Companion.init(action: MoviesFragment.Action): MoviesFeatureAction {
     return when (action) {
-        MoviesFragment.Action.LoadList ->
-            MoviesFeatureAction.Movies(MoviesAction.LoadMovies)
-        is MoviesFragment.Action.MovieTapped ->
-            MoviesFeatureAction.Movies(MoviesAction.MovieTapped(action.movieId))
-        is MoviesFragment.Action.FavoriteToggle -> TODO()
+        MoviesFragment.Action.LoadList -> Movies(LoadMovies)
+        is MoviesFragment.Action.MovieTapped -> Movies(MovieTapped(action.movieId))
+        is MoviesFragment.Action.FavoriteToggle -> Movies(
+            ToggleFavorite(
+                action.movieId,
+                action.isFavorite
+            )
+        )
     }
 }
