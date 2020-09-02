@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import androidx.fragment.app.testing.launchFragmentInContainer
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
@@ -42,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             initialState = MoviesFeatureState(
                 selectedMovie = Option.empty(),
                 movies = emptyList(),
-                favorites = setOf(0, 1)
+                favorites = setOf(0)
             ),
             reducer = moviesFeatureReducer,
             environment = mockEnvironment
@@ -64,11 +63,11 @@ class MainActivity : AppCompatActivity() {
         container.id = 1
         setContentView(container)
 
-//        if (savedInstanceState == null) {
-//            supportFragmentManager.beginTransaction()
-//                .add(container.id, featureFragment)
-//                .commitNow()
-//        }
-        launchFragmentInContainer { featureFragment }
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .add(container.id, featureFragment)
+                .commitNow()
+        }
+//        launchFragmentInContainer { featureFragment }
     }
 }
