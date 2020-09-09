@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="movie_tab_recomended">Recomended</string>
+    <string name="movie_tab_popular">Popular</string>
+    <string name="movie_tab_recent">Recent</string>
+</resources>
