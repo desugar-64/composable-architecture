@@ -39,7 +39,7 @@ fun MovieViewItem(
                 .clip(RoundedCornerShape(4.dp))
                 .preferredHeight(130.dp)
                 .background(color = Color.White)
-                .gravity(Alignment.BottomStart)
+                .align(Alignment.BottomStart)
                 .clickable(onClick = onClick)
         ) {
             Row(
@@ -61,7 +61,7 @@ fun MovieViewItem(
                         style = MaterialTheme.typography.body1
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalGravity = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(asset = Filled.Star, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.size(4.dp))
                         Text(
@@ -85,7 +85,7 @@ fun MovieViewItem(
         IconToggleButton(
             modifier = Modifier
                 .padding(top = 16.dp)
-                .gravity(Alignment.TopEnd),
+                .align(Alignment.TopEnd),
             checked = item.isFavorite,
             onCheckedChange = toggleFavorite
         ) {
