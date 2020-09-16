@@ -7,7 +7,7 @@ import com.sergeyfitis.moviekeeper.feature_movie.action.MovieFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.navigation.AppNavigator
 import com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment
 import com.syaremych.composable_architecture.prelude.types.Option

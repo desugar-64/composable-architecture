@@ -5,10 +5,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.environment.MoviesFeatureEnvironment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer.moviesFeatureReducer
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.reducer.moviesFeatureReducer
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.store.Store
 import org.junit.Assert

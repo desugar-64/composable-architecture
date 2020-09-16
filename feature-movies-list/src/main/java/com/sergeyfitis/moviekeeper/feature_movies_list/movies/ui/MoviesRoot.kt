@@ -12,8 +12,8 @@ import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.state.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.MovieItem
 import com.syaremych.composable_architecture.store.*
 

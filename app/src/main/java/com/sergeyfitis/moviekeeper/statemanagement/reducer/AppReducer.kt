@@ -2,8 +2,8 @@ package com.sergeyfitis.moviekeeper.statemanagement.reducer
 
 import com.sergeyfitis.moviekeeper.feature_movie.environment.MovieFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movie.reducer.movieFeatureReducer
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.environment.MoviesFeatureEnvironment
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.reducer.moviesFeatureReducer
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer.moviesFeatureReducer
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.movieFeatureAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.moviesFeatureAction

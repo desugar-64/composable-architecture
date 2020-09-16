@@ -1,8 +1,8 @@
-package com.sergeyfitis.moviekeeper.feature_movies_list.movies.effects
+package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects
 
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.environment.MoviesFeatureEnvironment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.recover
 import com.syaremych.composable_architecture.prelude.types.rmap
