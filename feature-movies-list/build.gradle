@@ -71,6 +71,7 @@ dependencies {
 
     implementation project(path: ':composable-architecture')
     api project(path: ':data')
+    implementation project(path: ':common-ui')
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

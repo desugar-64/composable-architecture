@@ -13,17 +13,16 @@ data class FavoriteFeatureState(
 }
 
 internal data class FavoriteState(
-    val favoriteMovies: List<Movie>
+    val favoriteMovies: Set<Int>,
+    val movies: Map<Int, Movie>
 )
 
-internal val FavoriteFeatureState.Companion.favoriteState: Lens<FavoriteFeatureState, FavoriteState>
+internal val FavoriteFeatureState.Companion.favoriteMoviesState: Lens<FavoriteFeatureState, FavoriteState>
     get() = Lens(
         get = { featureState ->
-            FavoriteState(featureState.favoriteMovies.mapNotNull { movieId ->
-                featureState.movies[movieId]
-            })
+            FavoriteState(featureState.favoriteMovies, featureState.movies)
         },
         set = { featureState, state ->
-            featureState.copy(favoriteMovies = state.favoriteMovies.map { it.id }.toSet())
+            featureState.copy(favoriteMovies = state.favoriteMovies)
         }
     )

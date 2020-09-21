@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state
+package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass
 
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.syaremych.composable_architecture.prelude.types.Lens

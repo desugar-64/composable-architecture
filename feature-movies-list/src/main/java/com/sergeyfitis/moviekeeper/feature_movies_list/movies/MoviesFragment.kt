@@ -7,7 +7,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.Action
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.MoviesRoot

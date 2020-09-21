@@ -3,7 +3,7 @@ package com.sergeyfitis.moviekeeper.statemanagement.appstate
 import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option

@@ -3,16 +3,16 @@ package com.sergeyfitis.moviekeeper.feature_movies_favorite
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.compose.foundation.lazy.LazyColumnFor
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.actions.FavoriteFeatureAction
+import androidx.fragment.app.FragmentFactory
+import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.FavoriteFeatureAction
+import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.FavoriteMoviesAction
+import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.favoriteMoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.FavoriteFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.FavoriteState
-import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.favoriteState
-import com.syaremych.composable_architecture.prelude.identity
+import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.favoriteMoviesState
+import com.sergeyfitis.moviekeeper.feature_movies_favorite.ui.FavoriteMoviesRootView
 import com.syaremych.composable_architecture.store.Store
 import com.syaremych.composable_architecture.store.ViewStore
 import com.syaremych.composable_architecture.store.view
@@ -21,10 +21,10 @@ class MoviesFavoriteFragment(
     private val store: Store<FavoriteFeatureState, FavoriteFeatureAction>
 ) : Fragment() {
 
-    private val viewStore: ViewStore<FavoriteState, FavoriteFeatureAction> =
+    private val viewStore: ViewStore<FavoriteState, FavoriteMoviesAction> =
         store.scope(
-            toLocalValue = FavoriteFeatureState.favoriteState::get,
-            toGlobalAction = ::identity
+            toLocalValue = FavoriteFeatureState.favoriteMoviesState::get,
+            toGlobalAction = FavoriteFeatureAction.favoriteMoviesAction::reverseGet
         ).view
 
     override fun onCreateView(
@@ -33,10 +33,7 @@ class MoviesFavoriteFragment(
         savedInstanceState: Bundle?
     ) = ComposeView(requireContext()).apply {
         setContent {
-            val state by viewStore.collectAsState(initial = viewStore.value)
-            LazyColumnFor(items = state.favoriteMovies) { movie ->
-
-            }
+            FavoriteMoviesRootView(viewStore = viewStore)
         }
     }
 
@@ -44,4 +41,18 @@ class MoviesFavoriteFragment(
         store.release()
         super.onDestroy()
     }
+
+    companion object
 }
+
+val MoviesFavoriteFragment.Companion.Factory: (Store<FavoriteFeatureState, FavoriteFeatureAction>) -> FragmentFactory
+    get() = {
+        object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                if (className == MoviesFavoriteFragment::class.java.canonicalName) {
+                    return MoviesFavoriteFragment(store = it)
+                }
+                return super.instantiate(classLoader, className)
+            }
+        }
+    }

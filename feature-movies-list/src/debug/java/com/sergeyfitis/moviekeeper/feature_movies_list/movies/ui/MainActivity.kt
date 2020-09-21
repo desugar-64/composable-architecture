@@ -12,7 +12,7 @@ import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer.moviesFeatureReducer
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.store.Store
@@ -68,6 +68,5 @@ class MainActivity : AppCompatActivity() {
                 .add(container.id, featureFragment)
                 .commitNow()
         }
-//        launchFragmentInContainer { featureFragment }
     }
 }

@@ -1,7 +1,7 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TabRow
@@ -12,7 +12,7 @@ import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.MovieItem
 import com.syaremych.composable_architecture.store.*
@@ -36,7 +36,7 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
             val stateHolder = viewStore.collectAsState(viewStore.value)
             LazyColumnFor(
                 stateHolder.value.movies,
-                contentPadding = InnerPadding(bottom = 16.dp),
+                contentPadding = PaddingValues(bottom = 16.dp),
             ) { item ->
                 MovieViewItem(
                     item = item,

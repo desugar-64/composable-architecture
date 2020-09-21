@@ -11,19 +11,16 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawShadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.MovieItem
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import ui.MoviePoster
 
 @Composable
 fun MovieViewItem(
@@ -96,27 +93,9 @@ fun MovieViewItem(
         }
 
         MoviePoster(
+            modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
             url = item.posterUrl,
-            posterWidth = posterWidth
+            posterWidth = posterWidth.dp
         )
     }
-}
-
-@Composable
-private fun MoviePoster(modifier: Modifier = Modifier, url: String, posterWidth: Int) {
-    val posterShape = remember { RoundedCornerShape(4.dp) }
-    val posterModifier = modifier
-        .padding(start = 16.dp, bottom = 16.dp)
-        .preferredWidth(posterWidth.dp)
-        .aspectRatio(.6f)
-        .drawShadow(elevation = 8.dp, shape = posterShape)
-        .background(Color.LightGray)
-        .border(0.5.dp, Color.LightGray, posterShape)
-        .clip(posterShape)
-
-    CoilImageWithCrossfade(
-        data = url,
-        contentScale = ContentScale.Crop,
-        modifier = posterModifier
-    )
 }
