@@ -11,9 +11,11 @@ import com.sergeyfitis.moviekeeper.navigation.AppNavigator
 import com.sergeyfitis.moviekeeper.navigation.movie.AppMovieNavigator
 import com.sergeyfitis.moviekeeper.navigation.movielist.AppMovieListNavigator
 import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
+import com.sergeyfitis.moviekeeper.statemanagement.action.favoriteFeatureAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.movieFeatureAction
 import com.sergeyfitis.moviekeeper.statemanagement.action.moviesFeatureAction
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
+import com.sergeyfitis.moviekeeper.statemanagement.appstate.favoriteFeatureState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieFeatureState
 import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesFeatureState
 import com.sergeyfitis.moviekeeper.statemanagement.environment.AppEnvironment
@@ -74,10 +76,17 @@ class MovieApp : Application() {
                 toGlobalAction = AppAction.moviesFeatureAction::reverseGet
             )
         }
+        val favoriteStoreLazy = {
+            appStore.scope(
+                toLocalValue = AppState.favoriteFeatureState::get,
+                toGlobalAction = AppAction.favoriteFeatureAction::reverseGet
+            )
+        }
         appFragmentFactory = AppFragmentFactory(
             appNavigatorLazy,
             moviesStoreLazy,
-            movieStoreLazy
+            movieStoreLazy,
+            favoriteStoreLazy
         )
     }
 }

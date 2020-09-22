@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
+import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
@@ -92,7 +93,7 @@ internal fun State.Companion.init(featureState: MoviesFeatureState): State {
             MovieItem(
                 id = movie.id,
                 title = movie.title,
-                posterUrl = "https://image.tmdb.org/t/p/w500/${movie.poster}",
+                posterUrl = movie.completePosterUrl(),
                 rating = movie.voteAverage,
                 voted = movie.voteCount,
                 isFavorite = featureState.favorites.any { movie.id == it }

@@ -15,3 +15,7 @@ data class Movie(
     @SerialName("vote_average")
     val voteAverage: Float
 )
+
+fun Movie.completePosterUrl(): String {
+    return "https://image.tmdb.org/t/p/w185/$poster"
+}

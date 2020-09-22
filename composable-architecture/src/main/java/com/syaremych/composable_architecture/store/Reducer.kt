@@ -1,7 +1,6 @@
 package com.syaremych.composable_architecture.store
 
 import com.syaremych.composable_architecture.prelude.types.Lens
-import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
 import kotlinx.coroutines.flow.map
 
@@ -44,7 +43,7 @@ fun <Value : Any,
 ): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
     return Reducer { globalValue, globalAction, globalEnvironment ->
         val localAction = action.get(globalAction)
-        if (localAction is Option.None) return@Reducer reduced(globalValue, noEffects())
+        if (localAction.isEmpty) return@Reducer reduced(globalValue, noEffects())
 
         val localValue = value.get(globalValue)
         val localEnvironment = environment.invoke(globalEnvironment)

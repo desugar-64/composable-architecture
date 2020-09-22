@@ -1,7 +1,7 @@
 package com.sergeyfitis.moviekeeper.navigation.movielist
 
 import androidx.navigation.NavController
-import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragmentDirections.Companion.actionMoviesFragmentToMovieDetailsFragment
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragmentDirections
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 
 class AppMovieListNavigator(
@@ -9,7 +9,7 @@ class AppMovieListNavigator(
 ) : MovieListNavigation {
 
     override fun openMovieDetails(movieId: Int) {
-        val action = actionMoviesFragmentToMovieDetailsFragment(movieId)
+        val action = MoviesFragmentDirections.actionMoviesFragmentToMovieGraph(movieId)
         navigation.navigate(action)
     }
 }

@@ -9,22 +9,18 @@
         android:id="@+id/moviesFragment"
         android:name="com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment"
         android:label="fragment_movies"
-        tools:layout="@layout/fragment_movies" >
+        tools:layout="@layout/fragment_movies">
         <action
-            android:id="@+id/action_moviesFragment_to_movieDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            android:id="@+id/action_moviesFragment_to_movieGraph"
+            app:destination="@id/movie_navigation">
+            <argument
+                android:name="movieId"
+                app:argType="integer" />
+        </action>
     </fragment>
-    <fragment
-        android:id="@+id/movieDetailsFragment"
-        android:name="com.sergeyfitis.moviekeeper.feature_movie.MovieDetailsFragment"
-        android:label="fragment_movie_details"
-        tools:layout="@layout/fragment_movie_details" >
-        <argument
-            android:name="movieId"
-            app:argType="integer" />
-    </fragment>
+    <include app:graph="@navigation/movie_navigation" />
     <fragment
         android:id="@+id/moviesFavoriteFragment"
-        android:name="com.sergeyfitis.moviekeeper.ui.favorite.MoviesFavoriteFragment"
+        android:name="com.sergeyfitis.moviekeeper.feature_movies_favorite.MoviesFavoriteFragment"
         android:label="MoviesFavoriteFragment" />
 </navigation>
