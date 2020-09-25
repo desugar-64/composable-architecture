@@ -10,12 +10,18 @@ data class Movie(
     val title: String,
     @SerialName("poster_path")
     var poster: String,
+    @SerialName("backdrop_path")
+    var backdrop: String,
     @SerialName("vote_count")
     val voteCount: Int,
     @SerialName("vote_average")
     val voteAverage: Float
 )
 
+fun Movie.completeBackdropUrl(): String {
+    return "https://image.tmdb.org/t/p/w300/$backdrop"
+}
+
 fun Movie.completePosterUrl(): String {
-    return "https://image.tmdb.org/t/p/w185/$poster"
+    return "https://image.tmdb.org/t/p/w342/$poster"
 }

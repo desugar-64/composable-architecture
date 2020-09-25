@@ -15,7 +15,7 @@ import com.syaremych.composable_architecture.store.Store
 class MainActivity : AppCompatActivity() {
 
     private val movie = Movie(
-        0, "The Movie", "", 1000, 5.5f
+        0, "The Movie", "", "", 1000, 5.5f
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

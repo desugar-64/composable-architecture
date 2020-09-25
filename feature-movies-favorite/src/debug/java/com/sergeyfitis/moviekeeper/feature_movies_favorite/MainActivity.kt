@@ -10,8 +10,8 @@ import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.FavoriteFeat
 import com.syaremych.composable_architecture.store.Store
 
 private val movies = listOf(
-    Movie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", 500, 6.0f),
-    Movie(1, "Superman: Man of Tomorrow", "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg", 1501, 7.0f)
+    Movie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", "", 500, 6.0f),
+    Movie(1, "Superman: Man of Tomorrow", "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg", "", 1501, 7.0f)
 )
 
 internal val Store.Companion.mock

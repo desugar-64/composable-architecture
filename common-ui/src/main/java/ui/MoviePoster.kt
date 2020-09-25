@@ -2,13 +2,11 @@ package ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -23,21 +21,26 @@ fun MoviePoster(
     modifier: Modifier = Modifier,
     url: String,
     posterWidth: Dp,
-    shape: Shape = RoundedCornerShape(4.dp)
+    shape: Shape = RoundedCornerShape(8.dp),
+    aspectRatio: Float = 0.6f,
+    onClick: () -> Unit = {}
 ) {
     val posterModifier = modifier
-        .preferredWidth(posterWidth)
-        .aspectRatio(.6f)
         .drawShadow(elevation = 8.dp, shape = shape)
+        .width(posterWidth)
+        .aspectRatio(aspectRatio)
         .background(Color.LightGray)
         .border(0.5.dp, Color.LightGray, shape)
-        .clip(shape)
+        .clickable(onClick = onClick)
 
-    CoilImageWithCrossfade(
-        data = url,
-        contentScale = ContentScale.Crop,
-        modifier = posterModifier
-    )
+    Column {
+        CoilImageWithCrossfade(
+            data = url,
+            contentScale = ContentScale.Crop,
+            modifier = posterModifier
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+    }
 }
 
 @Preview(backgroundColor = 0xffffffL, showBackground = true)

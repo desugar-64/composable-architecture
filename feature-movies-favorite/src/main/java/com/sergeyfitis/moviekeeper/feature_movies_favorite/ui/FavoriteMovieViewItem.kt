@@ -55,5 +55,5 @@ fun FavoriteMovieViewItem(movie: Movie) {
 @Preview(device = Devices.NEXUS_5, backgroundColor = 0xffffffL, showBackground = true)
 @Composable
 private fun ItemPreview() {
-    FavoriteMovieViewItem(movie = Movie(0, "Some movie", "", 10, 7f))
+    FavoriteMovieViewItem(movie = Movie(0, "Some movie", "", "", 10, 7f))
 }
