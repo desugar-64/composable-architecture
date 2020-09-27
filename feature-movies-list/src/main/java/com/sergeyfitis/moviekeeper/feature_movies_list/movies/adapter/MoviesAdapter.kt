@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.RemoteMovie
 
-typealias OnMovieItemClicked = (movie: Movie) -> Unit
+typealias OnMovieItemClicked = (movie: RemoteMovie) -> Unit
 
 class MoviesAdapter(
-    private val movies: List<Movie>,
+    private val movies: List<RemoteMovie>,
     private val onMovieItemClicked: OnMovieItemClicked
 ) : RecyclerView.Adapter<MoviesHolder>() {
 
@@ -40,13 +40,13 @@ class MoviesHolder(
 ) : RecyclerView.ViewHolder(itemView) {
     private val title: TextView = itemView.findViewById(android.R.id.text1)
 
-    private lateinit var movie: Movie
+    private lateinit var movie: RemoteMovie
 
     init {
         title.setOnClickListener { onMovieItemClicked(movie) }
     }
 
-    fun bind(movie: Movie) {
+    fun bind(movie: RemoteMovie) {
         this.movie = movie
         title.text = movie.title
     }

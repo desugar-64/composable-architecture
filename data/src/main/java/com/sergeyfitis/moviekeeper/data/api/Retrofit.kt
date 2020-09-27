@@ -13,7 +13,10 @@ private val baseRetrofit: Retrofit = Retrofit
     .baseUrl(BuildConfig.BASE_URL)
     .client(baseOkHttpClient)
     .addConverterFactory(
-        Json { ignoreUnknownKeys = true }
+        Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
             .asConverterFactory("json/application".toMediaType())
     )
     .build()

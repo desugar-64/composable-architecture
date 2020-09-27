@@ -3,8 +3,8 @@ package com.sergeyfitis.moviekeeper.feature_movies_list.movies
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
+import com.sergeyfitis.moviekeeper.data.models.RemoteMovie
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer.moviesFeatureReducer
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.state.MoviesFeatureState
@@ -19,8 +19,8 @@ import org.junit.runner.RunWith
 class MoviesFragmentTest {
 
     private val movies = listOf(
-        Movie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", 500, 6.0f),
-        Movie(1, "Superman: Man of Tomorrow", "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg", 1501, 7.0f)
+        RemoteMovie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", 500, 6.0f),
+        RemoteMovie(1, "Superman: Man of Tomorrow", "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg", 1501, 7.0f)
     )
 
     @Test

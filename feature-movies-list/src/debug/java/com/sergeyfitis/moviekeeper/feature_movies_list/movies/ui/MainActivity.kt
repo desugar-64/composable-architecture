@@ -7,14 +7,13 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
+import com.sergeyfitis.moviekeeper.data.models.RemoteMovie
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.MoviesFragment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.environment.MoviesFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer.moviesFeatureReducer
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
-import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.store.Store
 
 /* Activity to work on the feature in isolation */
@@ -22,13 +21,22 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MoviesListFeatureTest"
 
     private val movies = listOf(
-        Movie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", "", 500, 6.0f),
-        Movie(1, "Superman: Man of Tomorrow", "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg", "", 1501, 7.0f)
+        RemoteMovie(0, "Rogue", "/uOw5JD8IlD546feZ6oxbIjvN66P.jpg", "", 500, 6.0f),
+        RemoteMovie(
+            1,
+            "Superman: Man of Tomorrow",
+            "/6Bbq8qQWpoApLZYWFFAuZ1r2gFw.jpg",
+            "",
+            1501,
+            7.0f
+        )
     )
 
-    private val mockEnvironment = MoviesFeatureEnvironment {
-        MoviesResponse(movies)
-    }
+    private val mockEnvironment = MoviesFeatureEnvironment(
+        nowPlayingMovies = { MoviesResponse(movies) },
+        upcomingMovies = { MoviesResponse(movies) },
+        topRatedMovies = { MoviesResponse(movies) }
+    )
 
     val navigation = object : MovieListNavigation {
         override fun openMovieDetails(movieId: Int) {
@@ -38,11 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private val featureStore =
         Store.init(
-            initialState = MoviesFeatureState(
-                selectedMovie = Option.empty(),
-                movies = emptyList(),
-                favorites = setOf(0)
-            ),
+            initialState = MoviesFeatureState.init(),
             reducer = moviesFeatureReducer,
             environment = mockEnvironment
         )

@@ -25,7 +25,9 @@ val appReducer: Reducer<AppState, AppAction, AppEnvironment> =
             action = AppAction.moviesFeatureAction,
             environment = { appEnvironment ->
                 MoviesFeatureEnvironment(
-                    movies = appEnvironment.moviesClient.popular
+                    nowPlayingMovies = appEnvironment.moviesClient.nowPlaying,
+                    upcomingMovies = appEnvironment.moviesClient.upcoming,
+                    topRatedMovies = appEnvironment.moviesClient.topRated
                 )
             }
         ),

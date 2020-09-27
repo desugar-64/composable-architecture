@@ -1,6 +1,5 @@
 package com.sergeyfitis.moviekeeper.statemanagement.appstate
 
-import com.sergeyfitis.moviekeeper.data.models.Movie
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieFeatureState
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.FavoriteFeatureState
@@ -18,7 +17,7 @@ data class AppState(
 ) {
     companion object {
         fun initial() = AppState(
-            moviesFeatureState = MoviesFeatureState(Option.empty(), emptyList(), emptySet()),
+            moviesFeatureState = MoviesFeatureState.init(),
             movieFeatureState = Option.empty(),
             favoriteFeatureState = FavoriteFeatureState.init(),
             movieState = Option.empty()
@@ -33,8 +32,7 @@ val AppState.Companion.moviesFeatureState: Lens<AppState, MoviesFeatureState>
             appState.copy(
                 moviesFeatureState = moviesFeatureState,
                 favoriteFeatureState = appState.favoriteFeatureState.copy(
-                    moviesFeatureState.favorites,
-                    moviesFeatureState.movies.associateBy(Movie::id)
+                    movies = moviesFeatureState.movies
                 )
             )
         }
@@ -64,9 +62,6 @@ val AppState.Companion.favoriteFeatureState: Lens<AppState, FavoriteFeatureState
     get() = Lens(
         get = AppState::favoriteFeatureState,
         set = { appState, favoriteFeatureState ->
-            appState.copy(
-                favoriteFeatureState = favoriteFeatureState,
-                moviesFeatureState = appState.moviesFeatureState.copy(favorites = favoriteFeatureState.favoriteMovies)
-            )
+            appState.copy(favoriteFeatureState = favoriteFeatureState)
         }
     )

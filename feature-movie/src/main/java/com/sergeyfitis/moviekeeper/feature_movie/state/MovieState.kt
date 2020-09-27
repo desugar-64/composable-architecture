@@ -1,12 +1,13 @@
 package com.sergeyfitis.moviekeeper.feature_movie.state
 
-import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 
 data class MovieFeatureState(
-    val selectedMovie: Movie,
-    val favoriteMovies: Set<Movie>
+    val selectedMovie: MovieDTO,
+    val favoriteMovies: Set<MovieDTO>
+
 ) {
     companion object
 }
@@ -39,7 +40,7 @@ val MovieFeatureState.Companion.movieState
     )
 
 data class MovieState(
-    val movie: Movie,
+    val movie: MovieDTO,
     val isFavorite: Boolean
 ) {
     companion object

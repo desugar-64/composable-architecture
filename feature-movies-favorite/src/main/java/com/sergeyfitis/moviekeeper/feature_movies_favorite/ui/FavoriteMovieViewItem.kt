@@ -16,12 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
-import com.sergeyfitis.moviekeeper.data.models.Movie
+import com.sergeyfitis.moviekeeper.data.models.Category
+import com.sergeyfitis.moviekeeper.data.models.MovieDTO
 import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
 import ui.MoviePoster
 
 @Composable
-fun FavoriteMovieViewItem(movie: Movie) {
+fun FavoriteMovieViewItem(movie: MovieDTO) {
     val outerShape = RoundedCornerShape(16.dp)
     val innerShape = RoundedCornerShape(8.dp)
 
@@ -55,5 +56,5 @@ fun FavoriteMovieViewItem(movie: Movie) {
 @Preview(device = Devices.NEXUS_5, backgroundColor = 0xffffffL, showBackground = true)
 @Composable
 private fun ItemPreview() {
-    FavoriteMovieViewItem(movie = Movie(0, "Some movie", "", "", 10, 7f))
+    FavoriteMovieViewItem(movie = MovieDTO(0, "Some movie", "", "", 10, 7f, Category.TOP_RATED))
 }

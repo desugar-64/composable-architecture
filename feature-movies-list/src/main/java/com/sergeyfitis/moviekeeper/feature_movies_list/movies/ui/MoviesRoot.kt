@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -16,13 +14,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
-import com.sergeyfitis.moviekeeper.data.models.completeBackdropUrl
-import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
+import com.sergeyfitis.moviekeeper.data.models.MovieDTO
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieListNavigation
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.MovieItem
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.toItem
 import com.syaremych.composable_architecture.store.*
 import ui.MoviePoster
 
@@ -38,27 +36,29 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
             )
             ScrollableColumn {
                 val state by viewStore.collectAsState(viewStore.value)
+                onDispose(callback = viewStore::dispose)
                 val onClick: (MovieItem) -> () -> Unit = onClick@{ movie ->
                     return@onClick {
                         viewStore.send(Action.MovieTapped(movie.id))
                         navigator.openMovieDetails(movie.id)
                     }
                 }
-                MoviesRow(
-                    rowTitle = "Now Playing"
-                ) {
-                    MoviesHorizontalList(state.movies) { movieItem ->
+
+                MoviesRow(rowTitle = "Now Playing") {
+                    MoviesHorizontalList(state.nowPlaying) { movieItem ->
                         MoviePosterItem(
                             posterUrl = movieItem.posterUrl,
                             onClick = onClick(movieItem)
                         )
                     }
                 }
-
-                MoviesRow(
-                    rowTitle = "Upcoming"
-                ) {
-                    MoviesHorizontalList(state.movies) { movieItem ->
+                MoviesRow(rowTitle = "Upcoming") {
+                    MoviesHorizontalList(state.upcoming) { movieItem ->
+                        MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                    }
+                }
+                MoviesRow(rowTitle = "Top Rated") {
+                    MoviesHorizontalList(state.topRated) { movieItem ->
                         MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
                     }
                 }
@@ -94,7 +94,7 @@ private fun MovieBackdropItem(
             aspectRatio = 1.6f,
             posterWidth = posterWidth
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = item.title,
             style = MaterialTheme.typography.body1,
@@ -149,13 +149,29 @@ private fun MoviesRow(
 private fun RootPreview() {
     val mockStore = Store.init<State, Action, Unit>(
         initialState = State(
-            listOf(
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, false)
+            nowPlaying = listOf(
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
+            ),
+            upcoming = listOf(
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
+            ),
+            topRated = listOf(
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
             )
         ),
         reducer = Reducer { state, _, _ -> reduced(state, noEffects()) },
@@ -171,45 +187,35 @@ private fun RootPreview() {
 
 
 // Local domain specific state and action
-internal data class State(val movies: List<MovieItem>) {
+@Immutable
+internal data class State(
+    val nowPlaying: List<MovieItem>,
+    val upcoming: List<MovieItem>,
+    val topRated: List<MovieItem>,
+) {
     companion object
 }
 
 internal sealed class Action {
     object LoadList : Action()
     data class MovieTapped(val movieId: Int) : Action()
-    data class FavoriteToggle(val movieId: Int, val isFavorite: Boolean) : Action()
 }
 
 internal fun State.Companion.init(featureState: MoviesFeatureState): State {
-    return State(
-        movies = featureState.movies.map { movie ->
-            MovieItem(
-                id = movie.id,
-                title = movie.title,
-                posterUrl = movie.completePosterUrl(),
-                backdropUrl = movie.completeBackdropUrl(),
-                rating = movie.voteAverage,
-                voted = movie.voteCount,
-                isFavorite = featureState.favorites.any { movie.id == it }
-            )
-        }
-    )
+    return with(featureState) {
+        State(
+            nowPlaying = nowPlaying.mapNotNull(movies::get).map(MovieDTO::toItem),
+            upcoming = upcoming.mapNotNull(movies::get).map(MovieDTO::toItem),
+            topRated = topRated.mapNotNull(movies::get).map(MovieDTO::toItem)
+        )
+    }
 }
 
 internal fun MoviesFeatureAction.Companion.init(action: Action): MoviesFeatureAction {
     return when (action) {
         Action.LoadList -> MoviesFeatureAction.Movies(MoviesAction.LoadMovies)
         is Action.MovieTapped -> MoviesFeatureAction.Movies(
-            MoviesAction.MovieTapped(
-                action.movieId
-            )
-        )
-        is Action.FavoriteToggle -> MoviesFeatureAction.Movies(
-            MoviesAction.ToggleFavorite(
-                action.movieId,
-                action.isFavorite
-            )
+            MoviesAction.MovieTapped(action.movieId)
         )
     }
 }

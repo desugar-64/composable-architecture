@@ -53,3 +53,5 @@ inline fun <T> Option<T>.getOrThrow(): T = fold({
 }, ::identity)
 
 fun <T> T?.toOption(): Option<T> = Option.ofNullable(this)
+
+fun <K, V> Map<K, V>.getOption(key: K): Option<V> = this[key].toOption()
