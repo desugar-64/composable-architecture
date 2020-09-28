@@ -5,21 +5,18 @@ package com.syaremych.composable_architecture.store
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-class Effect<out A> : Flow<A> {
-    private val upstream: Flow<A>
-
-    constructor(flow: Flow<A>) {
-        upstream = flow
-    }
+class Effect<out A>(flow: Flow<A>) : Flow<A> {
+    private val upstream: Flow<A> = flow
 
     @InternalCoroutinesApi
     override suspend fun collect(collector: FlowCollector<A>) {
         upstream.collect(collector)
     }
 
-    fun receiveOn(dispatcher: CoroutineDispatcher): Effect<A> {
+    fun runOn(dispatcher: CoroutineDispatcher): Effect<A> {
         return upstream.flowOn(dispatcher).eraseToEffect()
     }
 
@@ -37,3 +34,13 @@ fun <T> Effect.Companion.sync(work: () -> T): Effect<T> =
 
 fun <T> Effect.Companion.fireAndForget(work: () -> Unit): Effect<T> =
     flow<T> { work(); emitAll(emptyFlow()) }.eraseToEffect()
+
+// TODO: replace later with Flow#flattenMerge api
+fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> = channelFlow<T> {
+    val ch = this.channel
+    effects.forEach { effect ->
+        launch {
+            effect.collect(ch::send)
+        }
+    }
+}.eraseToEffect()

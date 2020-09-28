@@ -16,10 +16,7 @@ import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.emptyList
 import com.syaremych.composable_architecture.prelude.types.getOption
-import com.syaremych.composable_architecture.store.Reducer
-import com.syaremych.composable_architecture.store.noEffects
-import com.syaremych.composable_architecture.store.pullback
-import com.syaremych.composable_architecture.store.reduced
+import com.syaremych.composable_architecture.store.*
 import kotlinx.coroutines.Dispatchers
 
 internal val moviesViewReducer =
@@ -29,14 +26,18 @@ internal val moviesViewReducer =
                 value = state.copy(selectedMovie = state.movies.getOption(action.movieId)),
                 effects = noEffects()
             ) // navigation to the screen details
-            MoviesAction.LoadMovies -> reduced(
-                value = state,
-                effects = listOf(
-                    loadNowPlayingEffect(environment.nowPlayingMovies).receiveOn(Dispatchers.Main),
-                    loadUpcomingEffect(environment.upcomingMovies).receiveOn(Dispatchers.Main),
-                    loadTopRatedEffect(environment.topRatedMovies).receiveOn(Dispatchers.Main),
+            MoviesAction.LoadMovies -> {
+                reduced(
+                    value = state,
+                    effects = listOf(
+                        Effect.merge(
+                            loadNowPlayingEffect(environment.nowPlayingMovies),
+                            loadUpcomingEffect(environment.upcomingMovies),
+                            loadTopRatedEffect(environment.topRatedMovies),
+                        ).runOn(Dispatchers.IO)
+                    )
                 )
-            )
+            }
             is MoviesAction.MoviesLoaded -> reduced(state.updateMovies(action.result), noEffects())
         }
     }

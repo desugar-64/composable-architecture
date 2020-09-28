@@ -113,6 +113,7 @@ private fun MoviePosterItem(
     posterUrl: String,
     onClick: () -> Unit
 ) {
+
     MoviePoster(
         modifier = modifier,
         url = posterUrl,

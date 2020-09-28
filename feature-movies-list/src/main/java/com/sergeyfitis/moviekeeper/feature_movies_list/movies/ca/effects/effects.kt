@@ -23,9 +23,7 @@ private val toCategorizedDto: (Category) -> suspend (value: Either<Throwable, Li
     }
 
 fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
-    return flow {
-        emit(Either.recover { getMovies.invoke() })
-    }
+    return flow { emit(Either.recover { getMovies.invoke() }) }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.NOW_PLAYING))
         .map(MoviesAction::MoviesLoaded)
