@@ -61,3 +61,8 @@ fun <Value : Any,
         )
     }
 }
+
+fun <Value : Any, Action : Any, Environment> Reducer.Companion.empty() =
+    Reducer<Value, Action, Environment> { value, _, _ ->
+        reduced(value, noEffects())
+    }

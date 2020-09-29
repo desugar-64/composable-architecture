@@ -5,7 +5,6 @@ package com.syaremych.composable_architecture.store
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class Effect<out A>(flow: Flow<A>) : Flow<A> {
@@ -35,12 +34,22 @@ fun <T> Effect.Companion.sync(work: () -> T): Effect<T> =
 fun <T> Effect.Companion.fireAndForget(work: () -> Unit): Effect<T> =
     flow<T> { work(); emitAll(emptyFlow()) }.eraseToEffect()
 
-// TODO: replace later with Flow#flattenMerge api
-fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> = channelFlow<T> {
-    val ch = this.channel
-    effects.forEach { effect ->
-        launch {
-            effect.collect(ch::send)
-        }
-    }
-}.eraseToEffect()
+/**
+ * Merges a sequence of effects together into a single effect, which runs the effects at the same
+ * time.
+ */
+fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> =
+    effects
+        .asFlow()
+        .flattenMerge(concurrency = effects.size)
+        .eraseToEffect()
+
+/**
+ * Concatenates a collection of effects together into a single effect,
+ * which runs the effects one after the other.
+ */
+fun <T> Effect.Companion.concat(vararg effects: Effect<T>): Effect<T> =
+    effects
+        .asFlow()
+        .flattenConcat()
+        .eraseToEffect()
