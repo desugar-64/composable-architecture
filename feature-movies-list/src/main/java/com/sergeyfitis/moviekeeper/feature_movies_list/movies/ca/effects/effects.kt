@@ -4,6 +4,7 @@ import com.sergeyfitis.moviekeeper.data.models.*
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.recover
+import com.syaremych.composable_architecture.prelude.types.right
 import com.syaremych.composable_architecture.prelude.types.rmap
 import com.syaremych.composable_architecture.store.Effect
 import com.syaremych.composable_architecture.store.eraseToEffect
@@ -24,7 +25,6 @@ private val toCategorizedDto: (Category) -> suspend (value: Either<Throwable, Li
 
 fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
     return flow {
-        kotlinx.coroutines.delay(3000)
         emit(Either.recover { getMovies.invoke() })
     }
         .map(extractMovieResponse)
@@ -34,7 +34,10 @@ fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<Movies
 }
 
 fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
-    return flow { emit(Either.recover { getMovies.invoke() }) }
+    return flow {
+        val movies = getMovies.invoke()
+        emit(movies.right())
+    }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.UPCOMING))
         .map(MoviesAction::MoviesLoaded)

@@ -24,21 +24,24 @@ internal val moviesViewReducer =
         when (action) {
             is MoviesAction.MovieTapped -> reduced(
                 value = state.copy(selectedMovie = state.movies.getOption(action.movieId)),
-                effects = noEffects()
+                effect = Effect.none()
             ) // navigation to the screen details
             MoviesAction.LoadMovies -> {
-                reduced(
+                val merge = Effect.merge(
+                    loadNowPlayingEffect(environment.nowPlayingMovies),
+                    loadUpcomingEffect(environment.upcomingMovies),
+                    loadTopRatedEffect(environment.topRatedMovies)
+                ).runOn(Dispatchers.IO)
+                val reduced = reduced(
                     value = state,
-                    effects = listOf(
-                        Effect.merge(
-                            loadNowPlayingEffect(environment.nowPlayingMovies),
-                            loadUpcomingEffect(environment.upcomingMovies),
-                            loadTopRatedEffect(environment.topRatedMovies),
-                        ).runOn(Dispatchers.IO)
-                    )
+                    effect = merge
                 )
+                reduced
             }
-            is MoviesAction.MoviesLoaded -> reduced(state.updateMovies(action.result), noEffects())
+            is MoviesAction.MoviesLoaded -> reduced(
+                value = state.updateMovies(action.result),
+                effect = Effect.none()
+            )
         }
     }
 

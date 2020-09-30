@@ -5,13 +5,16 @@ package com.syaremych.composable_architecture.store
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-class Effect<out A>(flow: Flow<A>) : Flow<A> {
+class Effect<A>(flow: Flow<A>) : AbstractFlow<A>() {
     private val upstream: Flow<A> = flow
 
-    @InternalCoroutinesApi
-    override suspend fun collect(collector: FlowCollector<A>) {
+    var isEmpty: Boolean = false
+
+    @OptIn(InternalCoroutinesApi::class)
+    override suspend fun collectSafely(collector: FlowCollector<A>) {
         upstream.collect(collector)
     }
 
@@ -24,9 +27,24 @@ class Effect<out A>(flow: Flow<A>) : Flow<A> {
 
 fun <T> Flow<T>.eraseToEffect(): Effect<T> = Effect(this)
 
-inline fun <Action> emptyEffect(): Effect<Action> = emptyFlow<Action>().eraseToEffect()
+@Deprecated(
+    "Use Effect.none()", ReplaceWith(
+        "Effect.none()",
+        "com.syaremych.composable_architecture.store.none"
+    )
+)
+inline fun <Action> emptyEffect(): Effect<Action> = listOf<Action>().asFlow().eraseToEffect()
 
+@Deprecated(
+    "Obsolete", ReplaceWith(
+        "Effect.none()",
+        "com.syaremych.composable_architecture.store.none"
+    )
+)
 inline fun <Action> noEffects(): List<Effect<Action>> = emptyList()
+
+inline fun <Action> Effect.Companion.none() =
+    emptyFlow<Action>().eraseToEffect().apply { isEmpty = true }
 
 fun <T> Effect.Companion.sync(work: () -> T): Effect<T> =
     flowOf(work()).eraseToEffect()

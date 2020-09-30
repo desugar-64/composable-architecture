@@ -17,7 +17,7 @@ class StoreTest {
             }
         store.send(Unit)
         store.send(Unit)
-        Assert.assertEquals(store.value, 2)
+        Assert.assertEquals(store.valueHolder, 2)
 
         val newStore = store.view<Int, Unit>(
             toLocalValue = { it },
@@ -28,9 +28,9 @@ class StoreTest {
         newStore.send(Unit)
         newStore.send(Unit)
         Assert.assertEquals(newStore.value, 5)
-        Assert.assertEquals(store.value, 5)
+        Assert.assertEquals(store.valueHolder, 5)
         store.send(Unit)
         Assert.assertEquals(newStore.value, 6)
-        Assert.assertEquals(store.value, 6)
+        Assert.assertEquals(store.valueHolder, 6)
     }
 }

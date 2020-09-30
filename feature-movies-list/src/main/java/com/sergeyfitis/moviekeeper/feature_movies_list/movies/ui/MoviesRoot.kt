@@ -175,7 +175,7 @@ private fun RootPreview() {
                 MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
             )
         ),
-        reducer = Reducer { state, _, _ -> reduced(state, noEffects()) },
+        reducer = Reducer.empty(),
         environment = Unit
     )
     val navigator = object : MovieListNavigation {

@@ -12,7 +12,7 @@ import com.syaremych.composable_architecture.store.*
 internal val favoriteMoviesReducer: Reducer<FavoriteState, FavoriteMoviesAction, Unit> =
     Reducer { state, action, _ ->
         when (action) {
-            FavoriteMoviesAction.Load -> reduced(state, noEffects()) // TODO: load favorite movies
+            FavoriteMoviesAction.Load -> reduced(state, Effect.none()) // TODO: load favorite movies
             is FavoriteMoviesAction.ToggleFavorite -> {
                 val newState = state.copy(favoriteMovies =
                 state.favoriteMovies.toMutableSet().apply {
@@ -23,7 +23,7 @@ internal val favoriteMoviesReducer: Reducer<FavoriteState, FavoriteMoviesAction,
                     }
                 }
                 )
-                reduced(newState, noEffects())
+                reduced(newState, Effect.none())
             }
         }
     }
