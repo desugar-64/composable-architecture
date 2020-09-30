@@ -9,15 +9,15 @@ class ViewStore<Value : Any, Action : Any>(
     initialValue: Value,
     val send: (Action) -> Unit,
     private val doOnDispose: () -> Unit
-) : Flow<Value> {
+) : AbstractFlow<Value>() {
 
     internal val _viewState: MutableStateFlow<Value> = MutableStateFlow(initialValue)
 
-    val value: Value
-        get() = _viewState.value
+    val viewState: StateFlow<Value>
+        get() = _viewState
 
     @InternalCoroutinesApi
-    override suspend fun collect(collector: FlowCollector<Value>) {
+    override suspend fun collectSafely(collector: FlowCollector<Value>) {
         _viewState.collect(collector)
     }
 
@@ -25,21 +25,24 @@ class ViewStore<Value : Any, Action : Any>(
 }
 
 fun <Value, Action> Store<Value, Action>.view(
-    acceptUpdateIf: (Value, Value) -> Boolean
+    areEquivalent: (Value, Value) -> Boolean
 ): ViewStore<Value, Action> where Value: Any, Action: Any {
     val viewStore = ViewStore(
-        initialValue = valueHolder.value,
+        initialValue = stateHolder.value,
         send = ::send,
         doOnDispose = ::release
     )
 
-    valueHolder
-        .distinctUntilChanged(acceptUpdateIf)
-        .onEach { viewStore._viewState.value = it }
+    stateHolder
+        .distinctUntilChanged(areEquivalent)
+        .onEach {
+            print("Store update in ViewStore = $it")
+            viewStore._viewState.value = it
+        }
         .launchIn(storeScope)
 
     return viewStore
 }
 
 val <Value : Any, Action : Any> Store<Value, Action>.view: ViewStore<Value, Action>
-    get() = view(acceptUpdateIf = { lhs, rhs -> lhs != rhs })
+    get() = view(areEquivalent = { lhs, rhs -> lhs == rhs })

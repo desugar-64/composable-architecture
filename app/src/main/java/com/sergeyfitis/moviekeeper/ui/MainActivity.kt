@@ -14,10 +14,13 @@ import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects.loadNowPlayingEffect
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects.loadTopRatedEffect
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects.loadUpcomingEffect
+import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects.loadUpcomingEffect2
 import com.syaremych.composable_architecture.store.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,22 +41,23 @@ class MainActivity : AppCompatActivity() {
 //            flowOf(2)
 //                .onCompletion { Log.d("MainActivity", "flowOf completed") }
 //                .collect { i -> Log.d("MainActivity", "i=$i") }
-
+            val mutex = Mutex()
             Effect.merge(
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
-                loadUpcomingEffect { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
+                loadUpcomingEffect2 { MoviesResponse(emptyList()) },
             )
                 .catch { Log.e("MainActivity", it.localizedMessage); it.printStackTrace() }
-                .map { delay(1); it }
                 .collect {
-                    Log.d("MainActivity", "action=$it")
+                    mutex.withLock {
+                        Log.d("MainActivity", "action=$it")
+                    }
                 }
         }
     }

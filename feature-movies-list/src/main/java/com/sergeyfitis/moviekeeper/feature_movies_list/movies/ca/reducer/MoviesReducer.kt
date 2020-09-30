@@ -24,10 +24,10 @@ internal val moviesViewReducer =
         when (action) {
             is MoviesAction.MovieTapped -> reduced(
                 value = state.copy(selectedMovie = state.movies.getOption(action.movieId)),
-                effect = Effect.none()
+                effect = EffectImpl.none()
             ) // navigation to the screen details
             MoviesAction.LoadMovies -> {
-                val merge = Effect.merge(
+                val merge = EffectImpl.merge(
                     loadNowPlayingEffect(environment.nowPlayingMovies),
                     loadUpcomingEffect(environment.upcomingMovies),
                     loadTopRatedEffect(environment.topRatedMovies)
@@ -40,7 +40,7 @@ internal val moviesViewReducer =
             }
             is MoviesAction.MoviesLoaded -> reduced(
                 value = state.updateMovies(action.result),
-                effect = Effect.none()
+                effect = EffectImpl.none()
             )
         }
     }

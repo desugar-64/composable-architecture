@@ -6,8 +6,10 @@ import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.recover
 import com.syaremych.composable_architecture.prelude.types.right
 import com.syaremych.composable_architecture.prelude.types.rmap
-import com.syaremych.composable_architecture.store.Effect
+import com.syaremych.composable_architecture.store.EffectImpl
+import com.syaremych.composable_architecture.store.Effect2
 import com.syaremych.composable_architecture.store.eraseToEffect
+import com.syaremych.composable_architecture.store.eraseToEffect2
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
@@ -23,7 +25,7 @@ private val toCategorizedDto: (Category) -> suspend (value: Either<Throwable, Li
         }
     }
 
-fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
+fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): EffectImpl<MoviesAction> {
     return flow {
         emit(Either.recover { getMovies.invoke() })
     }
@@ -33,7 +35,7 @@ fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<Movies
         .eraseToEffect()
 }
 
-fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
+fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): EffectImpl<MoviesAction> {
     return flow {
         val movies = getMovies.invoke()
         emit(movies.right())
@@ -44,7 +46,18 @@ fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAc
         .eraseToEffect()
 }
 
-fun loadTopRatedEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
+fun loadUpcomingEffect2(getMovies: suspend () -> MoviesResponse): Effect2<MoviesAction> {
+    return flow {
+        val movies = getMovies.invoke()
+        emit(movies.right())
+    }
+        .map(extractMovieResponse)
+        .map(toCategorizedDto(Category.UPCOMING))
+        .map(MoviesAction::MoviesLoaded)
+        .eraseToEffect2()
+}
+
+fun loadTopRatedEffect(getMovies: suspend () -> MoviesResponse): EffectImpl<MoviesAction> {
     return flow { emit(Either.recover { getMovies.invoke() }) }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.TOP_RATED))

@@ -13,13 +13,16 @@ inline fun <Value, Action> reduced(
     effect: Effect<Action>
 ): Reduced<Value, Action> = value to effect
 
+inline fun <Value, Action> reduced(value: Value) =
+    reduced<Value, Action>(value, Effect.none())
+
 class Store<Value : Any, Action : Any> private constructor(
-    storeDispatcher: CoroutineDispatcher
+    private val storeDispatcher: CoroutineDispatcher
 ) {
 
     private lateinit var _valueHolder: MutableStateFlow<Value>
 
-    val valueHolder: StateFlow<Value>
+    val stateHolder: StateFlow<Value>
         get() = _valueHolder
 
     private lateinit var reducer: Reducer<Value, Action, Any>
@@ -32,16 +35,15 @@ class Store<Value : Any, Action : Any> private constructor(
 
     internal fun send(action: Action) {
         storeScope.launch {
+            println("Store send, thread = ${Thread.currentThread().name}:${Thread.currentThread().id}")
             val (value, effect) = reducer(_valueHolder.value, action, environment)
             this@Store._valueHolder.value = value
-//            ensureActive()
-            if (!effect.isEmpty) {
-                effect
-                    .onEach {
-                        send(it)
-                    }
-                    .launchIn(this)
-            }
+            ensureActive()
+            effect
+                .onEach {
+                    send(it)
+                }
+                .launchIn(this)
         }
     }
 
@@ -56,7 +58,8 @@ class Store<Value : Any, Action : Any> private constructor(
                 val localValue = toLocalValue(_valueHolder.value)
                 return@Reducer reduced(localValue, Effect.none())
             },
-            environment = environment
+            environment = environment,
+            storeDispatcher = storeDispatcher
         )
 
         _valueHolder
