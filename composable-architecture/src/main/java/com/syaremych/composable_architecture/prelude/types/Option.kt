@@ -12,10 +12,12 @@ sealed class Option<out A> {
         override val isEmpty: Boolean = true
         override val value: Nothing
             get() = throw RuntimeException("Nothing to unwrap")
+        override fun toString() = "Option.None"
     }
 
     data class Some<out A>(override val value: A) : Option<A>() {
         override val isEmpty: Boolean = false
+        override fun toString() = "Option.Some(value=$value)"
     }
 
     inline infix fun <B> map(f: (A) -> B): Option<B> =

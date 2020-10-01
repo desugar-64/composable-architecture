@@ -22,26 +22,30 @@ import kotlinx.coroutines.Dispatchers
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
-            is MoviesAction.MovieTapped -> reduced(
-                value = state.copy(selectedMovie = state.movies.getOption(action.movieId)),
-                effect = EffectImpl.none()
-            ) // navigation to the screen details
+            is MoviesAction.MovieTapped -> {
+                val reduced = reduced<MoviesState, MoviesAction>(
+                    value = state.copy(selectedMovie = state.movies.getOption(action.movieId))
+                )
+                reduced // navigation to the screen details
+            }
             MoviesAction.LoadMovies -> {
-                val merge = EffectImpl.merge(
+                val merge = Effect.merge(
                     loadNowPlayingEffect(environment.nowPlayingMovies),
                     loadUpcomingEffect(environment.upcomingMovies),
                     loadTopRatedEffect(environment.topRatedMovies)
-                ).runOn(Dispatchers.IO)
+                )
                 val reduced = reduced(
                     value = state,
                     effect = merge
                 )
                 reduced
             }
-            is MoviesAction.MoviesLoaded -> reduced(
-                value = state.updateMovies(action.result),
-                effect = EffectImpl.none()
-            )
+            is MoviesAction.MoviesLoaded -> {
+                val reduced = reduced<MoviesState, MoviesAction>(
+                    value = state.updateMovies(action.result)
+                )
+                reduced
+            }
         }
     }
 

@@ -4,6 +4,7 @@ package com.syaremych.composable_architecture.store
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.util.concurrent.Executors
 
 
 typealias Reduced<Value, Action> = Pair<Value, Effect<Action>>
@@ -82,7 +83,8 @@ class Store<Value : Any, Action : Any> private constructor(
             initialState: Value,
             reducer: Reducer<Value, Action, Environment>,
             environment: Environment,
-            storeDispatcher: CoroutineDispatcher = Dispatchers.Default
+            storeDispatcher: CoroutineDispatcher =
+                Executors.newSingleThreadExecutor().asCoroutineDispatcher() // Store must be single threaded
         ): Store<Value, Action> {
             val store = Store<Value, Action>(storeDispatcher)
             store._valueHolder = MutableStateFlow(initialState)

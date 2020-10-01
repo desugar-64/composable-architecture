@@ -35,7 +35,7 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
                 style = MaterialTheme.typography.h4
             )
             ScrollableColumn {
-                val state by viewStore.collectAsState(viewStore.viewState)
+                val state by viewStore.collectAsState(viewStore.viewState.value)
                 onDispose(callback = viewStore::dispose)
                 val onClick: (MovieItem) -> () -> Unit = onClick@{ movie ->
                     return@onClick {

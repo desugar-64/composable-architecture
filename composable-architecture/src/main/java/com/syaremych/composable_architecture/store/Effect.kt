@@ -8,58 +8,69 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlin.experimental.ExperimentalTypeInference
 
-interface Effect<A> : Flow<A>{
-    fun runOn(dispatcher: CoroutineDispatcher): Effect<A>
-    companion object
-}
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalTypeInference::class)
-internal class EffectImpl<A>(@BuilderInference private val block: suspend FlowCollector<A>.() -> Unit) : AbstractFlow<A>(), Effect<A> {
+class Effect<out A>(private val upstream: Flow<A>) : Flow<A> {
+
+    constructor(@BuilderInference block: suspend FlowCollector<A>.() -> Unit) : this(flow(block))
+
+    constructor(value: A) : this(flowOf(value))
 
     @OptIn(InternalCoroutinesApi::class)
-    override suspend fun collectSafely(collector: FlowCollector<A>) {
-        collector.block()
+    override suspend fun collect(collector: FlowCollector<A>) {
+        upstream.collect(collector)
     }
 
-    override fun runOn(dispatcher: CoroutineDispatcher): Effect<A> {
+    fun runOn(dispatcher: CoroutineDispatcher): Effect<A> {
         return flowOn(dispatcher).eraseToEffect()
     }
 
     companion object
 }
 
-fun <T> Flow<T>.eraseToEffect(): Effect<T> = EffectImpl { emitAll(this@eraseToEffect) }
-
+fun <T> Flow<T>.eraseToEffect(): Effect<T> = Effect(this)
 
 inline fun <Action> Effect.Companion.none() =
-    emptyFlow<Action>().eraseToEffect()
+    Effect(emptyFlow<Action>())
 
 fun <T> Effect.Companion.sync(work: () -> T): Effect<T> =
-    flowOf(work()).eraseToEffect()
+    Effect(work())
 
 fun <T> Effect.Companion.fireAndForget(work: () -> Unit): Effect<T> =
-    flow<T> { work(); emitAll(emptyFlow()) }.eraseToEffect()
+    Effect { work(); emitAll(emptyFlow()) }
 
 /**
  * Merges a sequence of effects together into a single effect, which runs the effects at the same
  * time.
  */
-fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> =
-    effects
+fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> {
+    if (effects.isEmpty()) {
+        return none()
+    }
+    return effects
         .asFlow()
         .flattenMerge(concurrency = effects.size)
         .eraseToEffect()
+}
 
-fun <T> Effect.Companion.merge(vararg flows: Flow<T>): Effect<T> =
-    flows
+fun <T> Effect.Companion.merge(vararg flows: Flow<T>): Effect<T> {
+    if (flows.isEmpty()) {
+        return none()
+    }
+    return flows
         .asFlow()
         .flattenMerge(concurrency = flows.size).eraseToEffect()
+}
 
-fun <T> Effect.Companion.merge(effects: List<Effect<T>>): Effect<T> =
-    effects
+fun <T> Effect.Companion.merge(effects: List<Effect<T>>): Effect<T> {
+    if (effects.isEmpty()) {
+        return none()
+    }
+    return effects
         .asFlow()
         .flattenMerge(concurrency = effects.size)
         .eraseToEffect()
+}
 
 /**
  * Concatenates a collection of effects together into a single effect,

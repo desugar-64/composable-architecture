@@ -21,15 +21,16 @@ fun <Value : Any,
         Action : Any,
         Environment> Reducer.Companion.combine(vararg reducers: Reducer<Value, Action, Environment>) =
     Reducer<Value, Action, Environment> { value, action, environment ->
+
         var reducedValue: Value = value
-        var reducedEffect = Effect.none<Action>()
+        val reducedEffects = mutableListOf<Effect<Action>>()
 
         for (reducer in reducers) {
             val (newValue, effect) = reducer(reducedValue, action, environment)
             reducedValue = newValue
-            reducedEffect = effect
+            reducedEffects.add(effect)
         }
-        return@Reducer reduced(reducedValue, reducedEffect)
+        return@Reducer reduced(reducedValue, Effect.concat(reducedEffects))
     }
 
 fun <Value : Any,
@@ -44,7 +45,7 @@ fun <Value : Any,
 ): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
     return Reducer { globalValue, globalAction, globalEnvironment ->
         val localAction = action.get(globalAction)
-        if (localAction.isEmpty) return@Reducer reduced(globalValue, Effect.none())
+        if (localAction.isEmpty) return@Reducer reduced(globalValue)
 
         val localValue = value.get(globalValue)
         val localEnvironment = environment.invoke(globalEnvironment)
