@@ -5,8 +5,8 @@ import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Prism
 import kotlinx.coroutines.flow.map
 
-class Reducer<Value, Action, Environment>(
-    internal val reducer: (Value, Action, Environment) -> Reduced<Value, Action>
+open class Reducer<Value, Action, Environment>(
+    internal val reduce: (Value, Action, Environment) -> Reduced<Value, Action>
 ) where Value : Any, Action : Any {
     companion object
 }
@@ -15,7 +15,7 @@ operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.in
     value: Value,
     action: Action,
     environment: Environment
-) where Value : Any, Action : Any = reducer(value, action, environment)
+) where Value : Any, Action : Any = reduce(value, action, environment)
 
 fun <Value : Any,
         Action : Any,
