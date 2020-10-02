@@ -17,29 +17,26 @@ import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.emptyList
 import com.syaremych.composable_architecture.prelude.types.getOption
 import com.syaremych.composable_architecture.store.*
-import kotlinx.coroutines.Dispatchers
 
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
-            is MoviesAction.MovieTapped -> reduced(
-                value = state.copy(selectedMovie = state.movies.getOption(action.movieId)),
-                effects = noEffects()
-            ) // navigation to the screen details
-            MoviesAction.LoadMovies -> {
-                reduced(
-                    value = state,
-                    effects = listOf(
-                        Effect.merge(
-                            loadNowPlayingEffect(environment.nowPlayingMovies),
-                            loadUpcomingEffect(environment.upcomingMovies),
-                            loadTopRatedEffect(environment.topRatedMovies),
-                        ).runOn(Dispatchers.IO)
-                    )
+            is MoviesAction.MovieTapped -> reduced<MoviesState, MoviesAction>(
+                value = state.copy(selectedMovie = state.movies.getOption(action.movieId))
+            )
+            MoviesAction.LoadMovies -> reduced(
+                value = state,
+                effect = Effect.merge(
+                    loadNowPlayingEffect(environment.nowPlayingMovies),
+                    loadUpcomingEffect(environment.upcomingMovies),
+                    loadTopRatedEffect(environment.topRatedMovies)
                 )
-            }
-            is MoviesAction.MoviesLoaded -> reduced(state.updateMovies(action.result), noEffects())
+            )
+            is MoviesAction.MoviesLoaded -> reduced<MoviesState, MoviesAction>(
+                value = state.updateMovies(action.result)
+            )
         }
+        // navigation to the screen details
     }
 
 // Assemble a big feature reducer from its tiny reducers that describes the feature

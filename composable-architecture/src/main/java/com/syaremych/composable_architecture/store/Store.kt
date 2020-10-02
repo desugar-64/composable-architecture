@@ -2,59 +2,47 @@
 
 package com.syaremych.composable_architecture.store
 
-import android.util.Log
-import com.syaremych.composable_architecture.store.Store.Subscriber
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import java.util.*
-import kotlin.collections.HashSet
+import kotlinx.coroutines.flow.*
+import java.util.concurrent.Executors
 
 
-typealias Reduced<Value, Action> = Pair<Value, List<Effect<Action>>>
+typealias Reduced<Value, Action> = Pair<Value, Effect<Action>>
 
 inline fun <Value, Action> reduced(
     value: Value,
-    effects: List<Effect<Action>>
-): Reduced<Value, Action> = value to effects
+    effect: Effect<Action>
+): Reduced<Value, Action> = value to effect
+
+inline fun <Value, Action> reduced(value: Value) =
+    reduced<Value, Action>(value, Effect.none())
 
 class Store<Value : Any, Action : Any> private constructor(
-    storeDispatcher: CoroutineDispatcher
+    private val storeDispatcher: CoroutineDispatcher
 ) {
 
-    fun interface Subscriber<Value> {
-        fun render(value: Value)
-    }
+    private lateinit var _valueHolder: MutableStateFlow<Value>
 
-    // TODO: Use Mutex for consistent value updates
-    @Volatile
-    lateinit var value: Value
-        internal set
+    val stateHolder: StateFlow<Value>
+        get() = _valueHolder
 
     private lateinit var reducer: Reducer<Value, Action, Any>
 
     private lateinit var environment: Any
 
-    private val subscribers: MutableSet<Subscriber<Value>> =
-        Collections.synchronizedSet(HashSet())
-
-    private val storeScope = CoroutineScope(SupervisorJob() + storeDispatcher)
-
-    internal var onStoreReleased: (() -> Unit)? = null
-
-    fun subscribe(subscriber: Subscriber<Value>) {
-        subscribers.add(subscriber)
-        subscriber.render(value)
-    }
+    internal val storeScope = CoroutineScope(SupervisorJob() + storeDispatcher)
 
     internal fun send(action: Action) {
         storeScope.launch {
-            val (value, effects) = reducer(value, action, environment)
-            this@Store.value = value
-            effects.forEach { effect ->
-                ensureActive()
-                effect.collect { action: Action -> send(action) }
-            }
-            notifySubscribers()
+            println("Store send, thread = ${Thread.currentThread().name}:${Thread.currentThread().id}")
+            val (value, effect) = reducer.reduce(_valueHolder.value, action, environment)
+            this@Store._valueHolder.value = value
+            ensureActive()
+            effect
+                .onEach {
+                    send(it)
+                }
+                .launchIn(this)
         }
     }
 
@@ -63,44 +51,26 @@ class Store<Value : Any, Action : Any> private constructor(
         toGlobalAction: (LocalAction) -> Action
     ): Store<LocalValue, LocalAction> {
         val localStore = init<LocalValue, LocalAction, Any>(
-            initialState = toLocalValue(value),
+            initialState = toLocalValue(_valueHolder.value),
             reducer = Reducer { _, localAction, _ ->
                 this.send(toGlobalAction(localAction))
-                val localValue = toLocalValue(value)
-                return@Reducer reduced(localValue, noEffects())
+                val localValue = toLocalValue(_valueHolder.value)
+                return@Reducer reduced(localValue, Effect.none())
             },
-            environment = environment
+            environment = environment,
+            storeDispatcher = storeDispatcher
         )
 
-        val storeToViewUpdateNotifier = Subscriber<Value> { value ->
-            localStore.value = toLocalValue(value)
-            localStore.notifySubscribers()
-            Log.d("Local Store", "subscribe#render invoked")
-        }
-
-        localStore.onStoreReleased = {
-            unsubscribe(storeToViewUpdateNotifier)
-        }
-
-        subscribe(storeToViewUpdateNotifier)
+        _valueHolder
+            .map { newValue -> toLocalValue(newValue) }
+            .onEach { localStore._valueHolder.value = it }
+            .launchIn(storeScope)
 
         return localStore
     }
 
     fun release() {
-        subscribers.clear()
-        onStoreReleased?.invoke()
-        onStoreReleased = null
         storeScope.cancel()
-    }
-
-    fun unsubscribe(subscriber: Subscriber<Value>) {
-        subscribers.remove(subscriber)
-    }
-
-    private fun notifySubscribers() {
-        Log.d("Store", "notifySubscribers invoked. Subscribers count: ${subscribers.size}")
-        subscribers.forEach { it.render(value) }
     }
 
     companion object {
@@ -109,14 +79,15 @@ class Store<Value : Any, Action : Any> private constructor(
             initialState: Value,
             reducer: Reducer<Value, Action, Environment>,
             environment: Environment,
-            storeDispatcher: CoroutineDispatcher = Dispatchers.Main.immediate
+            storeDispatcher: CoroutineDispatcher =
+                Executors.newSingleThreadExecutor().asCoroutineDispatcher() // Store must be single threaded
         ): Store<Value, Action> {
             val store = Store<Value, Action>(storeDispatcher)
-            store.value = initialState
+            store._valueHolder = MutableStateFlow(initialState)
             store.environment = environment
             store.reducer = Reducer { value, action, env ->
-                val (state, effects) = reducer(value, action, env as Environment)
-                return@Reducer reduced(state, effects)
+                val (state, effect) = reducer.reduce(value, action, env as Environment)
+                return@Reducer reduced(state, effect)
             }
             return store
         }

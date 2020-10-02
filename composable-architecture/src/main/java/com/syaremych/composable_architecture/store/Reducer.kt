@@ -1,34 +1,43 @@
 package com.syaremych.composable_architecture.store
 
+import android.util.Log
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Prism
 import kotlinx.coroutines.flow.map
+// TODO: Wait for Kotlin 1.4.10 fix, for some reason `fun interface` gives an invalid bytecode
+//  kotlin java.lang.ClassFormatError: Bad method name at constant pool
+/*fun*/ interface Reducer<Value : Any, Action : Any, Environment> {
+    fun reduce(value: Value, action: Action, environment: Environment): Reduced<Value, Action>
 
-class Reducer<Value, Action, Environment>(
-    internal val reducer: (Value, Action, Environment) -> Reduced<Value, Action>
-) where Value : Any, Action : Any {
-    companion object
+    companion object {
+        operator fun <Value : Any, Action : Any, Environment>  invoke(
+            reducer: (Value, Action, Environment) -> Reduced<Value, Action>
+        ) = object : Reducer<Value, Action, Environment> {
+            override fun reduce(
+                value: Value,
+                action: Action,
+                environment: Environment
+            ): Reduced<Value, Action> {
+                return reducer(value, action, environment)
+            }
+        }
+    }
 }
-
-operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.invoke(
-    value: Value,
-    action: Action,
-    environment: Environment
-) where Value : Any, Action : Any = reducer(value, action, environment)
 
 fun <Value : Any,
         Action : Any,
         Environment> Reducer.Companion.combine(vararg reducers: Reducer<Value, Action, Environment>) =
     Reducer<Value, Action, Environment> { value, action, environment ->
+
         var reducedValue: Value = value
-        val listOfEffects = mutableListOf<Effect<Action>>()
+        val reducedEffects = mutableListOf<Effect<Action>>()
 
         for (reducer in reducers) {
-            val (v, effects) = reducer(reducedValue, action, environment)
-            reducedValue = v
-            listOfEffects.addAll(effects)
+            val (newValue, effect) = reducer.reduce(reducedValue, action, environment)
+            reducedValue = newValue
+            reducedEffects.add(effect)
         }
-        return@Reducer reduced(reducedValue, listOfEffects)
+        return@Reducer reduced(reducedValue, Effect.concat(reducedEffects))
     }
 
 fun <Value : Any,
@@ -43,26 +52,27 @@ fun <Value : Any,
 ): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
     return Reducer { globalValue, globalAction, globalEnvironment ->
         val localAction = action.get(globalAction)
-        if (localAction.isEmpty) return@Reducer reduced(globalValue, noEffects())
+        if (localAction.isEmpty) return@Reducer reduced(globalValue)
 
         val localValue = value.get(globalValue)
         val localEnvironment = environment.invoke(globalEnvironment)
 
-        val (reducedLocalValue, reducedLocalEffects)
-                = this@pullback(localValue, localAction.value, localEnvironment)
+        val (reducedLocalValue, reducedLocalEffect)
+                = this@pullback.reduce(localValue, localAction.value, localEnvironment)
 
         return@Reducer reduced(
             value.set(globalValue, reducedLocalValue),
-            reducedLocalEffects.map { localEffect ->
-                localEffect
-                    .map { localAction -> action.reverseGet(localAction) }
-                    .eraseToEffect()
-            }
+            reducedLocalEffect
+                .map { ac ->
+                    Log.d("pullback", ac.toString())
+                    action.reverseGet(ac)
+                }
+                .eraseToEffect()
         )
     }
 }
 
 fun <Value : Any, Action : Any, Environment> Reducer.Companion.empty() =
     Reducer<Value, Action, Environment> { value, _, _ ->
-        reduced(value, noEffects())
+        reduced(value, Effect.none())
     }

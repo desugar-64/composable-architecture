@@ -14,11 +14,11 @@ import com.syaremych.composable_architecture.store.*
 internal val movieViewReducer: Reducer<Option<MovieState>, MovieAction, MovieFeatureEnvironment> =
     Reducer { state, action, _ ->
         when (action) {
-            is MovieAction.LoadDetails -> reduced(state, noEffects()) // load some additional stuff
+            is MovieAction.LoadDetails -> reduced(state, Effect.none()) // load some additional stuff
             is MovieAction.DetailsLoaded -> TODO()
             is MovieAction.ToggleFavorite -> reduced(
                 value = state.map { it.copy(isFavorite = action.isFavorite) },
-                effects = noEffects()
+                effect = Effect.none()
             )
         }
     }
