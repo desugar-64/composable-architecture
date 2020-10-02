@@ -10,7 +10,7 @@ import kotlin.experimental.ExperimentalTypeInference
 
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalTypeInference::class)
-class Effect<out A>(private val upstream: Flow<A>) : Flow<A> {
+open class Effect<out A>(private val upstream: Flow<A>) : Flow<A> {
 
     constructor(@BuilderInference block: suspend FlowCollector<A>.() -> Unit) : this(flow(block))
 
@@ -53,6 +53,10 @@ fun <T> Effect.Companion.merge(vararg effects: Effect<T>): Effect<T> {
         .eraseToEffect()
 }
 
+/**
+ * Merges a sequence of effects together into a single effect, which runs the effects at the same
+ * time.
+ */
 fun <T> Effect.Companion.merge(vararg flows: Flow<T>): Effect<T> {
     if (flows.isEmpty()) {
         return none()
@@ -62,6 +66,10 @@ fun <T> Effect.Companion.merge(vararg flows: Flow<T>): Effect<T> {
         .flattenMerge(concurrency = flows.size).eraseToEffect()
 }
 
+/**
+ * Merges a sequence of effects together into a single effect, which runs the effects at the same
+ * time.
+ */
 fun <T> Effect.Companion.merge(effects: List<Effect<T>>): Effect<T> {
     if (effects.isEmpty()) {
         return none()
@@ -82,6 +90,10 @@ fun <T> Effect.Companion.concat(vararg effects: Effect<T>): Effect<T> =
         .flattenConcat()
         .eraseToEffect()
 
+/**
+ * Concatenates a collection of effects together into a single effect,
+ * which runs the effects one after the other.
+ */
 fun <T> Effect.Companion.concat(flows: List<Flow<T>>): Effect<T> =
     flows
         .asFlow()

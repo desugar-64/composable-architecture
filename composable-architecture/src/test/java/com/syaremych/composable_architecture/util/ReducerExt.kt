@@ -15,7 +15,7 @@ internal class TestReducer<V : Any, A : Any, E> {
     fun prepareReducer(reduce: (V, A, E) -> Reduced<V, A>): Reducer<V, A, E> {
         val testReduce = { v: V, a: A, e: E ->
             reduce(v, a, e).also {
-                _callCount.compareAndSet(0, callCount + 1)
+                _callCount.incrementAndGet()
                 reduceChannel.offer(Unit)
             }
         }

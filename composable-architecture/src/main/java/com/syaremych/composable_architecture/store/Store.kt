@@ -32,12 +32,10 @@ class Store<Value : Any, Action : Any> private constructor(
 
     internal val storeScope = CoroutineScope(SupervisorJob() + storeDispatcher)
 
-    internal var onStoreReleased: (() -> Unit)? = null
-
     internal fun send(action: Action) {
         storeScope.launch {
             println("Store send, thread = ${Thread.currentThread().name}:${Thread.currentThread().id}")
-            val (value, effect) = reducer(_valueHolder.value, action, environment)
+            val (value, effect) = reducer.reduce(_valueHolder.value, action, environment)
             this@Store._valueHolder.value = value
             ensureActive()
             effect
@@ -72,8 +70,6 @@ class Store<Value : Any, Action : Any> private constructor(
     }
 
     fun release() {
-        onStoreReleased?.invoke()
-        onStoreReleased = null
         storeScope.cancel()
     }
 
@@ -90,7 +86,7 @@ class Store<Value : Any, Action : Any> private constructor(
             store._valueHolder = MutableStateFlow(initialState)
             store.environment = environment
             store.reducer = Reducer { value, action, env ->
-                val (state, effect) = reducer(value, action, env as Environment)
+                val (state, effect) = reducer.reduce(value, action, env as Environment)
                 return@Reducer reduced(state, effect)
             }
             return store

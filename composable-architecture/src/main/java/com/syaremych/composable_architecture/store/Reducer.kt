@@ -4,18 +4,25 @@ import android.util.Log
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Prism
 import kotlinx.coroutines.flow.map
+// TODO: Wait for Kotlin 1.4.10 fix, for some reason `fun interface` gives an invalid bytecode
+//  kotlin java.lang.ClassFormatError: Bad method name at constant pool
+/*fun*/ interface Reducer<Value : Any, Action : Any, Environment> {
+    fun reduce(value: Value, action: Action, environment: Environment): Reduced<Value, Action>
 
-open class Reducer<Value, Action, Environment>(
-    internal val reduce: (Value, Action, Environment) -> Reduced<Value, Action>
-) where Value : Any, Action : Any {
-    companion object
+    companion object {
+        operator fun <Value : Any, Action : Any, Environment>  invoke(
+            reducer: (Value, Action, Environment) -> Reduced<Value, Action>
+        ) = object : Reducer<Value, Action, Environment> {
+            override fun reduce(
+                value: Value,
+                action: Action,
+                environment: Environment
+            ): Reduced<Value, Action> {
+                return reducer(value, action, environment)
+            }
+        }
+    }
 }
-
-operator fun <Value, Action, Environment> Reducer<Value, Action, Environment>.invoke(
-    value: Value,
-    action: Action,
-    environment: Environment
-) where Value : Any, Action : Any = reduce(value, action, environment)
 
 fun <Value : Any,
         Action : Any,
@@ -26,7 +33,7 @@ fun <Value : Any,
         val reducedEffects = mutableListOf<Effect<Action>>()
 
         for (reducer in reducers) {
-            val (newValue, effect) = reducer(reducedValue, action, environment)
+            val (newValue, effect) = reducer.reduce(reducedValue, action, environment)
             reducedValue = newValue
             reducedEffects.add(effect)
         }
@@ -51,7 +58,7 @@ fun <Value : Any,
         val localEnvironment = environment.invoke(globalEnvironment)
 
         val (reducedLocalValue, reducedLocalEffect)
-                = this@pullback(localValue, localAction.value, localEnvironment)
+                = this@pullback.reduce(localValue, localAction.value, localEnvironment)
 
         return@Reducer reduced(
             value.set(globalValue, reducedLocalValue),

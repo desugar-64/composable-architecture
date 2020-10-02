@@ -1,17 +1,19 @@
 package com.syaremych.composable_architecture.store
 
+import com.nhaarman.mockitokotlin2.*
 import com.syaremych.composable_architecture.store.StoreTest.Act
 import com.syaremych.composable_architecture.store.StoreTest.IntState
 import com.syaremych.composable_architecture.util.TestReducer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.concurrent.Executors
 
 @RunWith(MockitoJUnitRunner::class)
 class ReducerTest {
+    private enum class ReducerOrder { FST, SND, TRD }
 
     @Test
     fun reducer_CallReduce() = runBlocking {
@@ -39,7 +41,7 @@ class ReducerTest {
     }
 
     @Test
-    fun reducer_Combine()  = runBlocking {
+    fun reducer_Combine() = runBlocking {
         val state = IntState(0, 0, 0)
         val testReducerFst = TestReducer<IntState, Act, Unit>()
         val testReducerSnd = TestReducer<IntState, Act, Unit>()
@@ -80,9 +82,9 @@ class ReducerTest {
             testReducerTrd.awaitReduce()
         }
 
-        assertEquals(1, testReducerFst.callCount)
-        assertEquals(1, testReducerSnd.callCount)
-        assertEquals(1, testReducerTrd.callCount)
+        assertEquals(3, testReducerFst.callCount)
+        assertEquals(3, testReducerSnd.callCount)
+        assertEquals(3, testReducerTrd.callCount)
 
         assertEquals(state.copy(fst = 3, snd = 3, trd = 3), store.stateHolder.value)
     }
@@ -101,5 +103,66 @@ class ReducerTest {
 
         store.send(Act.Inc)
         assertEquals(state, store.stateHolder.value)
+    }
+
+    @Test
+    fun reducer_EffectPassThroughTheChain() = runBlocking {
+        val state = IntState(0, 0, 0)
+        val effect = mock<Effect<Act.Inc>>()
+
+        val expectedState = state.copy(fst = 1)
+
+        val mockReducer = mock<Reducer<IntState, Act.Inc, Unit>> {
+            on { reduce(any(), any(), any()) } doReturn reduced(expectedState, effect)
+        }
+
+        val store = Store.init(
+            initialState = state,
+            reducer = Reducer.combine(mockReducer),
+            environment = Unit,
+            storeDispatcher = Dispatchers.Unconfined
+        )
+
+        assertEquals(state, store.stateHolder.value)
+
+        store.send(Act.Inc)
+        val stateCaptor = argumentCaptor<IntState>()
+        val envCaptor = argumentCaptor<Unit>()
+        val actCaptor = argumentCaptor<Act.Inc>()
+
+        verify(mockReducer).reduce(stateCaptor.capture(), actCaptor.capture(), envCaptor.capture())
+        val reducedAction = actCaptor.firstValue
+
+        assertEquals(expectedState, store.stateHolder.value)
+        assertEquals(Act.Inc, reducedAction)
+
+        verify(effect).collect(any())
+    }
+
+    @Test
+    fun reducer_CombineCallsAllCombinedReducersInOrder() {
+        val state = IntState(0, 0, 0)
+        val reducerCallOrder = mutableListOf<ReducerOrder>()
+        val reducerFst = Reducer<IntState, Act.Inc, Unit> { intState, _, _ ->
+            reducerCallOrder.add(ReducerOrder.FST)
+            reduced(intState)
+        }
+        val reducerSnd = Reducer<IntState, Act.Inc, Unit> { intState, _, _ ->
+            reducerCallOrder.add(ReducerOrder.SND)
+            reduced(intState)
+        }
+        val reducerTrd = Reducer<IntState, Act.Inc, Unit> { intState, _, _ ->
+            reducerCallOrder.add(ReducerOrder.TRD)
+            reduced(intState)
+        }
+
+        val expectedCallOrder = ReducerOrder.values().toList()
+
+        val combinedReducer =
+            Reducer.combine(reducerFst, reducerSnd, reducerTrd)
+
+        combinedReducer.reduce(state, Act.Inc, Unit)
+
+        assertEquals(expectedCallOrder, reducerCallOrder)
     }
 }

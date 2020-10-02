@@ -17,36 +17,26 @@ import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.emptyList
 import com.syaremych.composable_architecture.prelude.types.getOption
 import com.syaremych.composable_architecture.store.*
-import kotlinx.coroutines.Dispatchers
 
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
-            is MoviesAction.MovieTapped -> {
-                val reduced = reduced<MoviesState, MoviesAction>(
-                    value = state.copy(selectedMovie = state.movies.getOption(action.movieId))
-                )
-                reduced // navigation to the screen details
-            }
-            MoviesAction.LoadMovies -> {
-                val merge = Effect.merge(
+            is MoviesAction.MovieTapped -> reduced<MoviesState, MoviesAction>(
+                value = state.copy(selectedMovie = state.movies.getOption(action.movieId))
+            )
+            MoviesAction.LoadMovies -> reduced(
+                value = state,
+                effect = Effect.merge(
                     loadNowPlayingEffect(environment.nowPlayingMovies),
                     loadUpcomingEffect(environment.upcomingMovies),
                     loadTopRatedEffect(environment.topRatedMovies)
                 )
-                val reduced = reduced(
-                    value = state,
-                    effect = merge
-                )
-                reduced
-            }
-            is MoviesAction.MoviesLoaded -> {
-                val reduced = reduced<MoviesState, MoviesAction>(
-                    value = state.updateMovies(action.result)
-                )
-                reduced
-            }
+            )
+            is MoviesAction.MoviesLoaded -> reduced<MoviesState, MoviesAction>(
+                value = state.updateMovies(action.result)
+            )
         }
+        // navigation to the screen details
     }
 
 // Assemble a big feature reducer from its tiny reducers that describes the feature

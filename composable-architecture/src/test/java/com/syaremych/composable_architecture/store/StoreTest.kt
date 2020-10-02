@@ -1,5 +1,6 @@
 package com.syaremych.composable_architecture.store
 
+import com.nhaarman.mockitokotlin2.mock
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option.Companion.empty
 import com.syaremych.composable_architecture.prelude.types.Prism
@@ -61,9 +62,9 @@ class StoreTest {
                                 .toList()
                 ).runOn(Dispatchers.Default)
             )
-            Act.IncFst -> reduced(intState.copy(fst = intState.fst + 1), Effect.none())
-            Act.IncSnd -> reduced(intState.copy(snd = intState.snd + 1), Effect.none())
-            Act.IncTrd -> reduced(intState.copy(trd = intState.trd + 1), Effect.none())
+            Act.IncFst -> reduced(intState.copy(fst = intState.fst + 1))
+            Act.IncSnd -> reduced(intState.copy(snd = intState.snd + 1))
+            Act.IncTrd -> reduced(intState.copy(trd = intState.trd + 1))
         }
     }
 
@@ -422,5 +423,23 @@ class StoreTest {
 
         store.send(Act.IncFst)
         assertEquals(state, store.stateHolder.value)
+    }
+
+    @Test
+    fun store_ReleaseDisposesScope() {
+        val state = IntState(0, 0, 0)
+        val reducer = mock<Reducer<IntState, Act, Unit>>()
+        val store = Store.init(
+            initialState = state,
+            reducer = reducer,
+            environment = Unit
+        )
+
+        assertEquals(state, store.stateHolder.value)
+        assertTrue(store.storeScope.isActive)
+
+        store.release()
+
+        assertFalse(store.storeScope.isActive)
     }
 }
