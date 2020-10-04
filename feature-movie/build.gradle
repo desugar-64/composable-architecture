@@ -32,8 +32,17 @@ android {
 
     kotlinOptions {
         jvmTarget = jvm.toString()
+        useIR = true
     }
 
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion kotlinV
+        kotlinCompilerExtensionVersion composeV
+    }
 }
 
 dependencies {
@@ -48,8 +57,19 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationKtx"
 
+    implementation "androidx.compose.ui:ui:$composeV"
+    implementation "androidx.compose.foundation:foundation:$composeV"
+    implementation "androidx.compose.foundation:foundation-layout:$composeV"
+    implementation "androidx.compose.material:material:$composeV"
+    implementation "androidx.compose.material:material-icons-extended:$composeV"
+    implementation "androidx.compose.runtime:runtime:$composeV"
+    implementation "androidx.compose.runtime:runtime-livedata:$composeV"
+    implementation "androidx.ui:ui-tooling:$composeV"
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:0.2.2"
+
     implementation project(path: ':composable-architecture')
     implementation project(path: ':data')
+    implementation project(path: ':common-ui')
 
 
     testImplementation 'junit:junit:4.13'

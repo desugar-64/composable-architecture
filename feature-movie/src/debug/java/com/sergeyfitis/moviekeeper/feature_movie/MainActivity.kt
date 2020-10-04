@@ -3,6 +3,7 @@ package com.sergeyfitis.moviekeeper.feature_movie
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.sergeyfitis.moviekeeper.data.models.Category
 import com.sergeyfitis.moviekeeper.data.models.MovieDTO
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieFeatureAction
@@ -37,9 +38,15 @@ class MainActivity : AppCompatActivity() {
 
             )
 
+        val args = Bundle().apply {
+            putInt("movieId", 0)
+        }
+
         val featureFragment = MovieDetailsFragment(
             store
-        )
+        ).apply {
+            arguments = args
+        }
 
         supportFragmentManager.beginTransaction()
             .add(container.id, featureFragment)

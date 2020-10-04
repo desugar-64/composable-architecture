@@ -15,19 +15,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import ext.applyIf
 
 @Composable
 fun MoviePoster(
     modifier: Modifier = Modifier,
     url: String,
-    posterWidth: Dp,
+    posterWidth: Dp = Dp.Unspecified,
     shape: Shape = RoundedCornerShape(8.dp),
     aspectRatio: Float = 0.6f,
+    elevation: Dp = 8.dp,
     onClick: () -> Unit = {}
 ) {
     val posterModifier = modifier
-        .drawShadow(elevation = 8.dp, shape = shape)
-        .width(posterWidth)
+        .drawShadow(elevation = elevation, shape = shape)
+        .applyIf(posterWidth != Dp.Unspecified) { width(posterWidth) }
         .aspectRatio(aspectRatio)
         .background(Color.LightGray)
         .border(0.5.dp, Color.LightGray, shape)
