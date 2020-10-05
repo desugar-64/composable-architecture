@@ -1,5 +1,6 @@
 package com.sergeyfitis.moviekeeper.feature_movie.state
 
+import androidx.compose.runtime.Immutable
 import com.sergeyfitis.moviekeeper.data.models.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
@@ -39,6 +40,7 @@ val MovieFeatureState.Companion.movieState
         }
     )
 
+@Immutable
 data class MovieState(
     val movie: MovieDTO,
     val isFavorite: Boolean
