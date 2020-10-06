@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
+import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.Category
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
-import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
-import ui.MoviePoster
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
 
 @Composable
 fun FavoriteMovieViewItem(movie: MovieDTO) {
@@ -56,5 +56,16 @@ fun FavoriteMovieViewItem(movie: MovieDTO) {
 @Preview(device = Devices.NEXUS_5, backgroundColor = 0xffffffL, showBackground = true)
 @Composable
 private fun ItemPreview() {
-    FavoriteMovieViewItem(movie = MovieDTO(0, "Some movie", "", "", 10, 7f, Category.TOP_RATED))
+    FavoriteMovieViewItem(
+        movie = MovieDTO(
+            id = 0,
+            title = "Some movie",
+            poster = "",
+            backdrop = "",
+            voteCount = 10,
+            voteAverage = 7f,
+            category = Category.TOP_RATED,
+            genres = emptyList()
+        )
+    )
 }

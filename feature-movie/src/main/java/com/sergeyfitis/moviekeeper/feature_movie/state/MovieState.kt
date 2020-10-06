@@ -1,7 +1,7 @@
 package com.sergeyfitis.moviekeeper.feature_movie.state
 
 import androidx.compose.runtime.Immutable
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 

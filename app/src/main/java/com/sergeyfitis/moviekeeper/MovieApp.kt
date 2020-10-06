@@ -5,21 +5,21 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.sergeyfitis.moviekeeper.base.AppActivityLifecycleCallbacks
 import com.sergeyfitis.moviekeeper.base.AppFragmentFactory
+import com.sergeyfitis.moviekeeper.ca.action.AppAction
+import com.sergeyfitis.moviekeeper.ca.action.favoriteFeatureAction
+import com.sergeyfitis.moviekeeper.ca.action.movieFeatureAction
+import com.sergeyfitis.moviekeeper.ca.action.moviesFeatureAction
+import com.sergeyfitis.moviekeeper.ca.appstate.AppState
+import com.sergeyfitis.moviekeeper.ca.appstate.favoriteFeatureState
+import com.sergeyfitis.moviekeeper.ca.appstate.movieFeatureState
+import com.sergeyfitis.moviekeeper.ca.appstate.moviesFeatureState
+import com.sergeyfitis.moviekeeper.ca.environment.AppEnvironment
+import com.sergeyfitis.moviekeeper.ca.reducer.appReducer
 import com.sergeyfitis.moviekeeper.data.api.MoviesClient
 import com.sergeyfitis.moviekeeper.data.api.live
 import com.sergeyfitis.moviekeeper.navigation.AppNavigator
 import com.sergeyfitis.moviekeeper.navigation.movie.AppMovieNavigator
 import com.sergeyfitis.moviekeeper.navigation.movielist.AppMovieListNavigator
-import com.sergeyfitis.moviekeeper.statemanagement.action.AppAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.favoriteFeatureAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.movieFeatureAction
-import com.sergeyfitis.moviekeeper.statemanagement.action.moviesFeatureAction
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.AppState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.favoriteFeatureState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.movieFeatureState
-import com.sergeyfitis.moviekeeper.statemanagement.appstate.moviesFeatureState
-import com.sergeyfitis.moviekeeper.statemanagement.environment.AppEnvironment
-import com.sergeyfitis.moviekeeper.statemanagement.reducer.appReducer
 import com.sergeyfitis.moviekeeper.ui.MainActivity
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.getOrThrow
@@ -33,7 +33,7 @@ class MovieApp : Application() {
             private set
     }
 
-    private val appStore = Store.init<AppState, AppAction, AppEnvironment>(
+    val appStore = Store.init<AppState, AppAction, AppEnvironment>(
         initialState = AppState.initial(),
         reducer = appReducer,
         environment = AppEnvironment(MoviesClient.live)

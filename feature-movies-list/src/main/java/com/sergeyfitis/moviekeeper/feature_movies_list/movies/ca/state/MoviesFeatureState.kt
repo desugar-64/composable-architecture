@@ -1,6 +1,7 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass
 
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
 
@@ -11,6 +12,7 @@ data class MoviesFeatureState(
     val nowPlaying: Set<Int>,
     val upcoming: Set<Int>,
     val topRated: Set<Int>,
+    val genres: Map<Int, GenreDTO>
 ) {
     companion object {
         fun init() = MoviesFeatureState(
@@ -18,7 +20,8 @@ data class MoviesFeatureState(
             movies = emptyMap(),
             nowPlaying = emptySet(),
             upcoming = emptySet(),
-            topRated = emptySet()
+            topRated = emptySet(),
+            genres = emptyMap()
         )
     }
 }
@@ -30,6 +33,7 @@ internal data class MoviesState(
     val nowPlaying: Set<Int>,
     val upcoming: Set<Int>,
     val topRated: Set<Int>,
+    val genres: Map<Int, GenreDTO>
 )
 
 internal val MoviesFeatureState.Companion.moviesState
@@ -40,7 +44,8 @@ internal val MoviesFeatureState.Companion.moviesState
                 movies = featureState.movies,
                 nowPlaying = featureState.nowPlaying,
                 upcoming = featureState.upcoming,
-                topRated = featureState.topRated
+                topRated = featureState.topRated,
+                genres = featureState.genres
             )
         },
         set = { featureState, viewState ->

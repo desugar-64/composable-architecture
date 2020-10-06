@@ -1,7 +1,7 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.reducer
 
 import com.sergeyfitis.moviekeeper.data.models.Category
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.moviesAction

@@ -1,4 +1,4 @@
-package com.sergeyfitis.moviekeeper.statemanagement.environment
+package com.sergeyfitis.moviekeeper.ca.environment
 
 import com.sergeyfitis.moviekeeper.data.api.MoviesClient
 

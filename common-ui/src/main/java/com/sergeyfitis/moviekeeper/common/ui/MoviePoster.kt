@@ -1,4 +1,4 @@
-package ui
+package com.sergeyfitis.moviekeeper.common.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,8 +14,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import com.sergeyfitis.moviekeeper.common.ext.applyIf
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
-import ext.applyIf
 
 @Composable
 fun MoviePoster(

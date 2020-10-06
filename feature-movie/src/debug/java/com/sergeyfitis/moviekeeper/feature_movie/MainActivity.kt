@@ -3,9 +3,8 @@ package com.sergeyfitis.moviekeeper.feature_movie
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import com.sergeyfitis.moviekeeper.data.models.Category
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movie.environment.MovieFeatureEnvironment
 import com.sergeyfitis.moviekeeper.feature_movie.reducer.movieFeatureReducer
@@ -17,7 +16,14 @@ import com.syaremych.composable_architecture.store.Store
 class MainActivity : AppCompatActivity() {
 
     private val movie = MovieDTO(
-        0, "The Movie", "", "", 1000, 5.5f, Category.TOP_RATED
+        id = 0,
+        title = "The Movie",
+        poster = "",
+        backdrop = "",
+        voteCount = 1000,
+        voteAverage = 5.5f,
+        category = Category.TOP_RATED,
+        genres = emptyList()
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

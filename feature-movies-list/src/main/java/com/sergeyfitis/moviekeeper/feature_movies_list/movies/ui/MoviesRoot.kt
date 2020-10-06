@@ -14,7 +14,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
+import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
@@ -22,7 +24,6 @@ import com.sergeyfitis.moviekeeper.feature_movies_list.movies.navigation.MovieLi
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.MovieItem
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model.toItem
 import com.syaremych.composable_architecture.store.*
-import ui.MoviePoster
 
 @Composable
 internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieListNavigation) {
@@ -151,28 +152,28 @@ private fun RootPreview() {
     val mockStore = Store.init<State, Action, Unit>(
         initialState = State(
             nowPlaying = listOf(
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList())
             ),
             upcoming = listOf(
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList())
             ),
             topRated = listOf(
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10),
-                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10)
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
+                MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList())
             )
         ),
         reducer = Reducer.empty(),
@@ -202,12 +203,18 @@ internal sealed class Action {
     data class MovieTapped(val movieId: Int) : Action()
 }
 
+private val extractGenres: (Map<Int, GenreDTO>) -> (MovieDTO) -> MovieItem =
+    { genres ->
+        { movie -> movie.toItem(movie.genres.mapNotNull(genres::get)) }
+    }
+
 internal fun State.Companion.init(featureState: MoviesFeatureState): State {
+    val genres = featureState.genres
     return with(featureState) {
         State(
-            nowPlaying = nowPlaying.mapNotNull(movies::get).map(MovieDTO::toItem),
-            upcoming = upcoming.mapNotNull(movies::get).map(MovieDTO::toItem),
-            topRated = topRated.mapNotNull(movies::get).map(MovieDTO::toItem)
+            nowPlaying = nowPlaying.mapNotNull(movies::get).map(extractGenres(genres)),
+            upcoming = upcoming.mapNotNull(movies::get).map(extractGenres(genres)),
+            topRated = topRated.mapNotNull(movies::get).map(extractGenres(genres))
         )
     }
 }

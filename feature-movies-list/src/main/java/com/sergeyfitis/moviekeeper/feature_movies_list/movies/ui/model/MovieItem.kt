@@ -1,9 +1,10 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
-import com.sergeyfitis.moviekeeper.data.models.completeBackdropUrl
-import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
+import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.completeBackdropUrl
+import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
 
 @Immutable
 data class MovieItem(
@@ -12,14 +13,16 @@ data class MovieItem(
     val posterUrl: String,
     val backdropUrl: String,
     val rating: Float,
-    val voted: Int
+    val voted: Int,
+    val genres: List<GenreDTO>
 )
 
-internal fun MovieDTO.toItem() = MovieItem(
+internal fun MovieDTO.toItem(genres: List<GenreDTO>) = MovieItem(
     id = id,
     title = title,
     posterUrl = completePosterUrl(),
     backdropUrl = completeBackdropUrl(),
     rating = voteAverage,
-    voted = voteCount
+    voted = voteCount,
+    genres = genres
 )

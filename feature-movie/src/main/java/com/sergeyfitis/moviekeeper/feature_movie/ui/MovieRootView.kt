@@ -1,16 +1,19 @@
 package com.sergeyfitis.moviekeeper.feature_movie.ui
 
+import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.FirstBaseline
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.onPositioned
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.text.TextStyle
@@ -19,15 +22,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
+import com.sergeyfitis.moviekeeper.common.ext.horizontalRoundedGradientBackground
+import com.sergeyfitis.moviekeeper.common.theme.colorGoldenTanoi
+import com.sergeyfitis.moviekeeper.common.theme.gradient0
+import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.Category
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
-import com.sergeyfitis.moviekeeper.data.models.completePosterUrl
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.toOption
 import com.syaremych.composable_architecture.store.*
-import ui.MoviePoster
 
 @Composable
 internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>) {
@@ -64,30 +70,63 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
 @Composable
 private fun DetailsContent(movie: MovieDTO) {
     Column {
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                modifier = Modifier
-                    .alignWithSiblings(alignmentLine = FirstBaseline)
-                    .weight(1f, fill = true),
+                modifier = Modifier.weight(1f, fill = true),
                 text = movie.title,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
                 )
             )
-            val ratingShape = RoundedCornerShape(size = 6.dp)
-            Text(
+            Row(
                 modifier = Modifier
-                    .alignWithSiblings(alignmentLine = FirstBaseline)
-                    .background(Color.Yellow, shape = ratingShape)
-                    .border(shape = ratingShape, width = 0.5f.dp, color = Color.Black)
-                    .padding(horizontal = 4.dp),
-                text = "IMDb ${movie.voteAverage}"
-            )
+                    .horizontalRoundedGradientBackground(gradient0)
+                    .padding(vertical = 2.dp, horizontal = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.size(14.dp),
+                    asset = Icons.Filled.StarRate
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(
+                    text = "${movie.voteAverage}",
+                    style = TextStyle(fontWeight = FontWeight.SemiBold),
+                    fontSize = 12.sp
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Runtime: 1h 35min")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            MovieRuntimeIcon()
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Runtime: 1h 35min",
+                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Medium)
+            )
+        }
     }
+}
+
+@Composable
+private fun MovieRuntimeIcon() {
+    Icon(
+        modifier = Modifier
+            .size(18.dp)
+            .drawBehind {
+                val radius = 15f
+                val cx = size.width / 2
+                val topOffset = size.height - radius / 2
+                val cy = topOffset
+                drawCircle(
+                    color = colorGoldenTanoi,
+                    radius = radius,
+                    center = Offset(cx, cy)
+                )
+            },
+        asset = Icons.Filled.AccessTime,
+    )
 }
 
 @Preview(device = Devices.NEXUS_5, showBackground = true, backgroundColor = 0x000000L)
@@ -102,7 +141,8 @@ private fun RootPreview() {
                 backdrop = "/111",
                 voteCount = 1000,
                 voteAverage = 6f,
-                category = Category.TOP_RATED
+                category = Category.TOP_RATED,
+                genres = emptyList()
             ),
             isFavorite = true
         ).toOption(),

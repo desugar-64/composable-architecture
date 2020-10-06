@@ -1,5 +1,6 @@
 package com.sergeyfitis.moviekeeper.data.models
 
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,7 +16,9 @@ data class RemoteMovie(
     @SerialName("vote_count")
     val voteCount: Int,
     @SerialName("vote_average")
-    val voteAverage: Float
+    val voteAverage: Float,
+    @SerialName("genre_ids")
+    val genres: List<Int>
 )
 
 fun RemoteMovie.toDTO(category: Category) = MovieDTO(
@@ -25,5 +28,6 @@ fun RemoteMovie.toDTO(category: Category) = MovieDTO(
     backdrop = backdrop ?: poster,
     voteCount = voteCount,
     voteAverage = voteAverage,
-    category = category
+    category = category,
+    genres = genres
 )

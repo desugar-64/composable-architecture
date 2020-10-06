@@ -8,6 +8,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sergeyfitis.moviekeeper.MovieApp
 import com.sergeyfitis.moviekeeper.R
+import com.sergeyfitis.moviekeeper.ca.action.AppAction
+import com.syaremych.composable_architecture.store.view
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,5 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val mainNavBar = findViewById<BottomNavigationView>(R.id.main_bottom_bar)
         mainNavBar.setupWithNavController(mainNavHost.findNavController())
+
+        (application as MovieApp).appStore.view.send(AppAction.Genres.Load)
     }
 }

@@ -1,4 +1,6 @@
-package com.sergeyfitis.moviekeeper.data.models
+package com.sergeyfitis.moviekeeper.data.models.dto
+
+import com.sergeyfitis.moviekeeper.data.models.Category
 
 data class MovieDTO(
     val id: Int,
@@ -7,7 +9,8 @@ data class MovieDTO(
     var backdrop: String,
     val voteCount: Int,
     val voteAverage: Float,
-    val category: Category
+    val category: Category,
+    val genres: List<Int>
 )
 
 fun MovieDTO.completeBackdropUrl(): String {

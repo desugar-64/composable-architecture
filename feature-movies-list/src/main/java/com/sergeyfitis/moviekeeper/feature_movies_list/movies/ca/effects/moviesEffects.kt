@@ -1,10 +1,13 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.effects
 
-import com.sergeyfitis.moviekeeper.data.models.*
+import com.sergeyfitis.moviekeeper.data.models.Category
+import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
+import com.sergeyfitis.moviekeeper.data.models.RemoteMovie
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.toDTO
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.recover
-import com.syaremych.composable_architecture.prelude.types.right
 import com.syaremych.composable_architecture.prelude.types.rmap
 import com.syaremych.composable_architecture.store.Effect
 import com.syaremych.composable_architecture.store.eraseToEffect
@@ -35,8 +38,7 @@ fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<Movies
 
 fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
     return flow {
-        val movies = getMovies.invoke()
-        emit(movies.right())
+        emit(Either.recover { getMovies.invoke() })
     }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.UPCOMING))

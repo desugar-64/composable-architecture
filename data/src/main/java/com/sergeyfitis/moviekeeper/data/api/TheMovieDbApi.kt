@@ -1,5 +1,6 @@
 package com.sergeyfitis.moviekeeper.data.api
 
+import com.sergeyfitis.moviekeeper.data.models.GenresResponse
 import com.sergeyfitis.moviekeeper.data.models.MoviesResponse
 import retrofit2.http.GET
 
@@ -12,4 +13,7 @@ interface TheMovieDbApi {
 
     @GET("movie/upcoming")
     suspend fun upcoming(): MoviesResponse
+
+    @GET("genre/movie/list")
+    suspend fun genres(): GenresResponse
 }

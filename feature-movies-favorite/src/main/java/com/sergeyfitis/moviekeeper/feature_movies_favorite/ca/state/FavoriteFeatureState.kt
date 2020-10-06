@@ -1,6 +1,6 @@
 package com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state
 
-import com.sergeyfitis.moviekeeper.data.models.MovieDTO
+import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
 
 data class FavoriteFeatureState(
