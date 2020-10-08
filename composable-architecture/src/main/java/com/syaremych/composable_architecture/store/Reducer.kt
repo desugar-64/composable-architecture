@@ -51,14 +51,13 @@ fun <Value : Any,
     environment: (GlobalEnvironment) -> Environment
 ): Reducer<GlobalValue, GlobalAction, GlobalEnvironment> {
     return Reducer { globalValue, globalAction, globalEnvironment ->
-        val localAction = action.get(globalAction)
-        if (localAction.isEmpty) return@Reducer reduced(globalValue)
+        val localAction = action.get(globalAction) ?: return@Reducer reduced(globalValue)
 
         val localValue = value.get(globalValue)
         val localEnvironment = environment.invoke(globalEnvironment)
 
         val (reducedLocalValue, reducedLocalEffect)
-                = this@pullback.reduce(localValue, localAction.value, localEnvironment)
+                = this@pullback.reduce(localValue, localAction, localEnvironment)
 
         return@Reducer reduced(
             value.set(globalValue, reducedLocalValue),

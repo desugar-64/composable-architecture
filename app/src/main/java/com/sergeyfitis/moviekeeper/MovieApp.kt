@@ -22,8 +22,9 @@ import com.sergeyfitis.moviekeeper.navigation.movie.AppMovieNavigator
 import com.sergeyfitis.moviekeeper.navigation.movielist.AppMovieListNavigator
 import com.sergeyfitis.moviekeeper.ui.MainActivity
 import com.syaremych.composable_architecture.prelude.types.Option
-import com.syaremych.composable_architecture.prelude.types.getOrThrow
+import com.syaremych.composable_architecture.prelude.types.empty
 import com.syaremych.composable_architecture.prelude.types.toOption
+import com.syaremych.composable_architecture.prelude.types.value
 import com.syaremych.composable_architecture.store.Store
 
 class MovieApp : Application() {
@@ -40,19 +41,19 @@ class MovieApp : Application() {
     )
 
     private var mainNavHostActivity: Option<MainActivity> =
-        Option.empty() // Is this good enough solution?
+        empty() // Is this good enough solution?
 
     override fun onCreate() {
         super.onCreate()
 
         registerActivityLifecycleCallbacks(AppActivityLifecycleCallbacks(
             onMainActivityCreated = { mainNavHostActivity = it.toOption() },
-            onMainActivityDestroyed = { mainNavHostActivity = Option.empty() }
+            onMainActivityDestroyed = { mainNavHostActivity = empty() }
         ))
 
         val navControllerLazy: () -> NavController = {
             mainNavHostActivity
-                .getOrThrow()
+                .value
                 .mainNavHost
                 .findNavController()
         }

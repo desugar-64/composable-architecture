@@ -15,14 +15,13 @@ import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.movi
 import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Either
 import com.syaremych.composable_architecture.prelude.types.emptyList
-import com.syaremych.composable_architecture.prelude.types.getOption
 import com.syaremych.composable_architecture.store.*
 
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
             is MoviesAction.MovieTapped -> reduced<MoviesState, MoviesAction>(
-                value = state.copy(selectedMovie = state.movies.getOption(action.movieId))
+                value = state.copy(selectedMovie = state.movies[action.movieId])
             )
             MoviesAction.LoadMovies -> reduced(
                 value = state,

@@ -8,21 +8,22 @@ import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.Movi
 import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.types.orNull
 import com.syaremych.composable_architecture.prelude.types.toOption
 
 data class AppState(
     val moviesFeatureState: MoviesFeatureState,
-    val movieFeatureState: Option<MovieFeatureState>,
+    val movieFeatureState: MovieFeatureState?,
     val favoriteFeatureState: FavoriteFeatureState,
-    val movieState: Option<MovieState>,
+    val movieState: MovieState?,
     val genres: Map<Int, GenreDTO>
 ) {
     companion object {
         fun initial() = AppState(
             moviesFeatureState = MoviesFeatureState.init(),
-            movieFeatureState = Option.empty(),
+            movieFeatureState = null,
             favoriteFeatureState = FavoriteFeatureState.init(),
-            movieState = Option.empty(),
+            movieState = null,
             genres = emptyMap()
         )
     }
@@ -43,20 +44,15 @@ val AppState.Companion.moviesFeatureState: Lens<AppState, MoviesFeatureState>
 val AppState.Companion.movieFeatureState: Lens<AppState, Option<MovieFeatureState>>
     get() = Lens(
         get = { appState ->
-            when (val movie = appState.moviesFeatureState.selectedMovie) {
-                Option.None -> Option.empty()
-                is Option.Some -> MovieFeatureState(
-                    selectedMovie = movie.value,
-                    favoriteMovies = appState
-                        .movieFeatureState
-                        .map(MovieFeatureState::favoriteMovies)
-                        .fold(::emptySet, ::identity)
-                ).toOption()
-
-            }
+            appState.moviesFeatureState.selectedMovie?.let { movie ->
+                MovieFeatureState(
+                    selectedMovie = movie,
+                    favoriteMovies = appState.movieFeatureState?.favoriteMovies ?: emptySet()
+                )
+            }.toOption()
         },
         set = { appState, movieFeatureState ->
-            appState.copy(movieFeatureState = movieFeatureState)
+            appState.copy(movieFeatureState = movieFeatureState.orNull)
         }
     )
 

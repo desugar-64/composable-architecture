@@ -3,11 +3,10 @@ package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass
 import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.syaremych.composable_architecture.prelude.types.Lens
-import com.syaremych.composable_architecture.prelude.types.Option
 
 // Should contain all variables of the feature(including all its sub-states)
 data class MoviesFeatureState(
-    val selectedMovie: Option<MovieDTO>,
+    val selectedMovie: MovieDTO?,
     val movies: Map<Int, MovieDTO>,
     val nowPlaying: Set<Int>,
     val upcoming: Set<Int>,
@@ -16,7 +15,7 @@ data class MoviesFeatureState(
 ) {
     companion object {
         fun init() = MoviesFeatureState(
-            selectedMovie = Option.empty(),
+            selectedMovie = null,
             movies = emptyMap(),
             nowPlaying = emptySet(),
             upcoming = emptySet(),
@@ -28,7 +27,7 @@ data class MoviesFeatureState(
 
 // Should contain domain specific variables
 internal data class MoviesState(
-    val selectedMovie: Option<MovieDTO>,
+    val selectedMovie: MovieDTO?,
     val movies: Map<Int, MovieDTO>,
     val nowPlaying: Set<Int>,
     val upcoming: Set<Int>,
@@ -40,7 +39,7 @@ internal val MoviesFeatureState.Companion.moviesState
     get() = Lens<MoviesFeatureState, MoviesState>(
         get = { featureState ->
             MoviesState(
-                selectedMovie = Option.None,
+                selectedMovie = null,
                 movies = featureState.movies,
                 nowPlaying = featureState.nowPlaying,
                 upcoming = featureState.upcoming,

@@ -6,9 +6,7 @@ import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.FavoriteFea
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesFeatureAction
 import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.prelude.types.Either
-import com.syaremych.composable_architecture.prelude.types.Option
 import com.syaremych.composable_architecture.prelude.types.Prism
-import com.syaremych.composable_architecture.prelude.types.toOption
 
 sealed class AppAction {
     data class Movies(val action: MoviesFeatureAction) : AppAction()
@@ -26,10 +24,7 @@ sealed class AppAction {
 val AppAction.Companion.moviesFeatureAction
     get() = Prism<AppAction, MoviesFeatureAction>(
         get = { appAction ->
-            if (appAction is AppAction.Movies)
-                appAction.action.toOption()
-            else
-                Option.empty()
+            (appAction as? AppAction.Movies)?.action
         },
         reverseGet = AppAction::Movies
     )
@@ -37,10 +32,7 @@ val AppAction.Companion.moviesFeatureAction
 val AppAction.Companion.movieFeatureAction
     get() = Prism<AppAction, MovieFeatureAction>(
         get = { appAction ->
-            if (appAction is AppAction.Movie)
-                appAction.action.toOption()
-            else
-                Option.empty()
+            (appAction as? AppAction.Movie)?.action
         },
         reverseGet = AppAction::Movie
     )
@@ -48,10 +40,7 @@ val AppAction.Companion.movieFeatureAction
 val AppAction.Companion.favoriteFeatureAction
     get() = Prism<AppAction, FavoriteFeatureAction>(
         get = { appAction ->
-            if (appAction is AppAction.Favorite)
-                appAction.action.toOption()
-            else
-                Option.empty()
+            (appAction as? AppAction.Favorite)?.action
         },
         reverseGet = AppAction::Favorite
     )
@@ -59,10 +48,7 @@ val AppAction.Companion.favoriteFeatureAction
 val AppAction.Companion.genresAction
     get() = Prism<AppAction, AppAction.Genres>(
         get = { appAction ->
-            if (appAction is AppAction.Genres)
-                appAction.toOption()
-            else
-                Option.empty()
+            (appAction as? AppAction.Genres)
         },
         reverseGet = ::identity
     )

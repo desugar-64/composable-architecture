@@ -2,8 +2,9 @@ package com.sergeyfitis.moviekeeper.feature_movie.state
 
 import androidx.compose.runtime.Immutable
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
-import com.syaremych.composable_architecture.prelude.types.Lens
-import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.absurd
+import com.syaremych.composable_architecture.prelude.identity
+import com.syaremych.composable_architecture.prelude.types.*
 
 data class MovieFeatureState(
     val selectedMovie: MovieDTO,
@@ -16,25 +17,32 @@ data class MovieFeatureState(
 val MovieFeatureState.Companion.movieState
     get() = Lens<Option<MovieFeatureState>, Option<MovieState>>(
         get = { movieFeatureState ->
-            movieFeatureState.map { featureState ->
+            movieFeatureState.flatMap { featureState ->
                 MovieState(
                     featureState.selectedMovie,
                     featureState.favoriteMovies.contains(featureState.selectedMovie)
-                )
+                ).toOption()
             }
         },
         set = { movieFeatureState, viewState ->
-            movieFeatureState.map { featureState ->
+            movieFeatureState.rmap { featureState ->
                 featureState.copy(favoriteMovies = if (viewState.fold({ false }, { it.isFavorite }))
                     featureState
                         .favoriteMovies
                         .toMutableSet()
-                        .apply { if (!viewState.isEmpty) add(viewState.value.movie) }
+                        .apply { add(viewState.fold(::absurd, ::identity).movie) }
                 else
                     featureState
                         .favoriteMovies
                         .toMutableSet()
-                        .apply { if (!viewState.isEmpty) remove(viewState.value.movie) }
+                        .apply {
+                            if (viewState is Either.Right) remove(
+                                viewState.fold(
+                                    ::absurd,
+                                    ::identity
+                                ).movie
+                            )
+                        }
                 )
             }
         }

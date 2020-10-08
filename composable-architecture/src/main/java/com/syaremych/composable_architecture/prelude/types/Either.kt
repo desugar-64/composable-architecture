@@ -5,6 +5,16 @@ package com.syaremych.composable_architecture.prelude.types
 import com.syaremych.composable_architecture.BuildConfig
 import kotlin.coroutines.cancellation.CancellationException
 
+typealias Option<A> = Either<Unit, A>
+
+inline fun <A> A?.toOption() = this?.right() ?: Unit.left()
+inline val <A> Option<A>.isEmpty: Boolean
+    get() = this is Either.Left
+inline val <A> Option<A>.value: A
+    get() = (this as Either.Right).value
+inline val <A> Option<A>.orNull: A?
+    get() = (this as? Either.Right)?.value
+inline fun <A> empty(): Either<Unit, A> = Unit.left()
 
 sealed class Either<out L, out R> {
 

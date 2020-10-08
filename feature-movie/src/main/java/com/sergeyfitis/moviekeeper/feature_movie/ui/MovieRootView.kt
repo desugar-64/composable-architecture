@@ -32,7 +32,9 @@ import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.syaremych.composable_architecture.prelude.types.Option
+import com.syaremych.composable_architecture.prelude.types.isEmpty
 import com.syaremych.composable_architecture.prelude.types.toOption
+import com.syaremych.composable_architecture.prelude.types.value
 import com.syaremych.composable_architecture.store.*
 
 @Composable

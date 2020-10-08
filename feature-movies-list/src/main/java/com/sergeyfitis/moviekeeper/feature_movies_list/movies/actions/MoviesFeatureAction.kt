@@ -1,7 +1,6 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions
 
 import com.syaremych.composable_architecture.prelude.types.Prism
-import com.syaremych.composable_architecture.prelude.types.toOption
 
 sealed class MoviesFeatureAction {
     data class Movies(val action: MoviesAction) : MoviesFeatureAction()
@@ -13,7 +12,7 @@ internal val MoviesFeatureAction.Companion.moviesAction: Prism<MoviesFeatureActi
     get() = Prism(
         get = { featureAction ->
             when (featureAction) {
-                is MoviesFeatureAction.Movies -> featureAction.action.toOption()
+                is MoviesFeatureAction.Movies -> featureAction.action
             }
         },
         reverseGet = { viewAction ->
