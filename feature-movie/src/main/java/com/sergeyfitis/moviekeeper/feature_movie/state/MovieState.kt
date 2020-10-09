@@ -1,6 +1,7 @@
 package com.sergeyfitis.moviekeeper.feature_movie.state
 
 import androidx.compose.runtime.Immutable
+import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.syaremych.composable_architecture.prelude.absurd
 import com.syaremych.composable_architecture.prelude.identity
@@ -8,8 +9,8 @@ import com.syaremych.composable_architecture.prelude.types.*
 
 data class MovieFeatureState(
     val selectedMovie: MovieDTO,
-    val favoriteMovies: Set<MovieDTO>
-
+    val favoriteMovies: Set<MovieDTO>,
+    val allGenres: Map<Int, GenreDTO>
 ) {
     companion object
 }
@@ -19,8 +20,9 @@ val MovieFeatureState.Companion.movieState
         get = { movieFeatureState ->
             movieFeatureState.flatMap { featureState ->
                 MovieState(
-                    featureState.selectedMovie,
-                    featureState.favoriteMovies.contains(featureState.selectedMovie)
+                    movie = featureState.selectedMovie,
+                    isFavorite = featureState.favoriteMovies.contains(featureState.selectedMovie),
+                    genres = featureState.selectedMovie.genres.mapNotNull(featureState.allGenres::get)
                 ).toOption()
             }
         },
@@ -51,6 +53,7 @@ val MovieFeatureState.Companion.movieState
 @Immutable
 data class MovieState(
     val movie: MovieDTO,
+    val genres: List<GenreDTO>,
     val isFavorite: Boolean
 ) {
     companion object

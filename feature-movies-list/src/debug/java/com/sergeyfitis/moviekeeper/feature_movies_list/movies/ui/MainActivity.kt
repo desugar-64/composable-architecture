@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
             backdrop = "",
             voteCount = 500,
             voteAverage = 6.0f,
-            genres = emptyList()
+            genres = emptyList(),
+            overview = "A professional thief with \$40 million in debt and his family's life on the line must commit one final heist - rob a futuristic airborne casino filled with the world's most dangerous criminals."
         ),
         RemoteMovie(
             id = 1,
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity() {
             backdrop = "",
             voteCount = 1501,
             voteAverage = 7.0f,
-            genres = emptyList()
+            genres = emptyList(),
+            overview = "A professional thief with \$40 million in debt and his family's life on the line must commit one final heist - rob a futuristic airborne casino filled with the world's most dangerous criminals."
         )
     )
 

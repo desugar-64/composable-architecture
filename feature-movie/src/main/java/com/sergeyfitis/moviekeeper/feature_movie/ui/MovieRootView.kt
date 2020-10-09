@@ -1,5 +1,6 @@
 package com.sergeyfitis.moviekeeper.feature_movie.ui
 
+import android.util.Log
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
@@ -14,19 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.onPositioned
 import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.annotatedString
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Devices
 import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.common.ext.horizontalRoundedGradientBackground
+import com.sergeyfitis.moviekeeper.common.theme.colorDarkOrange
 import com.sergeyfitis.moviekeeper.common.theme.colorGoldenTanoi
 import com.sergeyfitis.moviekeeper.common.theme.gradient0
 import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.Category
+import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
@@ -64,13 +72,13 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
             contentPadding = PaddingValues(start = 16.dp, top = paddingTop, end = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-            DetailsContent(movie)
+            DetailsContent(movie, state.genres)
         }
     }
 }
 
 @Composable
-private fun DetailsContent(movie: MovieDTO) {
+private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -108,7 +116,52 @@ private fun DetailsContent(movie: MovieDTO) {
                 style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Medium)
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        GenreList(genres = genres)
+        Spacer(modifier = Modifier.height(8.dp))
+        val overview = movie.overview
+        IntroductionView(overview) {
+            Log.d("MovieDetails", "ViewMore")
+        }
     }
+}
+
+@OptIn(ExperimentalLayout::class)
+@Composable
+private fun IntroductionView(overview: String, onViewMoreClicked: () -> Unit) {
+    Text(text = "Introduction", style = MaterialTheme.typography.h6)
+    Spacer(modifier = Modifier.height(4.dp))
+    val (textLayoutState, setTextLayout) = remember(overview) {
+        mutableStateOf<TextLayoutResult?>(null)
+    }
+    val text = annotatedString {
+        append(overview)
+        pushStyle(
+            SpanStyle(
+                color = colorDarkOrange,
+                fontSynthesis = FontSynthesis.Weight
+            )
+        )
+        append("View more\u0020▼")
+        addStringAnnotation("view_more", "", overview.length, length)
+    }
+    Text(
+        modifier = Modifier.tapGestureFilter { position ->
+            textLayoutState?.let { textLayout ->
+                val offset = textLayout.getOffsetForPosition(position)
+                text.getStringAnnotations(offset, offset)
+                    .firstOrNull { it.tag == "view_more" }
+                    ?.let { annotation ->
+                        if (annotation.tag == "view_more") {
+                            onViewMoreClicked.invoke()
+                        }
+                    }
+            }
+        },
+        text = text,
+        style = MaterialTheme.typography.body2,
+        onTextLayout = setTextLayout
+    )
 }
 
 @Composable
@@ -144,9 +197,11 @@ private fun RootPreview() {
                 voteCount = 1000,
                 voteAverage = 6f,
                 category = Category.TOP_RATED,
-                genres = emptyList()
+                genres = listOf(0, 1),
+                overview = "A professional thief with \$40 million in debt and his family's life on the line must commit one final heist - rob a futuristic airborne casino filled with the world's most dangerous criminals."
             ),
-            isFavorite = true
+            isFavorite = true,
+            genres = listOf(GenreDTO(0, "Action"), GenreDTO(1, "Sci-Fi"))
         ).toOption(),
         reducer = Reducer.empty(),
         environment = Unit

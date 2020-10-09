@@ -65,7 +65,8 @@ private fun ItemPreview() {
             voteCount = 10,
             voteAverage = 7f,
             category = Category.TOP_RATED,
-            genres = emptyList()
+            genres = emptyList(),
+            overview = "A professional thief with \$40 million in debt and his family's life on the line must commit one final heist - rob a futuristic airborne casino filled with the world's most dangerous criminals."
         )
     )
 }

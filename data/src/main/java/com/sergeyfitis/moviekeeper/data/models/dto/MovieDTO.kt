@@ -10,7 +10,8 @@ data class MovieDTO(
     val voteCount: Int,
     val voteAverage: Float,
     val category: Category,
-    val genres: List<Int>
+    val genres: List<Int>,
+    val overview: String
 )
 
 fun MovieDTO.completeBackdropUrl(): String {

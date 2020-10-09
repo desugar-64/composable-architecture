@@ -18,7 +18,9 @@ data class RemoteMovie(
     @SerialName("vote_average")
     val voteAverage: Float,
     @SerialName("genre_ids")
-    val genres: List<Int>
+    val genres: List<Int>,
+    @SerialName("overview")
+    val overview: String?
 )
 
 fun RemoteMovie.toDTO(category: Category) = MovieDTO(
@@ -29,5 +31,6 @@ fun RemoteMovie.toDTO(category: Category) = MovieDTO(
     voteCount = voteCount,
     voteAverage = voteAverage,
     category = category,
-    genres = genres
+    genres = genres,
+    overview = overview.orEmpty()
 )

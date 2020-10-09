@@ -47,7 +47,8 @@ val AppState.Companion.movieFeatureState: Lens<AppState, Option<MovieFeatureStat
             appState.moviesFeatureState.selectedMovie?.let { movie ->
                 MovieFeatureState(
                     selectedMovie = movie,
-                    favoriteMovies = appState.movieFeatureState?.favoriteMovies ?: emptySet()
+                    favoriteMovies = appState.movieFeatureState?.favoriteMovies ?: emptySet(),
+                    allGenres = appState.genres
                 )
             }.toOption()
         },
