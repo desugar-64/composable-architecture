@@ -64,7 +64,9 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
             aspectRatio = 1.4f,
             elevation = 0.dp
         )
+
         val paddingTop = with(DensityAmbient.current) { posterBottomPx.toDp() }
+
         ScrollableColumn(
             modifier = Modifier
                 .fillMaxHeight()

@@ -2,11 +2,12 @@ package com.syaremych.composable_architecture.store
 
 import com.nhaarman.mockitokotlin2.mock
 import com.syaremych.composable_architecture.prelude.types.Lens
-import com.syaremych.composable_architecture.prelude.types.Option.Companion.empty
 import com.syaremych.composable_architecture.prelude.types.Prism
-import com.syaremych.composable_architecture.prelude.types.toOption
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -178,7 +179,7 @@ class StoreTest {
                     set = { intState, fst -> intState.copy(fst = fst.count) }
                 ),
                 action = Prism(
-                    get = { act -> if (act == Act.IncFst) FstAction().toOption() else empty() },
+                    get = { act ->  if (act == Act.IncFst) FstAction() else null },
                     reverseGet = { Act.IncFst }
                 ),
                 environment = { Unit }
@@ -189,7 +190,7 @@ class StoreTest {
                     set = { intState, snd -> intState.copy(snd = snd.count) }
                 ),
                 action = Prism(
-                    get = { act -> if (act == Act.IncSnd) SndAction().toOption() else empty() },
+                    get = { act -> if (act == Act.IncSnd) SndAction() else null },
                     reverseGet = { Act.IncSnd }
                 ),
                 environment = { Unit }
@@ -200,7 +201,7 @@ class StoreTest {
                     set = { intState, trd -> intState.copy(trd = trd.count) }
                 ),
                 action = Prism(
-                    get = { act -> if (act == Act.IncTrd) TrdAction().toOption() else empty() },
+                    get = { act -> if (act == Act.IncTrd) TrdAction() else null },
                     reverseGet = { Act.IncTrd }
                 ),
                 environment = { Unit }
@@ -254,7 +255,7 @@ class StoreTest {
             set = { intState, fst -> intState.copy(fst = fst.count) }
         )
         val actToFstAction = Prism<Act, FstAction>(
-            get = { act -> if (act == Act.IncFst) FstAction().toOption() else empty() },
+            get = { act -> if (act == Act.IncFst) FstAction() else null },
             reverseGet = { Act.IncFst }
         )
 
@@ -263,7 +264,7 @@ class StoreTest {
             set = { intState, snd -> intState.copy(snd = snd.count) }
         )
         val actToSndAction = Prism<Act, SndAction>(
-            get = { act -> if (act == Act.IncSnd) SndAction().toOption() else empty() },
+            get = { act -> if (act == Act.IncSnd) SndAction() else null },
             reverseGet = { Act.IncSnd }
         )
         val intStateToTrd = Lens<IntState, Trd>(
@@ -271,7 +272,7 @@ class StoreTest {
             set = { intState, trd -> intState.copy(trd = trd.count) }
         )
         val actToTrdAction = Prism<Act, TrdAction>(
-            get = { act -> if (act == Act.IncTrd) TrdAction().toOption() else empty() },
+            get = { act -> if (act == Act.IncTrd) TrdAction() else null },
             reverseGet = { Act.IncTrd }
         )
         val reducer = Reducer.combine<IntState, Act, Unit>(

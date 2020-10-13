@@ -165,4 +165,27 @@ class ReducerTest {
 
         assertEquals(expectedCallOrder, reducerCallOrder)
     }
+
+    @Test
+    fun reducerWith_Scope() = runBlocking {
+        val intState = IntState(0, 0, 0)
+        val reducer: Reducer<IntState, Act, Unit> = Reducer.of {
+            if (action == Act.IncFst) {
+                state = state.copy(fst = state.fst + 1)
+            }
+            Effect.none()
+        }
+
+        val store = Store.init(
+            initialState = intState,
+            reducer = reducer,
+            environment = Unit,
+            storeDispatcher = Dispatchers.Unconfined
+        )
+
+        assertEquals(intState, store.stateHolder.value)
+
+        store.send(Act.IncFst)
+        assertEquals(intState.copy(fst = 1), store.stateHolder.value)
+    }
 }
