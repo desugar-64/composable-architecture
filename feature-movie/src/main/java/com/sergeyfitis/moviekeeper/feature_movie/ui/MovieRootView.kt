@@ -47,7 +47,7 @@ import com.syaremych.composable_architecture.store.*
 
 @Composable
 internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>) {
-    val optionState by viewStore.collectAsState(initial = viewStore.viewState.value)
+    val optionState by viewStore.collectAsState(initial = viewStore.state)
     if (optionState.isEmpty) return
     val state = optionState.value
     var posterBottomPx by mutableStateOf(0)
@@ -64,7 +64,9 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
             aspectRatio = 1.4f,
             elevation = 0.dp
         )
+
         val paddingTop = with(DensityAmbient.current) { posterBottomPx.toDp() }
+
         ScrollableColumn(
             modifier = Modifier
                 .fillMaxHeight()

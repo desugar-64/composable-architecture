@@ -1,10 +1,10 @@
 package com.syaremych.composable_architecture.store
 
-import com.syaremych.composable_architecture.store.StoreTest.*
+import com.syaremych.composable_architecture.store.StoreTest.Act
+import com.syaremych.composable_architecture.store.StoreTest.IntState
 import kotlinx.coroutines.Dispatchers
+import org.junit.Assert.assertEquals
 import org.junit.Before
-
-import org.junit.Assert.*
 import org.junit.Test
 
 class ViewStoreTest {
@@ -31,22 +31,22 @@ class ViewStoreTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         val viewStore = store.view
 
-        assertEquals(state, viewStore.viewState.value)
+        assertEquals(state, viewStore.state)
 
         viewStore.send(Act.Inc)
-        assertEquals(state, viewStore.viewState.value) // nothing should change
+        assertEquals(state, viewStore.state) // nothing should change
 
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), store.stateHolder.value)
-        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), viewStore.viewState.value)
+        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), store.state)
+        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), viewStore.state)
 
         viewStore.send(Act.IncFst)
-        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), viewStore.viewState.value)
-        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), store.stateHolder.value) // update must be propagated to the parent state
+        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), viewStore.state)
+        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), store.state) // update must be propagated to the parent state
     }
 
     @Test
@@ -67,16 +67,16 @@ class ViewStoreTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         val viewStore = store.view
 
-        assertEquals(state, viewStore.viewState.value)
+        assertEquals(state, viewStore.state)
 
         viewStore.dispose()
 
         viewStore.send(Act.IncFst)
-        assertEquals(state, viewStore.viewState.value)
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, viewStore.state)
+        assertEquals(state, store.state)
     }
 }

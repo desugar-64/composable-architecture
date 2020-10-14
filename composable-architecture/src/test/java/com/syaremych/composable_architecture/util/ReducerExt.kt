@@ -5,7 +5,7 @@ import com.syaremych.composable_architecture.store.Reducer
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import java.util.concurrent.atomic.AtomicInteger
 
-internal class TestReducer<V : Any, A : Any, E> {
+internal class TestReducer<V : Any, A : Any, E : Any> {
 
     private val reduceChannel = ConflatedBroadcastChannel<Unit>()
     private val _callCount = AtomicInteger(0)

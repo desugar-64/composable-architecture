@@ -27,7 +27,7 @@ internal fun FavoriteMoviesRootView(
     modifier: Modifier = Modifier,
     viewStore: ViewStore<FavoriteState, FavoriteMoviesAction>
 ) {
-    val state by viewStore.collectAsState(initial = viewStore.viewState.value)
+    val state by viewStore.collectAsState(initial = viewStore.state)
     LazyColumnFor(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),

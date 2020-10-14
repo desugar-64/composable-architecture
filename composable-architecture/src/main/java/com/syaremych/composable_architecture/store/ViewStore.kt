@@ -16,6 +16,9 @@ class ViewStore<Value : Any, Action : Any>(
     val viewState: StateFlow<Value>
         get() = _viewState
 
+    val state: Value
+        get() = _viewState.value
+
     @InternalCoroutinesApi
     override suspend fun collectSafely(collector: FlowCollector<Value>) {
         _viewState.collect(collector)
@@ -28,7 +31,7 @@ fun <Value, Action> Store<Value, Action>.view(
     areEquivalent: (Value, Value) -> Boolean
 ): ViewStore<Value, Action> where Value: Any, Action: Any {
     val viewStore = ViewStore(
-        initialValue = stateHolder.value,
+        initialValue = state,
         send = ::send,
         doOnDispose = ::release
     )
@@ -36,7 +39,6 @@ fun <Value, Action> Store<Value, Action>.view(
     stateHolder
         .distinctUntilChanged(areEquivalent)
         .onEach {
-            print("Store update in ViewStore = $it")
             viewStore._viewState.value = it
         }
         .launchIn(storeScope)
