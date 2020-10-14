@@ -29,7 +29,7 @@ class ReducerTest {
             environment = Unit
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
         assertEquals(0, testReducer.callCount)
 
         store.send(Act.IncFst)
@@ -37,7 +37,7 @@ class ReducerTest {
         testReducer.awaitReduce()
 
         assertEquals(1, testReducer.callCount)
-        assertEquals(state.copy(fst = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 1), store.state)
     }
 
     @Test
@@ -67,7 +67,7 @@ class ReducerTest {
             environment = Unit
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
         assertEquals(0, testReducerFst.callCount)
         assertEquals(0, testReducerSnd.callCount)
         assertEquals(0, testReducerTrd.callCount)
@@ -86,7 +86,7 @@ class ReducerTest {
         assertEquals(3, testReducerSnd.callCount)
         assertEquals(3, testReducerTrd.callCount)
 
-        assertEquals(state.copy(fst = 3, snd = 3, trd = 3), store.stateHolder.value)
+        assertEquals(state.copy(fst = 3, snd = 3, trd = 3), store.state)
     }
 
     @Test
@@ -99,10 +99,10 @@ class ReducerTest {
             environment = Unit,
             storeDispatcher = Dispatchers.Unconfined
         )
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         store.send(Act.Inc)
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
     }
 
     @Test
@@ -123,7 +123,7 @@ class ReducerTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         store.send(Act.Inc)
         val stateCaptor = argumentCaptor<IntState>()
@@ -133,7 +133,7 @@ class ReducerTest {
         verify(mockReducer).reduce(stateCaptor.capture(), actCaptor.capture(), envCaptor.capture())
         val reducedAction = actCaptor.firstValue
 
-        assertEquals(expectedState, store.stateHolder.value)
+        assertEquals(expectedState, store.state)
         assertEquals(Act.Inc, reducedAction)
 
         verify(effect).collect(any())
@@ -183,9 +183,9 @@ class ReducerTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(intState, store.stateHolder.value)
+        assertEquals(intState, store.state)
 
         store.send(Act.IncFst)
-        assertEquals(intState.copy(fst = 1), store.stateHolder.value)
+        assertEquals(intState.copy(fst = 1), store.state)
     }
 }

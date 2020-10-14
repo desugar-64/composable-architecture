@@ -26,6 +26,9 @@ class Store<Value : Any, Action : Any> private constructor(
     val stateHolder: StateFlow<Value>
         get() = _valueHolder
 
+    val state: Value
+        get() = _valueHolder.value
+
     private lateinit var reducer: Reducer<Value, Action, Any>
 
     private lateinit var environment: Any

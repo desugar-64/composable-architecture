@@ -86,10 +86,10 @@ class StoreTest {
     @Test
     fun store_MassiveParallelUpdate() = runBlocking {
         val expectedState = IntState(0, 0, 0)
-        assertEquals(expectedState, store.stateHolder.value)
+        assertEquals(expectedState, store.state)
         store.send(Act.Inc)
         delay(500)
-        assertEquals(IntState(50, 50, 0), store.stateHolder.value)
+        assertEquals(IntState(50, 50, 0), store.state)
     }
 
     @Test
@@ -132,23 +132,23 @@ class StoreTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 1), store.stateHolder.value)
-        assertTrue(store.stateHolder.value.snd == 0)
-        assertTrue(store.stateHolder.value.trd == 0)
+        assertEquals(state.copy(fst = 1), store.state)
+        assertTrue(store.state.snd == 0)
+        assertTrue(store.state.trd == 0)
 
         store.send(Act.IncSnd)
-        assertEquals(state.copy(fst = 1, snd = 1), store.stateHolder.value)
-        assertTrue(store.stateHolder.value.trd == 0)
+        assertEquals(state.copy(fst = 1, snd = 1), store.state)
+        assertTrue(store.state.trd == 0)
 
         store.send(Act.IncTrd)
-        assertEquals(state.copy(fst = 1, snd = 1, trd = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 1, snd = 1, trd = 1), store.state)
 
         store.send(Act.IncFst)
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 3, snd = 1, trd = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 3, snd = 1, trd = 1), store.state)
     }
 
     @Test
@@ -210,22 +210,22 @@ class StoreTest {
 
         val store = Store.init(state, reducer, Unit, Dispatchers.Unconfined)
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         store.send(Act.Inc)
-        assertEquals(state, store.stateHolder.value) // nothing should change
+        assertEquals(state, store.state) // nothing should change
 
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), store.stateHolder.value)
+        assertEquals(state.copy(fst = 1, snd = 0, trd = 0), store.state)
 
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), store.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 0, trd = 0), store.state)
 
         store.send(Act.IncSnd)
-        assertEquals(state.copy(fst = 2, snd = 1, trd = 0), store.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 1, trd = 0), store.state)
 
         store.send(Act.IncTrd)
-        assertEquals(state.copy(fst = 2, snd = 1, trd = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 1, trd = 1), store.state)
 
     }
 
@@ -295,26 +295,26 @@ class StoreTest {
 
         val store = Store.init(state, reducer, Unit, Dispatchers.Unconfined)
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         val fstStore = store.scope<Fst, FstAction>(
             toLocalValue = intStateToFst::get,
             toGlobalAction = actToFstAction::reverseGet
         )
 
-        assertEquals(state.fst, fstStore.stateHolder.value.count)
+        assertEquals(state.fst, fstStore.state.count)
 
         /******************* FstStore *******************/
         fstStore.send(FstAction())
         // fst store must update own state
-        assertEquals(Fst(1), fstStore.stateHolder.value)
+        assertEquals(Fst(1), fstStore.state)
         // and propagate changes to the parent state
-        assertEquals(state.copy(fst = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 1), store.state)
 
         // and vise versa scoped store must receive updates from the parent state
         store.send(Act.IncFst)
-        assertEquals(state.copy(fst = 2), store.stateHolder.value)
-        assertEquals(Fst(2), fstStore.stateHolder.value)
+        assertEquals(state.copy(fst = 2), store.state)
+        assertEquals(Fst(2), fstStore.state)
 
         /******************* SndStore *******************/
         val sndStore = store.scope<Snd, SndAction>(
@@ -322,18 +322,18 @@ class StoreTest {
             toGlobalAction = actToSndAction::reverseGet
         )
 
-        assertEquals(state.snd, sndStore.stateHolder.value.count)
+        assertEquals(state.snd, sndStore.state.count)
 
         sndStore.send(SndAction())
         // fst store must update own state
-        assertEquals(Snd(1), sndStore.stateHolder.value)
+        assertEquals(Snd(1), sndStore.state)
         // and propagate changes to the parent state
-        assertEquals(state.copy(fst = 2, snd = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 1), store.state)
 
         // and vise versa scoped store must receive updates from the parent state
         store.send(Act.IncSnd)
-        assertEquals(state.copy(fst = 2, snd = 2), store.stateHolder.value)
-        assertEquals(Snd(2), sndStore.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 2), store.state)
+        assertEquals(Snd(2), sndStore.state)
 
         /******************* TrdStore *******************/
         val trdStore = store.scope<Trd, TrdAction>(
@@ -341,18 +341,18 @@ class StoreTest {
             toGlobalAction = actToTrdAction::reverseGet
         )
 
-        assertEquals(state.trd, trdStore.stateHolder.value.count)
+        assertEquals(state.trd, trdStore.state.count)
 
         trdStore.send(TrdAction())
         // fst store must update own state
-        assertEquals(Trd(1), trdStore.stateHolder.value)
+        assertEquals(Trd(1), trdStore.state)
         // and propagate changes to the parent state
-        assertEquals(state.copy(fst = 2, snd = 2, trd = 1), store.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 2, trd = 1), store.state)
 
         // and vise versa scoped store must receive updates from the parent state
         store.send(Act.IncTrd)
-        assertEquals(state.copy(fst = 2, snd = 2, trd = 2), store.stateHolder.value)
-        assertEquals(Trd(2), trdStore.stateHolder.value)
+        assertEquals(state.copy(fst = 2, snd = 2, trd = 2), store.state)
+        assertEquals(Trd(2), trdStore.state)
 
     }
 
@@ -383,7 +383,7 @@ class StoreTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         val eventsCount = 10
 
@@ -392,7 +392,7 @@ class StoreTest {
             store.send(Act.IncFst)
         }
         latch.await()
-        assertEquals(state.copy(fst = 12), store.stateHolder.value)
+        assertEquals(state.copy(fst = 12), store.state)
     }
 
     @Test
@@ -418,12 +418,12 @@ class StoreTest {
             storeDispatcher = Dispatchers.Unconfined
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
 
         store.release()
 
         store.send(Act.IncFst)
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
     }
 
     @Test
@@ -436,7 +436,7 @@ class StoreTest {
             environment = Unit
         )
 
-        assertEquals(state, store.stateHolder.value)
+        assertEquals(state, store.state)
         assertTrue(store.storeScope.isActive)
 
         store.release()

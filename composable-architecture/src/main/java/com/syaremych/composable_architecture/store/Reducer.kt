@@ -31,14 +31,14 @@ interface ReducerScope<Value : Any, Action : Any, Environment : Any> {
 
         fun <Value : Any, Action : Any, Environment : Any> of(scope: ReducerScope<Value, Action, Environment>.() -> Effect<Action>): Reducer<Value, Action, Environment> =
             object : Reducer<Value, Action, Environment>, ReducerScope<Value, Action, Environment> {
-                private val _state: MutableState<Value?> = MutableStateImpl(null)
+                private lateinit var _state: Value
                 private lateinit var _action: Action
                 private lateinit var _environment: Environment
 
                 override var state: Value
-                    get() = _state.value!!
+                    get() = _state
                     set(value) {
-                        _state.value = value
+                        _state = value
                     }
                 override val action: Action
                     get() = _action
@@ -50,7 +50,7 @@ interface ReducerScope<Value : Any, Action : Any, Environment : Any> {
                     action: Action,
                     environment: Environment
                 ): Reduced<Value, Action> {
-                    _state.value = value
+                    _state = value
                     _action = action
                     _environment = environment
                     val effect = scope()
