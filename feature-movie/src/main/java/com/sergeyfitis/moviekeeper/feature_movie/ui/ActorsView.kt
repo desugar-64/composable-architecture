@@ -3,13 +3,11 @@ package com.sergeyfitis.moviekeeper.feature_movie.ui
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Devices
@@ -28,14 +26,13 @@ fun ActorsList(actors: List<String>) {
 @Composable
 private fun ActorViewItem(actor: String) {
     val cellWidth = 100.dp
-    Column(modifier = Modifier.width(cellWidth), horizontalAlignment = Alignment.Start) {
+    Column(modifier = Modifier.width(cellWidth)) {
         MoviePoster(url = "", aspectRatio = 1f, posterWidth = cellWidth, elevation = 0.1.dp)
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.wrapContentWidth(),
             text = actor,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = Color.LightGray
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -44,6 +41,6 @@ private fun ActorViewItem(actor: String) {
 @Composable
 private fun ActorsPreview() {
     MovieAppTheme {
-        ActorsList(actors = listOf("Gal Gadot", "Tom Nusi", "Connie Nielse"))
+        ActorsList(actors = listOf("Gal Gadot", "Actor", "Long Long actor name"))
     }
 }

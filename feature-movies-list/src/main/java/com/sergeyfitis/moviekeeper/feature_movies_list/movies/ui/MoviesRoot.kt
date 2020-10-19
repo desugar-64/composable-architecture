@@ -102,8 +102,8 @@ private fun MovieBackdropItem(
     item: MovieItem,
     onClick: () -> Unit
 ) {
-    Column {
-        val posterWidth = 250.dp
+    val posterWidth = 250.dp
+    Column(modifier = modifier.width(posterWidth)) {
         MoviePoster(
             modifier = modifier,
             url = item.backdropUrl,
@@ -115,7 +115,7 @@ private fun MovieBackdropItem(
         Text(
             text = item.title,
             style = MaterialTheme.typography.body1,
-            modifier = Modifier.width(posterWidth),
+            modifier = Modifier.wrapContentWidth(),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             color = Color.DarkGray
