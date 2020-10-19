@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 fun Modifier.applyIf(
     condition: Boolean,
     modifier: Modifier.() -> Modifier
-) = if (condition) modifier() else this
+) = if (condition) this.then(modifier()) else this
 
 fun Modifier.roundRectBackground(color: Color): Modifier = drawWithCache {
     val cornerRadius = size.height / 2

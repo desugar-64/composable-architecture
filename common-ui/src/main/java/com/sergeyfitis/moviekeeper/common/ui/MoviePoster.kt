@@ -26,14 +26,16 @@ fun MoviePoster(
     aspectRatio: Float = 0.6f,
     elevation: Dp = 8.dp,
     drawBorder: Boolean = true,
+    borderColor: Color = Color.LightGray,
+    backgroundColor: Color = Color.LightGray,
     onClick: () -> Unit = {}
 ) {
     val posterModifier = modifier
         .drawShadow(elevation = elevation, shape = shape)
         .applyIf(posterWidth != Dp.Unspecified) { width(posterWidth) }
         .aspectRatio(aspectRatio)
-        .background(Color.LightGray)
-        .applyIf(drawBorder) { border(0.5.dp, Color.LightGray, shape) }
+        .background(backgroundColor)
+        .applyIf(drawBorder) { border(0.5.dp, borderColor, shape) }
         .clickable(onClick = onClick)
 
     Column {

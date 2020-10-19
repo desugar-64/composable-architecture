@@ -4,6 +4,7 @@ import com.sergeyfitis.moviekeeper.data.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 private val authQueryAppenderInterceptor: Interceptor = Interceptor { chain ->
     val requestBuilder = chain.request().newBuilder()
@@ -24,4 +25,7 @@ internal val baseOkHttpClient: OkHttpClient = OkHttpClient
     .Builder()
     .addInterceptor(authQueryAppenderInterceptor)
     .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+    .readTimeout(100, TimeUnit.SECONDS)
+    .writeTimeout(100, TimeUnit.SECONDS)
+    .connectTimeout(100, TimeUnit.SECONDS)
     .build()

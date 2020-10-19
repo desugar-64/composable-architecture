@@ -5,11 +5,13 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -48,21 +50,33 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
                 }
 
                 MoviesRow(rowTitle = "Now Playing") {
-                    MoviesHorizontalList(state.nowPlaying) { movieItem ->
-                        MoviePosterItem(
-                            posterUrl = movieItem.posterUrl,
-                            onClick = onClick(movieItem)
-                        )
+                    if (state.showNowPlayingProgress) {
+                        ProgressPosterItem()
+                    } else {
+                        MoviesHorizontalList(state.nowPlaying) { movieItem ->
+                            MoviePosterItem(
+                                posterUrl = movieItem.posterUrl,
+                                onClick = onClick(movieItem)
+                            )
+                        }
                     }
                 }
                 MoviesRow(rowTitle = "Upcoming") {
-                    MoviesHorizontalList(state.upcoming) { movieItem ->
-                        MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                    if (state.showUpcomingProgress) {
+                        ProgressBackdropItem()
+                    } else {
+                        MoviesHorizontalList(state.upcoming) { movieItem ->
+                            MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                        }
                     }
                 }
                 MoviesRow(rowTitle = "Top Rated") {
-                    MoviesHorizontalList(state.topRated) { movieItem ->
-                        MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                    if (state.showTopRatedProgress) {
+                        ProgressBackdropItem()
+                    } else {
+                        MoviesHorizontalList(state.topRated) { movieItem ->
+                            MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                        }
                     }
                 }
             }
@@ -111,10 +125,53 @@ private fun MovieBackdropItem(
 }
 
 @Composable
+private fun ProgressPosterItem() {
+    Row(modifier = Modifier.padding(top = 8.dp)) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Box {
+            MoviePoster(
+                url = "",
+                posterWidth = 150.dp,
+                elevation = 0.0.dp,
+                backgroundColor = Color.Transparent,
+                drawBorder = true,
+                borderColor = Color.LightGray
+            )
+            CircularProgressIndicator(
+                modifier = Modifier.size(44.dp).align(Alignment.Center),
+                color = Color.LightGray
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProgressBackdropItem() {
+    Row(modifier = Modifier.padding(top = 8.dp)) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Box {
+            MoviePoster(
+                url = "",
+                posterWidth = 250.dp,
+                aspectRatio = 1.6f,
+                elevation = 0.0.dp,
+                backgroundColor = Color.Transparent,
+                drawBorder = true,
+                borderColor = Color.LightGray
+            )
+            CircularProgressIndicator(
+                modifier = Modifier.size(44.dp).align(Alignment.Center),
+                color = Color.LightGray
+            )
+        }
+    }
+}
+
+@Composable
 private fun MoviePosterItem(
     modifier: Modifier = Modifier,
     posterUrl: String,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
 
     MoviePoster(
@@ -176,7 +233,10 @@ private fun RootPreview() {
                 MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
                 MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList()),
                 MovieItem(0, "Title", "/url", backdropUrl = "", 1f, 10, emptyList())
-            )
+            ),
+            showTopRatedProgress = false,
+            showUpcomingProgress = false,
+            showNowPlayingProgress = true
         ),
         reducer = Reducer.empty(),
         environment = Unit
@@ -196,6 +256,9 @@ internal data class State(
     val nowPlaying: List<MovieItem>,
     val upcoming: List<MovieItem>,
     val topRated: List<MovieItem>,
+    val showNowPlayingProgress: Boolean,
+    val showUpcomingProgress: Boolean,
+    val showTopRatedProgress: Boolean,
 ) {
     companion object
 }
@@ -216,7 +279,10 @@ internal fun State.Companion.init(featureState: MoviesFeatureState): State {
         State(
             nowPlaying = nowPlaying.mapNotNull(movies::get).map(extractGenres(genres)),
             upcoming = upcoming.mapNotNull(movies::get).map(extractGenres(genres)),
-            topRated = topRated.mapNotNull(movies::get).map(extractGenres(genres))
+            topRated = topRated.mapNotNull(movies::get).map(extractGenres(genres)),
+            showNowPlayingProgress = nowPlaying.isEmpty(),
+            showUpcomingProgress = upcoming.isEmpty(),
+            showTopRatedProgress = topRated.isEmpty()
         )
     }
 }
