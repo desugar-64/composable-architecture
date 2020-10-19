@@ -20,9 +20,11 @@ import com.syaremych.composable_architecture.store.*
 internal val moviesViewReducer =
     Reducer<MoviesState, MoviesAction, MoviesFeatureEnvironment> { state, action, environment ->
         when (action) {
-            is MoviesAction.MovieTapped -> reduced<MoviesState, MoviesAction>(
-                value = state.copy(selectedMovie = state.movies[action.movieId])
-            )
+            is MoviesAction.MovieTapped -> {
+                reduced<MoviesState, MoviesAction>(
+                    value = state.copy(selectedMovie = state.movies[action.movieId])
+                )
+            }
             MoviesAction.LoadMovies -> reduced(
                 value = state,
                 effect = Effect.merge(

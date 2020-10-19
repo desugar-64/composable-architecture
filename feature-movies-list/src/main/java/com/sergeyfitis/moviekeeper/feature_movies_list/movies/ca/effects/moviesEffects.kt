@@ -7,7 +7,7 @@ import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
 import com.sergeyfitis.moviekeeper.data.models.toDTO
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.actions.MoviesAction
 import com.syaremych.composable_architecture.prelude.types.Either
-import com.syaremych.composable_architecture.prelude.types.recover
+import com.syaremych.composable_architecture.prelude.types.catch
 import com.syaremych.composable_architecture.prelude.types.rmap
 import com.syaremych.composable_architecture.store.Effect
 import com.syaremych.composable_architecture.store.eraseToEffect
@@ -28,7 +28,7 @@ private val toCategorizedDto: (Category) -> suspend (value: Either<Throwable, Li
 
 fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
     return flow {
-        emit(Either.recover { getMovies.invoke() })
+        emit(Either.catch { getMovies.invoke() })
     }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.NOW_PLAYING))
@@ -38,7 +38,7 @@ fun loadNowPlayingEffect(getMovies: suspend () -> MoviesResponse): Effect<Movies
 
 fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
     return flow {
-        emit(Either.recover { getMovies.invoke() })
+        emit(Either.catch { getMovies.invoke() })
     }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.UPCOMING))
@@ -47,7 +47,7 @@ fun loadUpcomingEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAc
 }
 
 fun loadTopRatedEffect(getMovies: suspend () -> MoviesResponse): Effect<MoviesAction> {
-    return flow { emit(Either.recover { getMovies.invoke() }) }
+    return flow { emit(Either.catch { getMovies.invoke() }) }
         .map(extractMovieResponse)
         .map(toCategorizedDto(Category.TOP_RATED))
         .map(MoviesAction::MoviesLoaded)

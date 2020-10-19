@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +40,6 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
             )
             ScrollableColumn {
                 val state by viewStore.collectAsState(viewStore.state)
-                onDispose(callback = viewStore::dispose)
                 val onClick: (MovieItem) -> () -> Unit = onClick@{ movie ->
                     return@onClick {
                         viewStore.send(Action.MovieTapped(movie.id))

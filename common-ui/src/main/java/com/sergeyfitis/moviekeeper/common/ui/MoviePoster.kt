@@ -25,6 +25,7 @@ fun MoviePoster(
     shape: Shape = RoundedCornerShape(8.dp),
     aspectRatio: Float = 0.6f,
     elevation: Dp = 8.dp,
+    drawBorder: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     val posterModifier = modifier
@@ -32,7 +33,7 @@ fun MoviePoster(
         .applyIf(posterWidth != Dp.Unspecified) { width(posterWidth) }
         .aspectRatio(aspectRatio)
         .background(Color.LightGray)
-        .border(0.5.dp, Color.LightGray, shape)
+        .applyIf(drawBorder) { border(0.5.dp, Color.LightGray, shape) }
         .clickable(onClick = onClick)
 
     Column {

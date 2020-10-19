@@ -46,6 +46,7 @@ class MoviesFragment(
 
     override fun onDestroy() {
         featureStore.release()
+        viewStore.dispose()
         super.onDestroy()
     }
 }

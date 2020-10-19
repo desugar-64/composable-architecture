@@ -48,7 +48,7 @@ fun <T> Either.Companion.ofNullable(value: T?): Either<Unit, T> =
     value?.let { v -> Either.Right(v as T) } ?: Either.Left(Unit)
 
 @OptIn(ExperimentalStdlibApi::class)
-inline fun <R> Either.Companion.recover(f: () -> R): Either<Throwable, R> =
+inline fun <R> Either.Companion.catch(f: () -> R): Either<Throwable, R> =
     try {
         Either.Right(f())
     } catch (t: Throwable) {

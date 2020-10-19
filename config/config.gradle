@@ -5,7 +5,8 @@ buildscript {
         kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinV"
 
         // Compose
-        composeV = "1.0.0-alpha04"
+        composeV = "1.0.0-alpha05"
+        composeCoilV = "0.3.0"
 
         // SDK
         compileSdkV = 29

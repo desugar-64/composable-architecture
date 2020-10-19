@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -16,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.gesture.tapGestureFilter
-import androidx.compose.ui.onPositioned
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.onGloballyPositioned
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -36,7 +38,7 @@ import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.Category
 import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
-import com.sergeyfitis.moviekeeper.data.models.dto.completePosterUrl
+import com.sergeyfitis.moviekeeper.data.models.dto.completeBackdropUrl
 import com.sergeyfitis.moviekeeper.feature_movie.action.MovieAction
 import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.syaremych.composable_architecture.prelude.types.Option
@@ -50,30 +52,34 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
     val optionState by viewStore.collectAsState(initial = viewStore.state)
     if (optionState.isEmpty) return
     val state = optionState.value
-    var posterBottomPx by mutableStateOf(0)
+    Log.d("MovieRoot", "render state ${state}")
+    var posterBottomPx by remember { mutableStateOf(0) }
     Box(modifier = Modifier) {
         val movie = state.movie
         MoviePoster(
             modifier = Modifier
                 .fillMaxWidth()
-                .onPositioned {
+                .onGloballyPositioned {
                     posterBottomPx = it.size.height
                 },
-            url = movie.completePosterUrl(),
+            url = movie.completeBackdropUrl(),
             shape = RoundedCornerShape(size = 0.dp),
             aspectRatio = 1.4f,
-            elevation = 0.dp
+            elevation = 0.dp,
+            drawBorder = false
         )
+
+        if (posterBottomPx == 0) return@Box
 
         val paddingTop = with(DensityAmbient.current) { posterBottomPx.toDp() }
 
+        Log.d("MovieRoot", "paddingTop ${paddingTop}")
+
         ScrollableColumn(
             modifier = Modifier
-                .fillMaxHeight()
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(start = 16.dp, top = paddingTop, end = 16.dp)
+            contentPadding = PaddingValues(top = paddingTop - 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
             DetailsContent(movie, state.genres)
         }
     }
@@ -81,10 +87,18 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
 
 @Composable
 private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
-    Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column(
+        modifier = Modifier
+            .background(Color.White, shape = RoundedCornerShape(topLeft = 16.dp, topRight = 16.dp))
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
-                modifier = Modifier.weight(1f, fill = true),
+                modifier = Modifier.weight(1f, fill = false),
                 text = movie.title,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
@@ -122,9 +136,12 @@ private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
         GenreList(genres = genres)
         Spacer(modifier = Modifier.height(8.dp))
         val overview = movie.overview
-        IntroductionView(overview) {
-            Log.d("MovieDetails", "ViewMore")
-        }
+        IntroductionView(overview) { Log.d("MovieDetails", "ViewMore") }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Actors", style = MaterialTheme.typography.h6)
+        Spacer(modifier = Modifier.height(8.dp))
+        ActorsList(actors = listOf("TODO"))
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -144,7 +161,7 @@ private fun IntroductionView(overview: String, onViewMoreClicked: () -> Unit) {
                 fontSynthesis = FontSynthesis.Weight
             )
         )
-        append("View more\u0020▼")
+        append(" View more\u0020▼")
         addStringAnnotation("view_more", "", overview.length, length)
     }
     Text(
