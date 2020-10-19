@@ -6,10 +6,7 @@ import com.sergeyfitis.moviekeeper.feature_movie.state.MovieState
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.state.FavoriteFeatureState
 import com.sergeyfitis.moviekeeper.feature_movies_list.movies.ca.stateclass.MoviesFeatureState
 import com.syaremych.composable_architecture.prelude.identity
-import com.syaremych.composable_architecture.prelude.types.Lens
-import com.syaremych.composable_architecture.prelude.types.Option
-import com.syaremych.composable_architecture.prelude.types.orNull
-import com.syaremych.composable_architecture.prelude.types.toOption
+import com.syaremych.composable_architecture.prelude.types.*
 
 data class AppState(
     val moviesFeatureState: MoviesFeatureState,
@@ -53,7 +50,12 @@ val AppState.Companion.movieFeatureState: Lens<AppState, Option<MovieFeatureStat
             }.toOption()
         },
         set = { appState, movieFeatureState ->
-            appState.copy(movieFeatureState = movieFeatureState.orNull)
+            appState.copy(
+                movieFeatureState = movieFeatureState.orNull,
+                favoriteFeatureState = movieFeatureState
+                    .rmap { appState.favoriteFeatureState.copy(favoriteMovies = it.favoriteMovies) }
+                    .fold({ appState.favoriteFeatureState }, ::identity)
+            )
         }
     )
 

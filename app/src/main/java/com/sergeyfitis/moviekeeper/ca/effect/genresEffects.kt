@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.map
 
 fun loadGenres(getGenres: suspend () -> GenresResponse): Effect<AppAction.Genres.Loaded> =
     flow {
-        kotlinx.coroutines.delay(15000L)
         emit(Either.catch { getGenres() })
     }
         .map { it.rmap(GenresResponse::genres) }

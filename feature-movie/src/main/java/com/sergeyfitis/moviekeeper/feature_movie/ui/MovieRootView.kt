@@ -7,9 +7,12 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -76,17 +79,23 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
         Log.d("MovieRoot", "paddingTop ${paddingTop}")
 
         ScrollableColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(top = paddingTop - 16.dp)
         ) {
-            DetailsContent(movie, state.genres)
+            DetailsContent(state.isFavorite, movie, state.genres) { toggleFavorite ->
+                viewStore.send(MovieAction.ToggleFavorite(toggleFavorite))
+            }
         }
     }
 }
 
 @Composable
-private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
+private fun DetailsContent(
+    isFavorite: Boolean,
+    movie: MovieDTO,
+    genres: List<GenreDTO>,
+    onFavoriteToggle: (Boolean) -> Unit
+) {
     Column(
         modifier = Modifier
             .background(Color.White, shape = RoundedCornerShape(topLeft = 16.dp, topRight = 16.dp))
@@ -105,22 +114,19 @@ private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
                     fontSize = 22.sp
                 )
             )
-            Row(
-                modifier = Modifier
-                    .horizontalRoundedGradientBackground(gradient0)
-                    .padding(vertical = 2.dp, horizontal = 6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.size(14.dp),
-                    asset = Icons.Filled.StarRate
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(
-                    text = "${movie.voteAverage}",
-                    style = TextStyle(fontWeight = FontWeight.SemiBold),
-                    fontSize = 12.sp
-                )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconToggleButton(
+                    modifier = Modifier.size(36.dp),
+                    checked = isFavorite,
+                    onCheckedChange = onFavoriteToggle
+                ) {
+                    Icon(
+                        asset = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        tint = colorGoldenTanoi
+                    )
+                }
+                RatingLabel(movie.voteAverage)
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -134,14 +140,37 @@ private fun DetailsContent(movie: MovieDTO, genres: List<GenreDTO>) {
         }
         Spacer(modifier = Modifier.height(8.dp))
         GenreList(genres = genres)
+
         Spacer(modifier = Modifier.height(8.dp))
         val overview = movie.overview
         IntroductionView(overview) { Log.d("MovieDetails", "ViewMore") }
         Spacer(modifier = Modifier.height(16.dp))
+
         Text(text = "Actors", style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
         ActorsList(actors = listOf("TODO"))
         Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun RatingLabel(voteAverage: Float) {
+    Row(
+        modifier = Modifier
+            .horizontalRoundedGradientBackground(gradient0)
+            .padding(vertical = 2.dp, horizontal = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(14.dp),
+            asset = Icons.Filled.StarRate
+        )
+        Spacer(modifier = Modifier.width(2.dp))
+        Text(
+            text = "$voteAverage",
+            style = TextStyle(fontWeight = FontWeight.SemiBold),
+            fontSize = 12.sp
+        )
     }
 }
 

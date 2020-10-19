@@ -9,7 +9,7 @@ import com.syaremych.composable_architecture.prelude.types.*
 
 data class MovieFeatureState(
     val selectedMovie: MovieDTO,
-    val favoriteMovies: Set<MovieDTO>,
+    val favoriteMovies: Set<Int>,
     val allGenres: Map<Int, GenreDTO>
 ) {
     companion object
@@ -21,7 +21,7 @@ val MovieFeatureState.Companion.movieState
             movieFeatureState.flatMap { featureState ->
                 MovieState(
                     movie = featureState.selectedMovie,
-                    isFavorite = featureState.favoriteMovies.contains(featureState.selectedMovie),
+                    isFavorite = featureState.favoriteMovies.contains(featureState.selectedMovie.id),
                     genres = featureState.selectedMovie.genres.mapNotNull(featureState.allGenres::get)
                 ).toOption()
             }
@@ -32,7 +32,7 @@ val MovieFeatureState.Companion.movieState
                     featureState
                         .favoriteMovies
                         .toMutableSet()
-                        .apply { add(viewState.fold(::absurd, ::identity).movie) }
+                        .apply { add(viewState.fold(::absurd, ::identity).movie.id) }
                 else
                     featureState
                         .favoriteMovies
@@ -42,7 +42,7 @@ val MovieFeatureState.Companion.movieState
                                 viewState.fold(
                                     ::absurd,
                                     ::identity
-                                ).movie
+                                ).movie.id
                             )
                         }
                 )
