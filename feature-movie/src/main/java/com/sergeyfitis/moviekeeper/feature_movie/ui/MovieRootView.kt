@@ -1,14 +1,15 @@
 package com.sergeyfitis.moviekeeper.feature_movie.ui
 
 import android.util.Log
-import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Favorite
@@ -17,22 +18,22 @@ import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.drawBehind
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.onGloballyPositioned
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.annotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.ui.tooling.preview.Devices
-import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.common.ext.horizontalRoundedGradientBackground
 import com.sergeyfitis.moviekeeper.common.theme.colorDarkOrange
 import com.sergeyfitis.moviekeeper.common.theme.colorGoldenTanoi
@@ -74,17 +75,16 @@ internal fun MovieRootView(viewStore: ViewStore<Option<MovieState>, MovieAction>
 
         if (posterBottomPx == 0) return@Box
 
-        val paddingTop = with(DensityAmbient.current) { posterBottomPx.toDp() }
+        val paddingTop = with(LocalDensity.current) { posterBottomPx.toDp() }
 
-        Log.d("MovieRoot", "paddingTop ${paddingTop}")
-
-        ScrollableColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(top = paddingTop - 16.dp)
-        ) {
-            DetailsContent(state.isFavorite, movie, state.genres) { toggleFavorite ->
-                viewStore.send(MovieAction.ToggleFavorite(toggleFavorite))
+        Log.d("MovieRoot", "paddingTop $paddingTop")
+        LazyColumn(modifier = Modifier.fillMaxWidth(), contentPadding = PaddingValues(top = paddingTop - 16.dp)) {
+            item {
+                DetailsContent(state.isFavorite, movie, state.genres) { toggleFavorite ->
+                    viewStore.send(MovieAction.ToggleFavorite(toggleFavorite))
+                }
             }
+
         }
     }
 }
@@ -98,7 +98,7 @@ private fun DetailsContent(
 ) {
     Column(
         modifier = Modifier
-            .background(Color.White, shape = RoundedCornerShape(topLeft = 16.dp, topRight = 16.dp))
+            .background(Color.White, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .padding(16.dp)
     ) {
         Row(
@@ -122,7 +122,8 @@ private fun DetailsContent(
                     onCheckedChange = onFavoriteToggle
                 ) {
                     Icon(
-                        asset = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = null,
                         tint = colorGoldenTanoi
                     )
                 }
@@ -163,7 +164,8 @@ private fun RatingLabel(voteAverage: Float) {
     ) {
         Icon(
             modifier = Modifier.size(14.dp),
-            asset = Icons.Filled.StarRate
+            contentDescription = null,
+            imageVector = Icons.Filled.StarRate
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
@@ -182,7 +184,7 @@ private fun IntroductionView(overview: String, onViewMoreClicked: () -> Unit) {
     val (textLayoutState, setTextLayout) = remember(overview) {
         mutableStateOf<TextLayoutResult?>(null)
     }
-    val text = annotatedString {
+    val text = buildAnnotatedString {
         append(overview)
         pushStyle(
             SpanStyle(
@@ -194,16 +196,18 @@ private fun IntroductionView(overview: String, onViewMoreClicked: () -> Unit) {
         addStringAnnotation("view_more", "", overview.length, length)
     }
     Text(
-        modifier = Modifier.tapGestureFilter { position ->
-            textLayoutState?.let { textLayout ->
-                val offset = textLayout.getOffsetForPosition(position)
-                text.getStringAnnotations(offset, offset)
-                    .firstOrNull { it.tag == "view_more" }
-                    ?.let { annotation ->
-                        if (annotation.tag == "view_more") {
-                            onViewMoreClicked.invoke()
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures { position ->
+                textLayoutState?.let { textLayout ->
+                    val offset = textLayout.getOffsetForPosition(position)
+                    text.getStringAnnotations(offset, offset)
+                        .firstOrNull { it.tag == "view_more" }
+                        ?.let { annotation ->
+                            if (annotation.tag == "view_more") {
+                                onViewMoreClicked.invoke()
+                            }
                         }
-                    }
+                }
             }
         },
         text = text,
@@ -228,7 +232,8 @@ private fun MovieRuntimeIcon() {
                     center = Offset(cx, cy)
                 )
             },
-        asset = Icons.Filled.AccessTime,
+        contentDescription = null,
+        imageVector = Icons.Filled.AccessTime,
     )
 }
 

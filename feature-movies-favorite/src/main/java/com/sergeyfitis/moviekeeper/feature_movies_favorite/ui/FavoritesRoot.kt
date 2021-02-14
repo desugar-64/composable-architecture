@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Devices
-import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.FavoriteFeatureAction
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.FavoriteMoviesAction
 import com.sergeyfitis.moviekeeper.feature_movies_favorite.ca.action.favoriteMoviesAction

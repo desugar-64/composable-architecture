@@ -1,13 +1,14 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui
 
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
@@ -17,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Devices
-import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.dto.GenreDTO
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
@@ -62,7 +63,6 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
                         }
                     }
                 }
-                TextField(value = , onValueChange = { /*TODO*/ })
                 MoviesRow(rowTitle = "Upcoming") {
                     if (state.showUpcomingProgress) {
                         ProgressBackdropItem()
@@ -91,11 +91,9 @@ private fun MoviesHorizontalList(
     movies: List<MovieItem>,
     viewHolder: @Composable LazyItemScope.(MovieItem) -> Unit
 ) {
-    LazyRowFor(
-        items = movies,
-        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, bottom = 8.dp),
-        itemContent = viewHolder
-    )
+    LazyRow(contentPadding = PaddingValues(start = 16.dp, top = 8.dp, bottom = 8.dp)) {
+        items(items = movies, itemContent = viewHolder)
+    }
 }
 
 @Composable

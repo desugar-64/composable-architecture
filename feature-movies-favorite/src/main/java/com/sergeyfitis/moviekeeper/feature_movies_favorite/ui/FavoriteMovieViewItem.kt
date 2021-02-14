@@ -3,6 +3,8 @@ package com.sergeyfitis.moviekeeper.feature_movies_favorite.ui
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -12,10 +14,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.ui.tooling.preview.Devices
-import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.data.models.Category
 import com.sergeyfitis.moviekeeper.data.models.dto.MovieDTO
@@ -45,7 +47,12 @@ fun FavoriteMovieViewItem(movie: MovieDTO) {
                 )
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(asset = Icons.Filled.Star, modifier = Modifier.size(12.dp), tint = Color.Black)
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp),
+                    tint = Color.Black
+                )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "${movie.voteAverage}")
             }

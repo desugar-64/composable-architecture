@@ -1,25 +1,28 @@
 package com.sergeyfitis.moviekeeper.feature_movie.ui
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Devices
-import androidx.ui.tooling.preview.Preview
 import com.sergeyfitis.moviekeeper.common.theme.MovieAppTheme
 import com.sergeyfitis.moviekeeper.common.ui.MoviePoster
 
 @Composable
 fun ActorsList(actors: List<String>) {
-    LazyRowFor(items = actors) { actor ->
-        ActorViewItem(actor = actor)
-        Spacer(modifier = Modifier.width(16.dp))
+    LazyRow {
+        items(items = actors) { actor ->
+            ActorViewItem(actor = actor)
+            Spacer(modifier = Modifier.width(16.dp))
+        }
     }
 }
 

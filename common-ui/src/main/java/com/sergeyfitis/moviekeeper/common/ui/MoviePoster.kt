@@ -7,15 +7,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawShadow
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
+import coil.request.ImageRequest
 import com.sergeyfitis.moviekeeper.common.ext.applyIf
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 @Composable
 fun MoviePoster(
@@ -31,7 +33,7 @@ fun MoviePoster(
     onClick: () -> Unit = {}
 ) {
     val posterModifier = modifier
-        .drawShadow(elevation = elevation, shape = shape)
+        .shadow(elevation = elevation, shape = shape)
         .applyIf(posterWidth != Dp.Unspecified) { width(posterWidth) }
         .aspectRatio(aspectRatio)
         .background(backgroundColor)
@@ -39,8 +41,9 @@ fun MoviePoster(
         .clickable(onClick = onClick)
 
     Column {
-        CoilImageWithCrossfade(
-            data = url,
+        CoilImage(
+            request = ImageRequest.Builder(LocalContext.current).crossfade(true).data(url).build(),
+            contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = posterModifier
         )
