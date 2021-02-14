@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
@@ -61,6 +62,7 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
                         }
                     }
                 }
+                TextField(value = , onValueChange = { /*TODO*/ })
                 MoviesRow(rowTitle = "Upcoming") {
                     if (state.showUpcomingProgress) {
                         ProgressBackdropItem()
@@ -138,7 +140,9 @@ private fun ProgressPosterItem() {
                 borderColor = Color.LightGray
             )
             CircularProgressIndicator(
-                modifier = Modifier.size(44.dp).align(Alignment.Center),
+                modifier = Modifier
+                    .size(44.dp)
+                    .align(Alignment.Center),
                 color = Color.LightGray
             )
         }
@@ -160,7 +164,9 @@ private fun ProgressBackdropItem() {
                 borderColor = Color.LightGray
             )
             CircularProgressIndicator(
-                modifier = Modifier.size(44.dp).align(Alignment.Center),
+                modifier = Modifier
+                    .size(44.dp)
+                    .align(Alignment.Center),
                 color = Color.LightGray
             )
         }

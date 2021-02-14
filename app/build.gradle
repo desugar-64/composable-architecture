@@ -65,8 +65,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation kotlinStdLib
     implementation "androidx.appcompat:appcompat:$appCompat"
-    implementation 'com.google.android.material:material:1.3.0-alpha02'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "androidx.core:core-ktx:$coreKtx"
     implementation "androidx.fragment:fragment-ktx:$fragment"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
@@ -79,9 +79,9 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:$composeV"
     implementation "androidx.compose.runtime:runtime:$composeV"
     implementation "androidx.compose.runtime:runtime-livedata:$composeV"
-    implementation "androidx.ui:ui-tooling:$composeV"
+    implementation "androidx.compose.ui:ui-tooling:$composeV"
 //    implementation "androidx.compose.test:test-core:$composeV"
-    implementation "androidx.ui:ui-test:$composeV"
+    implementation "androidx.compose.ui:ui-test:$composeV"
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationKtx"
