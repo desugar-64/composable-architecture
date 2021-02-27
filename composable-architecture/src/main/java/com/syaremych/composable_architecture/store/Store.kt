@@ -42,9 +42,7 @@ class Store<Value : Any, Action : Any> private constructor(
             this@Store._valueHolder.value = value
             ensureActive()
             effect
-                .onEach {
-                    send(it)
-                }
+                .onEach(::send)
                 .launchIn(this)
         }
     }

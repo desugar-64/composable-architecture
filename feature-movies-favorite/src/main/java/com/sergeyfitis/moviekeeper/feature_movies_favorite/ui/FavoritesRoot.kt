@@ -3,7 +3,8 @@ package com.sergeyfitis.moviekeeper.feature_movies_favorite.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,19 +29,20 @@ internal fun FavoriteMoviesRootView(
     viewStore: ViewStore<FavoriteState, FavoriteMoviesAction>
 ) {
     val state by viewStore.collectAsState(initial = viewStore.state)
-    LazyColumnFor(
+    LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        items = state.favoriteMovies.mapNotNull(state.movies::get)
-    ) { movie ->
-        FavoriteMovieViewItem(movie = movie)
-        Spacer(modifier = Modifier.height(8.dp))
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(state.favoriteMovies.mapNotNull(state.movies::get)) { movie ->
+            FavoriteMovieViewItem(movie = movie)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 
 @Preview(device = Devices.NEXUS_5, backgroundColor = 0xffffffL, showBackground = true)
 @Composable
-private fun screenPreview() {
+private fun ScreenPreview() {
     FavoriteMoviesRootView(
         viewStore = Store.mock.scope(
             toLocalValue = FavoriteFeatureState.favoriteMoviesState::get,

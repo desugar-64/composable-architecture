@@ -1,20 +1,22 @@
 package com.sergeyfitis.moviekeeper.feature_movies_list.movies.ui
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,42 +44,49 @@ internal fun MoviesRoot(viewStore: ViewStore<State, Action>, navigator: MovieLis
                 fontWeight = FontWeight.ExtraBold,
                 style = MaterialTheme.typography.h4
             )
-            ScrollableColumn {
-                val state by viewStore.collectAsState(viewStore.state)
-                val onClick: (MovieItem) -> () -> Unit = onClick@{ movie ->
+            val state by viewStore.collectAsState(viewStore.state)
+            val onClick: (MovieItem) -> () -> Unit = remember {
+                onClick@{ movie ->
                     return@onClick {
                         viewStore.send(Action.MovieTapped(movie.id))
                         navigator.openMovieDetails(movie.id)
                     }
                 }
-
-                MoviesRow(rowTitle = "Now Playing") {
-                    if (state.showNowPlayingProgress) {
-                        ProgressPosterItem()
-                    } else {
-                        MoviesHorizontalList(state.nowPlaying) { movieItem ->
-                            MoviePosterItem(
-                                posterUrl = movieItem.posterUrl,
-                                onClick = onClick(movieItem)
-                            )
+            }
+            LazyColumn {
+                item {
+                    MoviesRow(rowTitle = "Now Playing") {
+                        if (state.showNowPlayingProgress) {
+                            ProgressPosterItem()
+                        } else {
+                            MoviesHorizontalList(state.nowPlaying) { movieItem ->
+                                MoviePosterItem(
+                                    posterUrl = movieItem.posterUrl,
+                                    onClick = onClick(movieItem)
+                                )
+                            }
                         }
                     }
                 }
-                MoviesRow(rowTitle = "Upcoming") {
-                    if (state.showUpcomingProgress) {
-                        ProgressBackdropItem()
-                    } else {
-                        MoviesHorizontalList(state.upcoming) { movieItem ->
-                            MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                item {
+                    MoviesRow(rowTitle = "Upcoming") {
+                        if (state.showUpcomingProgress) {
+                            ProgressBackdropItem()
+                        } else {
+                            MoviesHorizontalList(state.upcoming) { movieItem ->
+                                MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                            }
                         }
                     }
                 }
-                MoviesRow(rowTitle = "Top Rated") {
-                    if (state.showTopRatedProgress) {
-                        ProgressBackdropItem()
-                    } else {
-                        MoviesHorizontalList(state.topRated) { movieItem ->
-                            MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                item {
+                    MoviesRow(rowTitle = "Top Rated") {
+                        if (state.showTopRatedProgress) {
+                            ProgressBackdropItem()
+                        } else {
+                            MoviesHorizontalList(state.topRated) { movieItem ->
+                                MovieBackdropItem(item = movieItem, onClick = onClick(movieItem))
+                            }
                         }
                     }
                 }

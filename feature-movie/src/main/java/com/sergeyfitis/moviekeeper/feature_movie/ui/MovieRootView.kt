@@ -176,7 +176,6 @@ private fun RatingLabel(voteAverage: Float) {
     }
 }
 
-@OptIn(ExperimentalLayout::class)
 @Composable
 private fun IntroductionView(overview: String, onViewMoreClicked: () -> Unit) {
     Text(text = "Introduction", style = MaterialTheme.typography.h6)
