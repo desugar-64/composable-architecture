@@ -1,6 +1,5 @@
 package com.syaremych.composable_architecture.store
 
-import android.util.Log
 import com.syaremych.composable_architecture.prelude.types.Lens
 import com.syaremych.composable_architecture.prelude.types.Prism
 import kotlinx.coroutines.flow.map
@@ -100,7 +99,7 @@ fun <Value : Any,
             value.set(globalValue, reducedLocalValue),
             reducedLocalEffect
                 .map { ac ->
-                    Log.d("pullback", ac.toString())
+                    println("pullback: ${ac.toString()}")
                     action.reverseGet(ac)
                 }
                 .eraseToEffect()

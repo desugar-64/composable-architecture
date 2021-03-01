@@ -2,7 +2,6 @@
 
 package com.syaremych.composable_architecture.prelude.types
 
-import com.syaremych.composable_architecture.BuildConfig
 import kotlin.coroutines.cancellation.CancellationException
 
 typealias Option<A> = Either<Unit, A>
@@ -52,9 +51,6 @@ inline fun <R> Either.Companion.catch(f: () -> R): Either<Throwable, R> =
     try {
         Either.Right(f())
     } catch (t: Throwable) {
-        if (BuildConfig.DEBUG) {
-            t.printStackTrace()
-        }
         if (t is CancellationException) {
             throw t
         }

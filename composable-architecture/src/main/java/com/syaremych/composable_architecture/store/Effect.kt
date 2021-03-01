@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "EXPERIMENTAL_API_USAGE")
 
 package com.syaremych.composable_architecture.store
 

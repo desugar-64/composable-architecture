@@ -1,8 +1,0 @@
-rootProject.name='Movie Keeper'
-include ':app'
-include ':composable-architecture'
-include ':feature-movies-list'
-include ':data'
-include ':feature-movie'
-include ':feature-movies-favorite'
-include ':common-ui'

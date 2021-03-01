@@ -1,6 +1,6 @@
 package com.sergeyfitis.moviekeeper.data.api
 
-import com.sergeyfitis.moviekeeper.data.BuildConfig
+import Movie_Keeper_Compose.data.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit
 
 private val authQueryAppenderInterceptor: Interceptor = Interceptor { chain ->
     val requestBuilder = chain.request().newBuilder()
-
     val url = chain.request().url
     val urlBuilder = url.newBuilder()
     if (url.queryParameter("api_key") == null) {
