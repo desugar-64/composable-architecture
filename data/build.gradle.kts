@@ -16,7 +16,7 @@ buildConfig {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).forEach {
     it.kotlinOptions {
         jvmTarget = Libs.Kotlin.jvm
-        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 }
 

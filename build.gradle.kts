@@ -18,20 +18,22 @@ buildscript {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().forEach {
-    it.kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-Xopt-in=kotlin.RequiresOptIn",
-            "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xopt-in=kotlinx.coroutines.FlowPreview",
-            "-Xopt-in=kotlin.Experimental",
-            "-Xallow-jvm-ir-dependencies"
-        )
-        jvmTarget = Libs.Kotlin.jvm
-        useIR = true
+allprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().forEach {
+        it.kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=kotlinx.coroutines.FlowPreview",
+                "-Xopt-in=kotlin.Experimental",
+                "-Xallow-jvm-ir-dependencies"
+            )
+            jvmTarget = Libs.Kotlin.jvm
+            useIR = true
+        }
     }
-}
 
+}
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)

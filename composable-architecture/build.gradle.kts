@@ -15,9 +15,9 @@ dependencies {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).forEach {
     it.kotlinOptions {
         jvmTarget = Libs.Kotlin.jvm
-        freeCompilerArgs += listOf(
+        freeCompilerArgs = freeCompilerArgs + listOf(
             "-Xopt-in=kotlin.RequiresOptIn",
-            "-Xopt-in=kotlinx.coroutines.FlowPrevie"
+            "-Xopt-in=kotlinx.coroutines.FlowPreview"
         )
     }
 }
