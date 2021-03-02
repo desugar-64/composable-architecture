@@ -6,6 +6,7 @@ plugins {
     id("kotlin-android")
     kotlin("plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
+    id("org.jetbrains.compose")
 }
 
 android {
@@ -61,16 +62,11 @@ android {
 
 
     buildFeatures {
-        compose = true
         // Disable unused AGP features
         aidl = false
         renderScript = false
         resValues = false
         shaders = false
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.version
     }
 
     packagingOptions {

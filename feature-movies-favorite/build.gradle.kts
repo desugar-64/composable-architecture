@@ -3,6 +3,7 @@ import com.syaremych.composableArchitecture.buildsrc.Libs
 plugins {
     id("com.android.library")
     id("kotlin-android")
+    id("org.jetbrains.compose")
 }
 
 android {
@@ -33,17 +34,15 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Libs.Kotlin.jvm.toString()
+        jvmTarget = Libs.Kotlin.jvm
         useIR = true
     }
 
-    buildFeatures {
-        compose = true
+    compileOptions {
+        sourceCompatibility = Libs.Kotlin.javaVersion
+        targetCompatibility = Libs.Kotlin.javaVersion
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = Libs.AndroidX.Compose.version
-    }
     lint {
         isAbortOnError = false
     }

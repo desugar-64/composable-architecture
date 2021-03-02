@@ -4,6 +4,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         jcenter()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 rootProject.name = "Movie Keeper Compose"
@@ -14,5 +15,6 @@ include(
     ":data",
     ":feature-movie",
     ":feature-movies-favorite",
-    ":common-ui"
+    ":common-ui",
+    ":desktop"
 )

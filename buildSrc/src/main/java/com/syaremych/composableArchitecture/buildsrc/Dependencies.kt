@@ -18,9 +18,9 @@ object Libs {
     }
 
     object Kotlin {
-        val javaVersion: JavaVersion = JavaVersion.VERSION_11
-        const val jvm = "11"
-        const val version = "1.4.30"
+        val javaVersion: JavaVersion = JavaVersion.VERSION_1_8
+        const val jvm = "1.8"
+        const val version = "1.4.31"
         const val stdlib = "org.jetbrains.java:java-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.java:java-gradle-plugin:$version"
         const val serializationPlugin = "org.jetbrains.java:java-serialization:$version"
