@@ -16,5 +16,6 @@ include(
     ":feature-movie",
     ":feature-movies-favorite",
     ":common-ui",
-    ":desktop"
+    ":desktop",
+    ":common:ui"
 )
