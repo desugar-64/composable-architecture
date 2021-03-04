@@ -7,39 +7,6 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-
-android {
-    compileSdkVersion(Libs.AndroidSDK.compileSDK)
-
-    defaultConfig {
-        minSdkVersion(Libs.AndroidSDK.minSDK)
-        targetSdkVersion(Libs.AndroidSDK.targetSDK)
-        versionCode = 1
-        versionName = "1.0"
-    }
-
-    compileOptions {
-        sourceCompatibility = Libs.Kotlin.javaVersion
-        targetCompatibility = Libs.Kotlin.javaVersion
-    }
-
-    sourceSets {
-        named("main") {
-            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-            res.srcDirs("src/androidMain/res")
-        }
-    }
-
-    configurations {
-        create("androidTestApi")
-        create("androidTestDebugApi")
-        create("androidTestReleaseApi")
-        create("testApi")
-        create("testDebugApi")
-        create("testReleaseApi")
-    }
-}
-
 kotlin {
     android()
     jvm("desktop")
@@ -63,8 +30,38 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
-                implementation("com.alialbaali.kamel:kamel-image:0.1.1")
+                implementation("com.alialbaali.kamel:kamel-image:0.2.0")
             }
+        }
+    }
+
+    configurations {
+        create("testApi")
+        create("testDebugApi")
+        create("testReleaseApi")
+    }
+}
+
+android {
+    compileSdkVersion(30)
+    buildToolsVersion(Libs.AndroidSDK.buildTools)
+
+    defaultConfig {
+        minSdkVersion(Libs.AndroidSDK.minSDK)
+        targetSdkVersion(Libs.AndroidSDK.targetSDK)
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = Libs.Kotlin.javaVersion
+        targetCompatibility = Libs.Kotlin.javaVersion
+    }
+
+    sourceSets {
+        named("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            res.srcDirs("src/androidMain/res")
         }
     }
 }

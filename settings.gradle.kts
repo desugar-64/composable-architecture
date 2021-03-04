@@ -10,12 +10,12 @@ dependencyResolutionManagement {
 rootProject.name = "Movie Keeper Compose"
 include(
     ":app",
+    ":common:ui",
+    ":desktop",
     ":composable-architecture",
     ":feature-movies-list",
     ":data",
     ":feature-movie",
     ":feature-movies-favorite",
-    ":common-ui",
-    ":desktop",
-    ":common:ui"
+    ":common-ui"
 )
