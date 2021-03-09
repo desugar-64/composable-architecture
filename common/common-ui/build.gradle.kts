@@ -43,7 +43,7 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(Libs.AndroidSDK.compileSDK)
     buildToolsVersion(Libs.AndroidSDK.buildTools)
 
     defaultConfig {

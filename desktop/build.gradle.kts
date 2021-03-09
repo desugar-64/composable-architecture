@@ -14,7 +14,8 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(project(":common:ui"))
+                implementation(project(":common:common-ui"))
+                implementation(project(":common:feature-home"))
             }
         }
     }
