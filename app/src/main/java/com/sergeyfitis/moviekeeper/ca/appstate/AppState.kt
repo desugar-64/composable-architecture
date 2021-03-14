@@ -28,15 +28,16 @@ data class AppState(
 
 val AppState.Companion.moviesFeatureState: Lens<AppState, MoviesFeatureState>
     get() = Lens(
-        get = { appState -> appState.moviesFeatureState.copy(genres = appState.genres) }
-    ) { appState, moviesFeatureState ->
-        appState.copy(
-            moviesFeatureState = moviesFeatureState,
-            favoriteFeatureState = appState.favoriteFeatureState.copy(
-                movies = moviesFeatureState.movies,
+        get = { appState -> appState.moviesFeatureState.copy(genres = appState.genres) },
+        set = { appState, moviesFeatureState ->
+            appState.copy(
+                moviesFeatureState = moviesFeatureState,
+                favoriteFeatureState = appState.favoriteFeatureState.copy(
+                    movies = moviesFeatureState.movies,
+                )
             )
-        )
-    }
+        }
+    )
 
 val AppState.Companion.movieFeatureState: Lens<AppState, Option<MovieFeatureState>>
     get() = Lens(

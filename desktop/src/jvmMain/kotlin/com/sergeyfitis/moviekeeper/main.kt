@@ -7,6 +7,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.sergeyfitis.moviekeeper.ui.MoviePoster
 import com.sergeyfitis.moviekeeper.home.Home
+import com.sergeyfitis.moviekeeper.home.ca.state.HomeFeatureState
+import com.sergeyfitis.moviekeeper.home.ui.navbar.HomeRootView
 
 
 fun main() = Window(
@@ -14,5 +16,5 @@ fun main() = Window(
     size = IntSize(640, 480),
     icon = null,
 ) {
-    Home()
+    HomeRootView(homeFeatureState = HomeFeatureState.init())
 }
