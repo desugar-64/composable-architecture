@@ -20,16 +20,8 @@ internal data class NavBarState(
     val activeNavBarItem: ActiveNavBarItem?
 ) {
     companion object {
-        fun init() = NavBarState(items = emptyList(), activeNavBarItem = null)
-    }
-}
-
-data class HomeFeatureState internal constructor(
-    internal val items: List<NavBarItem>,
-) {
-    companion object {
-        fun init() = HomeFeatureState(
-            listOf(
+        fun init() = NavBarState(
+            items = listOf(
                 NavBarItem(
                     NavBarHeader.MOVIES,
                     listOf(
@@ -48,7 +40,18 @@ data class HomeFeatureState internal constructor(
                         NavBarTab.TOP_RATED
                     )
                 )
-            )
+            ),
+            activeNavBarItem = null
+        )
+    }
+}
+
+data class HomeFeatureState internal constructor(
+    internal val navBarState: NavBarState,
+) {
+    companion object {
+        fun init() = HomeFeatureState(
+            navBarState = NavBarState.init()
         )
     }
 }

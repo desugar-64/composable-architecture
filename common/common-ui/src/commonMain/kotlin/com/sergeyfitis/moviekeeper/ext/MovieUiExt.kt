@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 
-fun Modifier.applyIf(
+inline fun Modifier.applyIf(
     condition: Boolean,
     modifier: Modifier.() -> Modifier
 ) = if (condition) this.then(modifier()) else this
