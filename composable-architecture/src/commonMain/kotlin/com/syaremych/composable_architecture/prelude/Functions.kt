@@ -2,6 +2,7 @@
 
 package com.syaremych.composable_architecture.prelude
 
+import kotlin.jvm.JvmName
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
 import kotlin.reflect.KMutableProperty1
