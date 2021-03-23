@@ -10,7 +10,7 @@ import com.sergeyfitis.moviekeeper.home.ui.navbar.model.MenuItem
 @Composable
 internal fun MenuElement(
     modifier: Modifier = Modifier,
-    menuItem: MenuItem,
+    menuItem: MenuItem.Element,
     onItemClicked: (NavBarTab) -> Unit
 ) {
     Text(

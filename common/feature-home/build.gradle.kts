@@ -16,8 +16,9 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
+                api(compose.materialIconsExtended)
                 implementation(project(":common:common-ui"))
-                implementation(project(Libs.ComposableArchitecture.lib))
+                api(project(Libs.ComposableArchitecture.lib))
             }
         }
         named("androidMain") {

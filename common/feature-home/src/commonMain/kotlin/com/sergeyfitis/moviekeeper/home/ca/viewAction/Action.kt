@@ -5,7 +5,7 @@ import com.sergeyfitis.moviekeeper.home.ca.action.navBar.NavBarAction
 import com.sergeyfitis.moviekeeper.home.ui.navbar.model.MenuItem
 
 internal sealed class Action {
-    data class TapMenuItem(val menuItem: MenuItem) : Action()
+    data class TapMenuItem(val menuItem: MenuItem.Element) : Action()
 
     companion object
 }

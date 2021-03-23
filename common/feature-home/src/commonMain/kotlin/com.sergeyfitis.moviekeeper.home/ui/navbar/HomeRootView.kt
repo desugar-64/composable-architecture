@@ -25,39 +25,34 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.sergeyfitis.moviekeeper.ext.applyIf
+import com.sergeyfitis.moviekeeper.home.ca.action.HomeFeatureAction
+import com.sergeyfitis.moviekeeper.home.ca.action.navBarAction
 import com.sergeyfitis.moviekeeper.home.ca.state.HomeFeatureState
+import com.sergeyfitis.moviekeeper.home.ca.state.navBarState
+import com.sergeyfitis.moviekeeper.home.ca.viewAction.init
+import com.syaremych.composable_architecture.store.Store
+import com.syaremych.composable_architecture.store.ViewStore
+import com.syaremych.composable_architecture.store.view
 
 private enum class HomeScaffoldLayout { SIDE_BAR, BOTTOM_BAR, CONTENT }
 
 @Composable
-fun HomeRootView(homeFeatureState: HomeFeatureState) = HomeScaffold(
-    sideNavigationBar = {
-        var maxMenuItemWidthPx: Int by remember { mutableStateOf(0) }
-        SideNavBar(Modifier.fillMaxHeight().wrapContentWidth()) {
-            homeFeatureState.navBarState.items.forEach { navBarItem ->
-                Text(
-                    text = navBarItem.header.name,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .onSizeChanged {
-                            if (it.width > maxMenuItemWidthPx) {
-                                maxMenuItemWidthPx = it.width
-                            }
-                        }
-                        .applyIf(maxMenuItemWidthPx > 0) {
-                            requiredWidth(width = with(LocalDensity.current) { maxMenuItemWidthPx.toDp() })
-                        }
-                        .background(
-                            shape = RoundedCornerShape(4.dp),
-                            color = Color.Green
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-                navBarItem.tabs.forEach { tab ->
+fun HomeRootView(homeFeatureStore: Store<HomeFeatureState, HomeFeatureAction>) {
+    val navBarStore = remember(homeFeatureStore) {
+        homeFeatureStore.scope(
+            toLocalValue = HomeFeatureState.navBarState::get,
+            toGlobalAction = HomeFeatureAction.navBarAction::reverseGet
+        )
+    }
+    HomeScaffold(
+        sideNavigationBar = {
+//            var maxMenuItemWidthPx: Int by remember { mutableStateOf(0) }
+            SideNavBar(Modifier.fillMaxHeight().wrapContentWidth(), navBarStore = navBarStore) /*{
+                homeFeatureState.navBarState.items.forEach { navBarItem ->
                     Text(
-                        text = tab.name,
+                        text = navBarItem.header.name,
                         modifier = Modifier
-                            .padding(vertical = 2.dp)
+                            .padding(vertical = 4.dp)
                             .onSizeChanged {
                                 if (it.width > maxMenuItemWidthPx) {
                                     maxMenuItemWidthPx = it.width
@@ -68,24 +63,44 @@ fun HomeRootView(homeFeatureState: HomeFeatureState) = HomeScaffold(
                             }
                             .background(
                                 shape = RoundedCornerShape(4.dp),
-                                color = Color.LightGray
+                                color = Color.Green
                             )
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     )
+                    navBarItem.tabs.forEach { tab ->
+                        Text(
+                            text = tab.name,
+                            modifier = Modifier
+                                .padding(vertical = 2.dp)
+                                .onSizeChanged {
+                                    if (it.width > maxMenuItemWidthPx) {
+                                        maxMenuItemWidthPx = it.width
+                                    }
+                                }
+                                .applyIf(maxMenuItemWidthPx > 0) {
+                                    requiredWidth(width = with(LocalDensity.current) { maxMenuItemWidthPx.toDp() })
+                                }
+                                .background(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = Color.LightGray
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                 }
-            }
+            }*/
+        },
+        bottomNavigationBar = {
+            BottomNavBar(Modifier.fillMaxWidth().requiredHeight(48.dp))
         }
-    },
-    bottomNavigationBar = {
-        BottomNavBar(Modifier.fillMaxWidth().requiredHeight(48.dp))
-    }
-) {
-    Box(
-        Modifier.fillMaxSize()
-            .background(color = Color.Gray)
-            .padding(16.dp)
     ) {
-        Text("Content")
+        Box(
+            Modifier.fillMaxSize()
+                .background(color = Color.Gray)
+                .padding(16.dp)
+        ) {
+            Text("Content")
+        }
     }
 }
 
