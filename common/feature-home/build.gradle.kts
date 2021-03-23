@@ -17,6 +17,7 @@ kotlin {
                 api(compose.foundation)
                 api(compose.material)
                 implementation(project(":common:common-ui"))
+                implementation(project(Libs.ComposableArchitecture.lib))
             }
         }
         named("androidMain") {

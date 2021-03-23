@@ -3,7 +3,7 @@ package com.syaremych.composableArchitecture.buildsrc
 import org.gradle.api.JavaVersion
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha10"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha11"
     const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.0.9"
 
     const val junit = "junit:junit:4.13"
@@ -95,5 +95,10 @@ object Libs {
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
             const val viewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02"
         }
+
+    }
+
+    object ComposableArchitecture {
+        const val lib = ":composable-architecture"
     }
 }

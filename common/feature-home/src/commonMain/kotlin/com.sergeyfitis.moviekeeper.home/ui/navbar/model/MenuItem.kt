@@ -1,9 +1,10 @@
 package com.sergeyfitis.moviekeeper.home.ui.navbar.model
 
-import com.sergeyfitis.moviekeeper.home.ca.state.NavBarTab
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.sergeyfitis.moviekeeper.home.ca.state.navbar.NavBarTab
 
 internal data class MenuItem(
     val title: String = "",
-    val icon: Int = 0,
+    val icon: ImageVector? = null,
     val navBarTab: NavBarTab
 )
