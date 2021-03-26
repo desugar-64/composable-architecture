@@ -1,24 +1,28 @@
 package com.sergeyfitis.moviekeeper.home.ui.navbar.model
 
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material.icons.filled.OnlinePrediction
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.PermMedia
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Upcoming
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sergeyfitis.moviekeeper.home.ca.state.navbar.NavBarHeader
 import com.sergeyfitis.moviekeeper.home.ca.state.navbar.NavBarItem
 import com.sergeyfitis.moviekeeper.home.ca.state.navbar.NavBarTab
 
+@Stable
 internal sealed class MenuItem {
     data class Header(val title: String, val header: NavBarHeader) : MenuItem()
-    data class Element(val title: String, val icon: ImageVector?, val navBarTab: NavBarTab) :
-        MenuItem()
+    data class Element(
+        val title: String,
+        val icon: ImageVector?,
+        val navBarTab: NavBarTab,
+        val parentHeader: NavBarHeader
+    ) : MenuItem()
 }
 
 internal fun NavBarItem.toMenuItems(): List<MenuItem> {
@@ -31,7 +35,8 @@ internal fun NavBarItem.toMenuItems(): List<MenuItem> {
         MenuItem.Element(
             title = tabStringOf(tab),
             icon = tabIconOf(tab),
-            navBarTab = tab
+            navBarTab = tab,
+            parentHeader = this.header
         )
     }
 

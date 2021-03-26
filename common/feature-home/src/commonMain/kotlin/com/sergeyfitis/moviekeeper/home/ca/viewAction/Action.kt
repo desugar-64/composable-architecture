@@ -12,6 +12,11 @@ internal sealed class Action {
 
 internal fun HomeFeatureAction.Companion.init(action: Action): HomeFeatureAction {
     return when (action) {
-        is Action.TapMenuItem -> HomeFeatureAction.NavBar(NavBarAction.NavigateTo(action.menuItem.navBarTab))
+        is Action.TapMenuItem -> HomeFeatureAction.NavBar(
+            NavBarAction.TabSelected(
+                parentHeader = action.menuItem.parentHeader,
+                navBarTab = action.menuItem.navBarTab
+            )
+        )
     }
 }
