@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.IntSize
 import com.sergeyfitis.moviekeeper.home.HomeScreen
 import com.sergeyfitis.moviekeeper.home.ca.reducer.homeFeatureReducer
 import com.sergeyfitis.moviekeeper.home.ca.state.HomeFeatureState
+import com.sergeyfitis.moviekeeper.theme.MovieAppTheme
 import com.syaremych.composable_architecture.store.Store
 
 
@@ -18,5 +19,7 @@ fun main() = Window(
         reducer = homeFeatureReducer,
         environment = Unit
     )
-    HomeScreen(homeFeatureStore)
+    MovieAppTheme {
+        HomeScreen(homeFeatureStore)
+    }
 }
