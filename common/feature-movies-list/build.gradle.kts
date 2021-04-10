@@ -2,13 +2,13 @@ import com.syaremych.composableArchitecture.buildsrc.Libs
 import org.jetbrains.compose.compose
 
 plugins {
-    id("com.android.library")
+//    id("com.android.library")
     kotlin("multiplatform")
     id("org.jetbrains.compose")
 }
 
 kotlin {
-    android()
+//    android()
     jvm("desktop")
     sourceSets {
         named("commonMain") {
@@ -38,12 +38,6 @@ kotlin {
                 api(compose.desktop.common)
             }
         }
-    }
-
-    configurations {
-        create("testApi")
-        create("testDebugApi")
-        create("testReleaseApi")
     }
 }
 

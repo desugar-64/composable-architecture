@@ -42,7 +42,10 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -55,11 +58,9 @@ android {
     kotlinOptions {
         jvmTarget = Libs.Kotlin.jvm
     }
-
-    lint {
+    lintOptions {
         isAbortOnError = false
     }
-
 
     buildFeatures {
         // Disable unused AGP features
@@ -70,8 +71,8 @@ android {
     }
 
     packagingOptions {
-        resources.pickFirsts.add("META-INF/AL2.0")
-        resources.pickFirsts.add("META-INF/LGPL2.1")
+        pickFirsts.add("META-INF/AL2.0")
+        pickFirsts.add("META-INF/LGPL2.1")
     }
 }
 

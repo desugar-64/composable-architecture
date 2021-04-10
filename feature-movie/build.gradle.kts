@@ -41,7 +41,7 @@ android {
         targetCompatibility = Libs.Kotlin.javaVersion
     }
 
-    lint {
+    lintOptions {
         isAbortOnError = false
     }
 }

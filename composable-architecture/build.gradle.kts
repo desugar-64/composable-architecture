@@ -31,12 +31,6 @@ kotlin {
 
         }
     }
-
-    configurations {
-        create("testApi")
-        create("testDebugApi")
-        create("testReleaseApi")
-    }
 }
 
 android {
