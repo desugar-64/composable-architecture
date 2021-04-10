@@ -89,3 +89,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+/debug_key.jks
