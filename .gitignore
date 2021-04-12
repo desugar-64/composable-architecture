@@ -90,3 +90,4 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 /debug_key.jks
+/.idea/libraries-with-intellij-classes.xml

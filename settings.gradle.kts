@@ -21,3 +21,5 @@ include(
     ":feature-movies-favorite",
     ":common-ui"
 )
+include("common:data")
+findProject(":common:data")?.name = "data"

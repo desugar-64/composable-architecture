@@ -23,8 +23,20 @@ object Libs {
         const val version = "1.4.31"
         const val stdlib = "org.jetbrains.java:java-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.java:java-gradle-plugin:$version"
-        const val serializationPlugin = "org.jetbrains.java:java-serialization:$version"
         const val extensions = "org.jetbrains.java:java-android-extensions:$version"
+
+        object Ktor {
+            private const val ktorVersion = "1.5.3"
+            const val core = "io.ktor:ktor-client-core:$ktorVersion"
+            const val client = "io.ktor:ktor-client-cio:$ktorVersion"
+            const val logging = "io.ktor:ktor-client-logging:$ktorVersion"
+            const val serialization = "io.ktor:ktor-client-serialization:$ktorVersion"
+        }
+
+        object Serialization {
+            const val serializationPlugin = "org.jetbrains.java:java-serialization:$version"
+            const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0"
+        }
     }
 
     object Coroutines {
