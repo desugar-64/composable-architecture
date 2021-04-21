@@ -13,7 +13,7 @@ include(
     ":data",
     ":common:common-ui",
     ":common:feature-home",
-//    ":common:feature-movies-list",
+    ":common:feature-movies-list",
     ":app",
     ":desktop",
     ":feature-movies-list",

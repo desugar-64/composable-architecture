@@ -12,11 +12,11 @@ interface ReducerScope<Value : Any, Action : Any, Environment : Any> {
 
 // TODO: Wait for Kotlin 1.4.10 fix, for some reason `fun interface` gives an invalid bytecode
 //  kotlin java.lang.ClassFormatError: Bad method name at constant pool
-/*fun*/ interface Reducer<Value : Any, Action : Any, Environment : Any> {
+/*fun*/ interface Reducer<Value, Action : Any, Environment : Any> {
     fun reduce(value: Value, action: Action, environment: Environment): Reduced<Value, Action>
 
     companion object {
-        operator fun <Value : Any, Action : Any, Environment : Any> invoke(
+        operator fun <Value, Action : Any, Environment : Any> invoke(
             reducer: (Value, Action, Environment) -> Reduced<Value, Action>
         ) = object : Reducer<Value, Action, Environment> {
             override fun reduce(
@@ -107,7 +107,17 @@ fun <Value : Any,
     }
 }
 
-fun <Value : Any, Action : Any, Environment : Any> Reducer.Companion.empty() =
+fun <Value, Action : Any, Environment : Any> Reducer.Companion.empty() =
     Reducer<Value, Action, Environment> { value, _, _ ->
         reduced(value, Effect.none())
     }
+
+fun <Value : Any, Action : Any, Environment : Any> Reducer<Value, Action, Environment>.optional(): Reducer<Value?, Action, Environment> {
+    return Reducer.invoke { value, action, environment ->
+        return@invoke if (value != null) {
+            this.reduce(value, action, environment)
+        } else {
+            reduced(value)
+        }
+    }
+}

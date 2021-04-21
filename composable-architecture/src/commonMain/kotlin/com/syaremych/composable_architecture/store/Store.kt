@@ -16,7 +16,7 @@ inline fun <Value, Action> reduced(
 inline fun <Value, Action> reduced(value: Value) =
     reduced<Value, Action>(value, Effect.none())
 
-class Store<Value : Any, Action : Any> private constructor(
+class Store<Value, Action: Any> private constructor(
     private val storeDispatcher: CoroutineDispatcher
 ) {
 
@@ -46,7 +46,7 @@ class Store<Value : Any, Action : Any> private constructor(
         }
     }
 
-    fun <LocalValue : Any, LocalAction : Any> scope(
+    fun <LocalValue, LocalAction : Any> scope(
         toLocalValue: (Value) -> LocalValue,
         toGlobalAction: (LocalAction) -> Action
     ): Store<LocalValue, LocalAction> {
@@ -75,7 +75,7 @@ class Store<Value : Any, Action : Any> private constructor(
 
     companion object {
         @Suppress("UNCHECKED_CAST")
-        fun <Value : Any, Action : Any, Environment : Any> init(
+        fun <Value, Action : Any, Environment : Any> init(
             initialState: Value,
             reducer: Reducer<Value, Action, Environment>,
             environment: Environment,

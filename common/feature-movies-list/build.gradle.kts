@@ -13,13 +13,14 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
+                implementation(kotlin("stdlib-common"))
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
                 api(compose.materialIconsExtended)
                 implementation(project(":common:common-ui"))
                 api(project(Libs.ComposableArchitecture.lib))
-                api(project(":data"))
+                api(project(":common:data"))
             }
         }
 /*

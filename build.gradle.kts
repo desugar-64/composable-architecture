@@ -11,7 +11,7 @@ buildscript {
 
     dependencies {
         // __LATEST_COMPOSE_RELEASE_VERSION__
-        classpath("org.jetbrains.compose:compose-gradle-plugin:0.4.0-build178")
+        classpath("org.jetbrains.compose:compose-gradle-plugin:0.4.0-build184")
         classpath(com.syaremych.composableArchitecture.buildsrc.Libs.androidGradlePlugin)
         classpath(kotlin("gradle-plugin", version = com.syaremych.composableArchitecture.buildsrc.Libs.Kotlin.version))
         classpath(kotlin("serialization", version = com.syaremych.composableArchitecture.buildsrc.Libs.Kotlin.version))

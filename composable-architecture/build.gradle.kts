@@ -1,5 +1,5 @@
 import com.syaremych.composableArchitecture.buildsrc.Libs
-import java.awt.SystemColor.desktop
+import org.jetbrains.compose.compose
 
 plugins {
     id("com.android.library")
@@ -12,8 +12,8 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-//                api(compose.runtime)
-//                api(compose.foundation)
+                api(compose.runtime)
+                api(compose.foundation)
 //                api(compose.material)
                 api(Libs.Coroutines.core)
             }

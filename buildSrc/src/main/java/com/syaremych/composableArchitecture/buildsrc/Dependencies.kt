@@ -20,7 +20,7 @@ object Libs {
     object Kotlin {
         val javaVersion: JavaVersion = JavaVersion.VERSION_1_8
         const val jvm = "1.8"
-        const val version = "1.4.31"
+        const val version = "1.4.32"
         const val stdlib = "org.jetbrains.java:java-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.java:java-gradle-plugin:$version"
         const val extensions = "org.jetbrains.java:java-android-extensions:$version"
@@ -40,7 +40,7 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.4.2"
+        private const val version = "1.4.3"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"

@@ -1,16 +1,9 @@
 package com.sergeyfitis.moviekeeper.home.ui.navbar
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sergeyfitis.moviekeeper.home.ca.action.navBar.NavBarAction
@@ -20,10 +13,10 @@ import com.sergeyfitis.moviekeeper.home.ca.viewState.init
 import com.sergeyfitis.moviekeeper.home.ui.menuItem.MenuElement
 import com.sergeyfitis.moviekeeper.home.ui.menuItem.MenuHeader
 import com.sergeyfitis.moviekeeper.home.ui.navbar.model.MenuItem
+import com.syaremych.composable_architecture.compose_ui.collectAsState
+import com.syaremych.composable_architecture.compose_ui.rememberViewStore
 import com.syaremych.composable_architecture.prelude.identity
 import com.syaremych.composable_architecture.store.Store
-import com.syaremych.composable_architecture.store.ViewStore
-import com.syaremych.composable_architecture.store.view
 
 @Composable
 internal fun SideNavBar(
@@ -32,11 +25,8 @@ internal fun SideNavBar(
 ) {
     val fillWidth = Modifier.fillMaxWidth()
 
-    val navBarViewStore: ViewStore<NavBarViewState, NavBarAction> = remember(navBarStore) {
-        navBarStore.scope(toLocalValue = NavBarViewState::init, toGlobalAction = ::identity).view
-    }
-
-    val state by navBarViewStore.collectAsState(initial = NavBarViewState.init(navBarStore.state))
+    val navBarViewStore = rememberViewStore(navBarStore, toViewState = NavBarViewState::init, toAction = ::identity)
+    val state by navBarViewStore.collectAsState()
 
     Surface(modifier = modifier) {
         Column {
@@ -66,7 +56,4 @@ internal fun SideNavBar(
         }
     }
 
-    DisposableEffect(navBarViewStore) {
-        onDispose(navBarViewStore::dispose)
-    }
 }
